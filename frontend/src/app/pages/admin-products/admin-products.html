@@ -1,0 +1,995 @@
+<div class="admin-page">
+
+  <!-- ===================================================== -->
+  <!-- SIDEBAR -->
+  <!-- ===================================================== -->
+
+  <app-admin-sidebar
+    *ngIf="!showProductModal">
+  </app-admin-sidebar>
+
+
+  <!-- ===================================================== -->
+  <!-- MAIN CONTENT -->
+  <!-- ===================================================== -->
+
+  <main class="main-content">
+
+
+    <!-- =================================================== -->
+    <!-- HEADER -->
+    <!-- =================================================== -->
+
+    <header class="page-header">
+
+      <div class="header-left">
+
+        <div class="breadcrumb">
+          <span>Administration</span>
+          <span class="separator">/</span>
+          <strong>Products</strong>
+        </div>
+
+        <h1>Products</h1>
+
+        <p>
+          Manage products, inventory quantities and procurement values.
+        </p>
+
+      </div>
+
+
+      <div class="header-actions">
+
+        <button
+          type="button"
+          class="secondary-button"
+          (click)="refreshProducts()">
+
+          <span>↻</span>
+          Refresh
+
+        </button>
+
+
+        <button
+          type="button"
+          class="secondary-button"
+          [disabled]="isDownloading"
+          (click)="downloadProductsCsv()">
+
+          <span>⇩</span>
+
+          <span *ngIf="!isDownloading">
+            Download CSV
+          </span>
+
+          <span *ngIf="isDownloading">
+            Downloading...
+          </span>
+
+        </button>
+
+
+        <button
+          type="button"
+          class="primary-button"
+          (click)="openAddProductModal()">
+
+          <span>＋</span>
+          Add Product
+
+        </button>
+
+      </div>
+
+    </header>
+
+
+    <!-- =================================================== -->
+    <!-- SUCCESS MESSAGE -->
+    <!-- =================================================== -->
+
+    <div
+      class="alert success-alert"
+      *ngIf="successMessage">
+
+      <span class="alert-icon">✓</span>
+
+      <span>{{ successMessage }}</span>
+
+    </div>
+
+
+    <!-- =================================================== -->
+    <!-- ERROR MESSAGE -->
+    <!-- =================================================== -->
+
+    <div
+      class="alert error-alert"
+      *ngIf="errorMessage">
+
+      <span class="alert-icon">!</span>
+
+      <span>{{ errorMessage }}</span>
+
+      <button
+        type="button"
+        class="alert-close"
+        (click)="errorMessage = ''">
+
+        ×
+
+      </button>
+
+    </div>
+
+
+    <!-- =================================================== -->
+    <!-- SUMMARY CARDS -->
+    <!-- =================================================== -->
+
+    <section class="summary-grid">
+
+
+      <!-- TOTAL PRODUCTS -->
+
+      <div class="summary-card">
+
+        <div class="summary-icon products-icon">
+          ▣
+        </div>
+
+        <div class="summary-content">
+
+          <span class="summary-label">
+            Total Products
+          </span>
+
+          <strong class="summary-value">
+            {{ totalProducts }}
+          </strong>
+
+        </div>
+
+      </div>
+
+
+      <!-- ACTIVE PRODUCTS -->
+
+      <div class="summary-card">
+
+        <div class="summary-icon active-icon">
+          ✓
+        </div>
+
+        <div class="summary-content">
+
+          <span class="summary-label">
+            Active Products
+          </span>
+
+          <strong class="summary-value">
+            {{ activeProducts }}
+          </strong>
+
+        </div>
+
+      </div>
+
+
+      <!-- INVENTORY QUANTITY -->
+
+      <div class="summary-card">
+
+        <div class="summary-icon quantity-icon">
+          #
+        </div>
+
+        <div class="summary-content">
+
+          <span class="summary-label">
+            Inventory Quantity
+          </span>
+
+          <strong class="summary-value">
+            {{ totalInventoryQuantity }}
+          </strong>
+
+        </div>
+
+      </div>
+
+
+      <!-- INVENTORY VALUE -->
+
+      <div class="summary-card">
+
+        <div class="summary-icon value-icon">
+          ₹
+        </div>
+
+        <div class="summary-content">
+
+          <span class="summary-label">
+            Inventory Value
+          </span>
+
+          <strong class="summary-value currency-value">
+            {{ formatCurrency(totalInventoryValue) }}
+          </strong>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =================================================== -->
+    <!-- PRODUCTS CARD -->
+    <!-- =================================================== -->
+
+    <section class="content-card">
+
+
+      <!-- TABLE HEADER -->
+
+      <div class="card-header">
+
+        <div class="card-title">
+
+          <h2>Product Inventory</h2>
+
+          <span class="record-count">
+            {{ filteredProducts.length }}
+            {{ filteredProducts.length === 1 ? 'product' : 'products' }}
+          </span>
+
+        </div>
+
+
+        <div class="search-box">
+
+          <span class="search-icon">⌕</span>
+
+          <input
+            type="text"
+            [(ngModel)]="searchText"
+            (ngModelChange)="filterProducts()"
+            placeholder="Search products..." />
+
+          <button
+            *ngIf="searchText"
+            type="button"
+            class="clear-search"
+            (click)="searchText = ''; filterProducts()">
+
+            ×
+
+          </button>
+
+        </div>
+
+      </div>
+
+
+      <!-- ================================================= -->
+      <!-- LOADING -->
+      <!-- ================================================= -->
+
+      <div
+        class="loading-state"
+        *ngIf="isLoading">
+
+        <div class="spinner"></div>
+
+        <p>Loading products...</p>
+
+      </div>
+
+
+      <!-- ================================================= -->
+      <!-- EMPTY STATE -->
+      <!-- ================================================= -->
+
+      <div
+        class="empty-state"
+        *ngIf="!isLoading && filteredProducts.length === 0">
+
+        <div class="empty-icon">
+          ▣
+        </div>
+
+        <h3>
+          {{ searchText ? 'No products found' : 'No products yet' }}
+        </h3>
+
+        <p>
+          {{
+          searchText
+          ? 'Try changing your search criteria.'
+          : 'Start by adding your first product.'
+          }}
+        </p>
+
+
+        <button
+          *ngIf="!searchText"
+          type="button"
+          class="primary-button"
+          (click)="openAddProductModal()">
+
+          ＋ Add Product
+
+        </button>
+
+      </div>
+
+
+      <!-- ================================================= -->
+      <!-- TABLE -->
+      <!-- ================================================= -->
+
+      <div
+        class="table-wrapper"
+        *ngIf="!isLoading && filteredProducts.length > 0">
+
+        <table class="products-table">
+
+          <thead>
+
+          <tr>
+
+            <th>Product</th>
+
+            <th>Department</th>
+
+            <th>Category</th>
+
+            <th>Price</th>
+
+            <th>Quantity</th>
+
+            <th>Total Value</th>
+
+            <th>Status</th>
+
+            <th class="actions-column">
+              Actions
+            </th>
+
+          </tr>
+
+          </thead>
+
+
+          <tbody>
+
+          <tr
+            *ngFor="let product of filteredProducts">
+
+
+            <!-- PRODUCT -->
+
+            <td>
+
+              <div class="product-cell">
+
+                <div class="product-avatar">
+                  {{ product.name.charAt(0).toUpperCase() }}
+                </div>
+
+                <div class="product-info">
+
+                  <strong>
+                    {{ product.name }}
+                  </strong>
+
+                  <span>
+                      ID #{{ product.productId }}
+                    </span>
+
+                </div>
+
+              </div>
+
+            </td>
+
+
+            <!-- DEPARTMENT -->
+
+            <td>
+
+                <span class="department-text">
+
+                  {{ getDepartmentName(product.departmentId) }}
+
+                </span>
+
+            </td>
+
+
+            <!-- CATEGORY -->
+
+            <td>
+
+                <span class="category-badge">
+
+                  {{ getCategoryName(product.categoryId) }}
+
+                </span>
+
+            </td>
+
+
+            <!-- PRICE -->
+
+            <td>
+
+                <span class="price-value">
+
+                  {{ formatCurrency(product.price) }}
+
+                </span>
+
+            </td>
+
+
+            <!-- QUANTITY -->
+
+            <td>
+
+                <span class="quantity-value">
+
+                  {{ product.numberOfQuantities }}
+
+                </span>
+
+            </td>
+
+
+            <!-- TOTAL VALUE -->
+
+            <td>
+
+              <strong class="total-value">
+
+                {{
+                formatCurrency(
+                product.totalPrice
+                )
+                }}
+
+              </strong>
+
+            </td>
+
+
+            <!-- STATUS -->
+
+            <td>
+
+                <span
+                  class="status-badge"
+                  [class.status-active]="
+                    product.status?.toUpperCase() === 'ACTIVE'
+                  "
+                  [class.status-inactive]="
+                    product.status?.toUpperCase() !== 'ACTIVE'
+                  ">
+
+                  <span class="status-dot"></span>
+
+                  {{ product.status || 'UNKNOWN' }}
+
+                </span>
+
+            </td>
+
+
+            <!-- ACTIONS -->
+
+            <td>
+
+              <div class="row-actions">
+
+                <button
+                  type="button"
+                  class="action-button edit-action"
+                  title="Edit product"
+                  (click)="openEditProductModal(product)">
+
+                  ✎
+
+                </button>
+
+
+                <button
+                  type="button"
+                  class="action-button delete-action"
+                  title="Delete product"
+                  [disabled]="
+                      deletingProductId === product.productId
+                    "
+                  (click)="deleteProduct(product)">
+
+                    <span
+                      *ngIf="
+                        deletingProductId !==
+                        product.productId
+                      ">
+
+                      ×
+
+                    </span>
+
+                  <span
+                    *ngIf="
+                        deletingProductId ===
+                        product.productId
+                      ">
+
+                      ...
+
+                    </span>
+
+                </button>
+
+              </div>
+
+            </td>
+
+          </tr>
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+
+      <!-- ================================================= -->
+      <!-- TABLE FOOTER -->
+      <!-- ================================================= -->
+
+      <div
+        class="table-footer"
+        *ngIf="!isLoading && products.length > 0">
+
+        <span>
+
+          Showing
+          <strong>{{ filteredProducts.length }}</strong>
+          of
+          <strong>{{ products.length }}</strong>
+          products
+
+        </span>
+
+        <span *ngIf="searchText">
+          Filtered by "{{ searchText }}"
+        </span>
+
+      </div>
+
+    </section>
+
+  </main>
+
+</div>
+
+
+
+<!-- ========================================================= -->
+<!-- PRODUCT MODAL -->
+<!-- ========================================================= -->
+
+<div
+  class="modal-backdrop"
+  *ngIf="showProductModal"
+  (click)="closeProductModal()">
+
+
+  <div
+    class="product-modal"
+    (click)="$event.stopPropagation()">
+
+
+    <!-- ===================================================== -->
+    <!-- MODAL HEADER -->
+    <!-- ===================================================== -->
+
+    <div class="modal-header">
+
+      <div>
+
+        <span class="modal-eyebrow">
+          Product Management
+        </span>
+
+        <h2>
+          {{
+          isEditMode
+          ? 'Edit Product'
+          : 'Add New Product'
+          }}
+        </h2>
+
+        <p>
+          {{
+          isEditMode
+          ? 'Update the product information below.'
+          : 'Enter the product details to add it to inventory.'
+          }}
+        </p>
+
+      </div>
+
+
+      <button
+        type="button"
+        class="modal-close"
+        [disabled]="isSavingProduct"
+        (click)="closeProductModal()">
+
+        ×
+
+      </button>
+
+    </div>
+
+
+    <!-- ===================================================== -->
+    <!-- MODAL CONTENT -->
+    <!-- ===================================================== -->
+
+    <div class="modal-body">
+
+
+      <!-- MODAL ERROR -->
+
+      <div
+        class="modal-alert modal-error"
+        *ngIf="modalError">
+
+        <span>!</span>
+
+        <span>{{ modalError }}</span>
+
+      </div>
+
+
+      <!-- MODAL SUCCESS -->
+
+      <div
+        class="modal-alert modal-success"
+        *ngIf="modalSuccess">
+
+        <span>✓</span>
+
+        <span>{{ modalSuccess }}</span>
+
+      </div>
+
+
+      <!-- ================================================= -->
+      <!-- PRODUCT NAME -->
+      <!-- ================================================= -->
+
+      <div class="form-group full-width">
+
+        <label for="productName">
+          Product Name
+          <span>*</span>
+        </label>
+
+        <input
+          id="productName"
+          type="text"
+          [(ngModel)]="productForm.name"
+          placeholder="Enter product name"
+          maxlength="150"
+          [disabled]="isSavingProduct" />
+
+      </div>
+
+
+      <!-- ================================================= -->
+      <!-- DEPARTMENT -->
+      <!-- ================================================= -->
+
+      <div class="form-group">
+
+        <label for="department">
+          Department
+          <span>*</span>
+        </label>
+
+        <select
+          id="department"
+          [(ngModel)]="productForm.departmentId"
+          (ngModelChange)="onDepartmentChange()"
+          [disabled]="
+            isSavingProduct ||
+            isLoadingDepartments
+          ">
+
+          <option [ngValue]="0">
+            {{
+            isLoadingDepartments
+            ? 'Loading departments...'
+            : 'Select department'
+            }}
+          </option>
+
+
+          <option
+            *ngFor="let department of departments"
+            [ngValue]="department.departmentId">
+
+            {{ department.departmentName }}
+
+          </option>
+
+        </select>
+
+      </div>
+
+
+      <!-- ================================================= -->
+      <!-- CATEGORY -->
+      <!-- ================================================= -->
+
+      <div class="form-group">
+
+        <label for="category">
+          Category
+          <span>*</span>
+        </label>
+
+        <select
+          id="category"
+          [(ngModel)]="productForm.categoryId"
+          (ngModelChange)="onCategoryChange()"
+          [disabled]="
+            isSavingProduct ||
+            !productForm.departmentId ||
+            isLoadingCategories
+          ">
+
+          <option [ngValue]="0">
+
+            {{
+            isLoadingCategories
+            ? 'Loading categories...'
+            : !productForm.departmentId
+            ? 'Select department first'
+            : categories.length === 0
+            ? 'No categories available'
+            : 'Select category'
+            }}
+
+          </option>
+
+
+          <option
+            *ngFor="let category of categories"
+            [ngValue]="category.categoryId">
+
+            {{ category.categoryName }}
+
+          </option>
+
+        </select>
+
+      </div>
+
+
+      <!-- ================================================= -->
+      <!-- PRICE -->
+      <!-- ================================================= -->
+
+      <div class="form-group">
+
+        <label for="price">
+          Unit Price
+          <span>*</span>
+        </label>
+
+        <div class="input-with-prefix">
+
+          <span>₹</span>
+
+          <input
+            id="price"
+            type="number"
+            [(ngModel)]="productForm.price"
+            (ngModelChange)="calculateTotalPrice()"
+            placeholder="0.00"
+            min="0.01"
+            step="0.01"
+            [disabled]="isSavingProduct" />
+
+        </div>
+
+      </div>
+
+
+      <!-- ================================================= -->
+      <!-- QUANTITY -->
+      <!-- ================================================= -->
+
+      <div class="form-group">
+
+        <label for="quantity">
+          Quantity
+          <span>*</span>
+        </label>
+
+        <input
+          id="quantity"
+          type="number"
+          [(ngModel)]="productForm.numberOfQuantities"
+          (ngModelChange)="calculateTotalPrice()"
+          placeholder="Enter quantity"
+          min="1"
+          step="1"
+          [disabled]="isSavingProduct" />
+
+      </div>
+
+
+      <!-- ================================================= -->
+      <!-- TOTAL PRICE -->
+      <!-- ================================================= -->
+
+      <div class="form-group">
+
+        <label>
+          Total Value
+        </label>
+
+        <div class="total-price-display">
+
+          <span>₹</span>
+
+          <strong>
+            {{
+            formatCurrency(
+            productForm.totalPrice
+            )
+            }}
+          </strong>
+
+        </div>
+
+      </div>
+
+
+      <!-- ================================================= -->
+      <!-- STATUS -->
+      <!-- ================================================= -->
+
+      <div class="form-group">
+
+        <label for="status">
+          Status
+        </label>
+
+        <select
+          id="status"
+          [(ngModel)]="productForm.status"
+          [disabled]="isSavingProduct">
+
+          <option value="ACTIVE">
+            ACTIVE
+          </option>
+
+          <option value="INACTIVE">
+            INACTIVE
+          </option>
+
+        </select>
+
+      </div>
+
+
+      <!-- ================================================= -->
+      <!-- DESCRIPTION -->
+      <!-- ================================================= -->
+
+      <div class="form-group full-width">
+
+        <label for="description">
+          Description
+          <span>*</span>
+        </label>
+
+        <textarea
+          id="description"
+          [(ngModel)]="productForm.description"
+          placeholder="Enter product description"
+          rows="4"
+          [disabled]="isSavingProduct"></textarea>
+
+      </div>
+
+
+      <!-- ================================================= -->
+      <!-- CALCULATION NOTE -->
+      <!-- ================================================= -->
+
+      <div class="calculation-note">
+
+        <span class="note-icon">i</span>
+
+        <span>
+          Total value is automatically calculated as
+          <strong>unit price × quantity</strong>.
+        </span>
+
+      </div>
+
+    </div>
+
+
+    <!-- ===================================================== -->
+    <!-- MODAL FOOTER -->
+    <!-- ===================================================== -->
+
+    <div class="modal-footer">
+
+      <button
+        type="button"
+        class="cancel-button"
+        [disabled]="isSavingProduct"
+        (click)="closeProductModal()">
+
+        Cancel
+
+      </button>
+
+
+      <button
+        type="button"
+        class="save-button"
+        [disabled]="isSavingProduct"
+        (click)="saveProduct()">
+
+        <span
+          class="button-spinner"
+          *ngIf="isSavingProduct">
+        </span>
+
+
+        <span *ngIf="!isSavingProduct">
+
+          {{
+            isEditMode
+              ? 'Update Product'
+              : 'Create Product'
+          }}
+
+        </span>
+
+
+        <span *ngIf="isSavingProduct">
+
+          {{
+            isEditMode
+              ? 'Updating...'
+              : 'Creating...'
+          }}
+
+        </span>
+
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+

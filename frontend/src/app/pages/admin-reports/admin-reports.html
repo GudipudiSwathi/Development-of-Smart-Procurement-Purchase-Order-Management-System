@@ -1,0 +1,2914 @@
+<div class="admin-page">
+
+  <app-admin-sidebar></app-admin-sidebar>
+
+  <main class="main-area">
+
+    <!-- =====================================================
+         PAGE HEADER
+         ===================================================== -->
+
+    <header class="page-header">
+
+      <div class="header-content">
+
+        <div class="breadcrumb">
+          <span>Admin</span>
+          <span class="separator">/</span>
+          <strong>Reports</strong>
+        </div>
+
+        <p class="eyebrow">
+          BUSINESS INTELLIGENCE
+        </p>
+
+        <h1>
+          Procurement Reports
+        </h1>
+
+        <p class="page-subtitle">
+          Analyze procurement activity, spending, departments,
+          categories, suppliers and payment performance.
+        </p>
+
+      </div>
+
+
+      <div class="header-actions">
+
+        <button
+          type="button"
+          class="refresh-button"
+          (click)="refreshReports()"
+          [disabled]="isRefreshing">
+
+          <span
+            class="refresh-icon"
+            [class.spinning]="isRefreshing">
+            ↻
+          </span>
+
+          {{
+          isRefreshing
+          ? 'Refreshing...'
+          : 'Refresh'
+          }}
+
+        </button>
+
+
+        <button
+          type="button"
+          class="export-button"
+          (click)="exportReport()">
+
+          <span>
+            ↓
+          </span>
+
+          Export CSV
+
+        </button>
+
+      </div>
+
+    </header>
+
+
+    <!-- =====================================================
+         ALERTS
+         ===================================================== -->
+
+    <div
+      class="alert success-alert"
+      *ngIf="successMessage">
+
+      <span class="alert-symbol">
+        ✓
+      </span>
+
+      <span>
+        {{ successMessage }}
+      </span>
+
+      <button
+        type="button"
+        class="alert-close"
+        (click)="successMessage = ''">
+
+        ×
+
+      </button>
+
+    </div>
+
+
+    <div
+      class="alert error-alert"
+      *ngIf="errorMessage">
+
+      <span class="alert-symbol">
+        !
+      </span>
+
+      <span>
+        {{ errorMessage }}
+      </span>
+
+      <button
+        type="button"
+        class="alert-close"
+        (click)="errorMessage = ''">
+
+        ×
+
+      </button>
+
+    </div>
+
+
+    <!-- =====================================================
+         LOADING
+         ===================================================== -->
+
+    <div
+      class="loading-state"
+      *ngIf="isLoading">
+
+      <div class="loading-spinner"></div>
+
+      <h3>
+        Preparing procurement reports
+      </h3>
+
+      <p>
+        Collecting data from your procurement system...
+      </p>
+
+    </div>
+
+
+    <!-- =====================================================
+         REPORT CONTENT
+         ===================================================== -->
+
+    <div
+      class="reports-content"
+      *ngIf="!isLoading">
+
+
+      <!-- ===================================================
+           REPORT NAVIGATION
+           =================================================== -->
+
+      <section class="report-tabs">
+
+        <button
+          type="button"
+          class="report-tab"
+          [class.active]="selectedReport === 'overview'"
+          (click)="selectReport('overview')">
+
+          <span class="tab-icon">
+            ◈
+          </span>
+
+          <span>
+            Overview
+          </span>
+
+        </button>
+
+
+        <button
+          type="button"
+          class="report-tab"
+          [class.active]="selectedReport === 'procurement'"
+          (click)="selectReport('procurement')">
+
+          <span class="tab-icon">
+            ▥
+          </span>
+
+          <span>
+            Procurement
+          </span>
+
+        </button>
+
+
+        <button
+          type="button"
+          class="report-tab"
+          [class.active]="selectedReport === 'departments'"
+          (click)="selectReport('departments')">
+
+          <span class="tab-icon">
+            ▦
+          </span>
+
+          <span>
+            Departments
+          </span>
+
+        </button>
+
+
+        <button
+          type="button"
+          class="report-tab"
+          [class.active]="selectedReport === 'categories'"
+          (click)="selectReport('categories')">
+
+          <span class="tab-icon">
+            □
+          </span>
+
+          <span>
+            Categories
+          </span>
+
+        </button>
+
+
+        <button
+          type="button"
+          class="report-tab"
+          [class.active]="selectedReport === 'suppliers'"
+          (click)="selectReport('suppliers')">
+
+          <span class="tab-icon">
+            ▤
+          </span>
+
+          <span>
+            Suppliers
+          </span>
+
+        </button>
+
+
+        <button
+          type="button"
+          class="report-tab"
+          [class.active]="selectedReport === 'payments'"
+          (click)="selectReport('payments')">
+
+          <span class="tab-icon">
+            ₹
+          </span>
+
+          <span>
+            Payments
+          </span>
+
+        </button>
+
+      </section>
+
+
+      <!-- ===================================================
+           OVERVIEW
+           =================================================== -->
+
+      <section
+        class="report-section"
+        *ngIf="selectedReport === 'overview'">
+
+
+        <div class="section-heading">
+
+          <div>
+
+            <p class="section-eyebrow">
+              EXECUTIVE SUMMARY
+            </p>
+
+            <h2>
+              Procurement Overview
+            </h2>
+
+            <p>
+              A high-level view of procurement activity
+              across the enterprise.
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <!-- OVERVIEW CARDS -->
+
+        <div class="overview-grid">
+
+
+          <div class="overview-card primary-overview">
+
+            <div class="overview-card-top">
+
+              <div class="overview-icon purple">
+                ₹
+              </div>
+
+              <span class="overview-label">
+                TOTAL PROCUREMENT
+              </span>
+
+            </div>
+
+            <strong class="overview-value">
+              {{ formatCurrency(totalProcurementAmount) }}
+            </strong>
+
+            <span class="overview-note">
+              Across all purchase requests
+            </span>
+
+          </div>
+
+
+          <div class="overview-card">
+
+            <div class="overview-card-top">
+
+              <div class="overview-icon blue">
+                ≡
+              </div>
+
+              <span class="overview-label">
+                PURCHASE REQUESTS
+              </span>
+
+            </div>
+
+            <strong class="overview-value">
+              {{ totalPurchaseRequests }}
+            </strong>
+
+            <span class="overview-note">
+              Total procurement requests
+            </span>
+
+          </div>
+
+
+          <div class="overview-card">
+
+            <div class="overview-card-top">
+
+              <div class="overview-icon green">
+                ✓
+              </div>
+
+              <span class="overview-label">
+                APPROVED
+              </span>
+
+            </div>
+
+            <strong class="overview-value">
+              {{ approvedRequests }}
+            </strong>
+
+            <span class="overview-note">
+              {{ getPercentage(
+                approvedRequests,
+                totalPurchaseRequests
+              ) }}% of all requests
+            </span>
+
+          </div>
+
+
+          <div class="overview-card">
+
+            <div class="overview-card-top">
+
+              <div class="overview-icon orange">
+                ◷
+              </div>
+
+              <span class="overview-label">
+                PENDING
+              </span>
+
+            </div>
+
+            <strong class="overview-value">
+              {{ pendingRequests }}
+            </strong>
+
+            <span class="overview-note">
+              Awaiting approval
+            </span>
+
+          </div>
+
+        </div>
+
+
+        <!-- SECONDARY OVERVIEW -->
+
+        <div class="overview-lower-grid">
+
+
+          <!-- REQUEST STATUS -->
+
+          <div class="report-card">
+
+            <div class="card-header">
+
+              <div>
+
+                <h3>
+                  Request Status
+                </h3>
+
+                <p>
+                  Current distribution of purchase requests
+                </p>
+
+              </div>
+
+            </div>
+
+
+            <div class="status-chart">
+
+
+              <div class="status-chart-row">
+
+                <div class="status-row-label">
+
+                  <span class="status-indicator pending"></span>
+
+                  <span>
+                    Pending
+                  </span>
+
+                  <strong>
+                    {{ pendingRequests }}
+                  </strong>
+
+                </div>
+
+                <div class="progress-track">
+
+                  <div
+                    class="progress-bar pending"
+                    [style.width.%]="
+                      getPercentage(
+                        pendingRequests,
+                        totalPurchaseRequests
+                      )
+                    ">
+                  </div>
+
+                </div>
+
+                <span class="percentage">
+                  {{ getPercentage(
+                    pendingRequests,
+                    totalPurchaseRequests
+                  ) }}%
+                </span>
+
+              </div>
+
+
+              <div class="status-chart-row">
+
+                <div class="status-row-label">
+
+                  <span class="status-indicator approved"></span>
+
+                  <span>
+                    Approved
+                  </span>
+
+                  <strong>
+                    {{ approvedRequests }}
+                  </strong>
+
+                </div>
+
+                <div class="progress-track">
+
+                  <div
+                    class="progress-bar approved"
+                    [style.width.%]="
+                      getPercentage(
+                        approvedRequests,
+                        totalPurchaseRequests
+                      )
+                    ">
+                  </div>
+
+                </div>
+
+                <span class="percentage">
+                  {{ getPercentage(
+                    approvedRequests,
+                    totalPurchaseRequests
+                  ) }}%
+                </span>
+
+              </div>
+
+
+              <div class="status-chart-row">
+
+                <div class="status-row-label">
+
+                  <span class="status-indicator rejected"></span>
+
+                  <span>
+                    Rejected
+                  </span>
+
+                  <strong>
+                    {{ rejectedRequests }}
+                  </strong>
+
+                </div>
+
+                <div class="progress-track">
+
+                  <div
+                    class="progress-bar rejected"
+                    [style.width.%]="
+                      getPercentage(
+                        rejectedRequests,
+                        totalPurchaseRequests
+                      )
+                    ">
+                  </div>
+
+                </div>
+
+                <span class="percentage">
+                  {{ getPercentage(
+                    rejectedRequests,
+                    totalPurchaseRequests
+                  ) }}%
+                </span>
+
+              </div>
+
+
+              <div class="status-chart-row">
+
+                <div class="status-row-label">
+
+                  <span class="status-indicator cancelled"></span>
+
+                  <span>
+                    Cancelled
+                  </span>
+
+                  <strong>
+                    {{ cancelledRequests }}
+                  </strong>
+
+                </div>
+
+                <div class="progress-track">
+
+                  <div
+                    class="progress-bar cancelled"
+                    [style.width.%]="
+                      getPercentage(
+                        cancelledRequests,
+                        totalPurchaseRequests
+                      )
+                    ">
+                  </div>
+
+                </div>
+
+                <span class="percentage">
+                  {{ getPercentage(
+                    cancelledRequests,
+                    totalPurchaseRequests
+                  ) }}%
+                </span>
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <!-- ORGANIZATION SUMMARY -->
+
+          <div class="report-card">
+
+            <div class="card-header">
+
+              <div>
+
+                <h3>
+                  Organization Summary
+                </h3>
+
+                <p>
+                  Current system resources
+                </p>
+
+              </div>
+
+            </div>
+
+
+            <div class="resource-list">
+
+
+              <div class="resource-row">
+
+                <div class="resource-icon users">
+                  ♙
+                </div>
+
+                <div class="resource-info">
+
+                  <span>
+                    Users
+                  </span>
+
+                  <strong>
+                    {{ totalUsers }}
+                  </strong>
+
+                </div>
+
+              </div>
+
+
+              <div class="resource-row">
+
+                <div class="resource-icon departments">
+                  ▦
+                </div>
+
+                <div class="resource-info">
+
+                  <span>
+                    Departments
+                  </span>
+
+                  <strong>
+                    {{ totalDepartments }}
+                  </strong>
+
+                </div>
+
+              </div>
+
+
+              <div class="resource-row">
+
+                <div class="resource-icon categories">
+                  ◇
+                </div>
+
+                <div class="resource-info">
+
+                  <span>
+                    Categories
+                  </span>
+
+                  <strong>
+                    {{ totalCategories }}
+                  </strong>
+
+                </div>
+
+              </div>
+
+
+              <div class="resource-row">
+
+                <div class="resource-icon products">
+                  □
+                </div>
+
+                <div class="resource-info">
+
+                  <span>
+                    Products
+                  </span>
+
+                  <strong>
+                    {{ totalProducts }}
+                  </strong>
+
+                </div>
+
+              </div>
+
+
+              <div class="resource-row">
+
+                <div class="resource-icon suppliers">
+                  ▤
+                </div>
+
+                <div class="resource-info">
+
+                  <span>
+                    Suppliers
+                  </span>
+
+                  <strong>
+                    {{ totalSuppliers }}
+                  </strong>
+
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <!-- KEY INSIGHTS -->
+
+          <div class="report-card insights-card">
+
+            <div class="card-header">
+
+              <div>
+
+                <h3>
+                  Key Insights
+                </h3>
+
+                <p>
+                  Procurement highlights
+                </p>
+
+              </div>
+
+            </div>
+
+
+            <div class="insight-list">
+
+
+              <div
+                class="insight-item"
+                *ngIf="getTopDepartment()">
+
+                <div class="insight-icon purple">
+                  ▦
+                </div>
+
+                <div>
+
+                  <span>
+                    Highest Spending Department
+                  </span>
+
+                  <strong>
+                    {{ getTopDepartment()?.departmentName }}
+                  </strong>
+
+                  <small>
+                    {{
+                    formatCurrency(
+                    getTopDepartment()?.totalAmount || 0
+                    )
+                    }}
+                  </small>
+
+                </div>
+
+              </div>
+
+
+              <div
+                class="insight-item"
+                *ngIf="getTopCategory()">
+
+                <div class="insight-icon blue">
+                  □
+                </div>
+
+                <div>
+
+                  <span>
+                    Highest Spending Category
+                  </span>
+
+                  <strong>
+                    {{ getTopCategory()?.categoryName }}
+                  </strong>
+
+                  <small>
+                    {{
+                    formatCurrency(
+                    getTopCategory()?.totalAmount || 0
+                    )
+                    }}
+                  </small>
+
+                </div>
+
+              </div>
+
+
+              <div
+                class="insight-item"
+                *ngIf="getTopSupplier()">
+
+                <div class="insight-icon green">
+                  ▤
+                </div>
+
+                <div>
+
+                  <span>
+                    Top Supplier
+                  </span>
+
+                  <strong>
+                    {{ getTopSupplier()?.supplierName }}
+                  </strong>
+
+                  <small>
+                    {{
+                    formatCurrency(
+                    getTopSupplier()?.totalAmount || 0
+                    )
+                    }}
+                  </small>
+
+                </div>
+
+              </div>
+
+
+              <div
+                class="insight-empty"
+                *ngIf="
+                  !getTopDepartment() &&
+                  !getTopCategory() &&
+                  !getTopSupplier()
+                ">
+
+                No procurement insights available yet.
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- ===================================================
+           PROCUREMENT REPORT
+           =================================================== -->
+
+      <section
+        class="report-section"
+        *ngIf="selectedReport === 'procurement'">
+
+
+        <div class="section-heading">
+
+          <div>
+
+            <p class="section-eyebrow">
+              PROCUREMENT ANALYSIS
+            </p>
+
+            <h2>
+              Purchase Request Report
+            </h2>
+
+            <p>
+              Detailed analysis of procurement requests
+              and their financial impact.
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <!-- PROCUREMENT FINANCIAL CARDS -->
+
+        <div class="financial-grid">
+
+          <div class="financial-card">
+
+            <span>
+              TOTAL PROCUREMENT
+            </span>
+
+            <strong>
+              {{ formatCurrency(totalProcurementAmount) }}
+            </strong>
+
+            <small>
+              All request values
+            </small>
+
+          </div>
+
+
+          <div class="financial-card approved-financial">
+
+            <span>
+              APPROVED VALUE
+            </span>
+
+            <strong>
+              {{ formatCurrency(approvedProcurementAmount) }}
+            </strong>
+
+            <small>
+              {{ getAmountPercentage(
+              approvedProcurementAmount,
+              totalProcurementAmount
+              ) }}% of total
+            </small>
+
+          </div>
+
+
+          <div class="financial-card pending-financial">
+
+            <span>
+              PENDING VALUE
+            </span>
+
+            <strong>
+              {{ formatCurrency(pendingProcurementAmount) }}
+            </strong>
+
+            <small>
+              {{ getAmountPercentage(
+              pendingProcurementAmount,
+              totalProcurementAmount
+              ) }}% of total
+            </small>
+
+          </div>
+
+
+          <div class="financial-card rejected-financial">
+
+            <span>
+              REJECTED VALUE
+            </span>
+
+            <strong>
+              {{ formatCurrency(rejectedProcurementAmount) }}
+            </strong>
+
+            <small>
+              {{ getAmountPercentage(
+              rejectedProcurementAmount,
+              totalProcurementAmount
+              ) }}% of total
+            </small>
+
+          </div>
+
+        </div>
+
+
+        <!-- REQUEST FILTERS -->
+
+        <div class="filter-card">
+
+          <div class="filter-card-heading">
+
+            <div>
+
+              <h3>
+                Request Analysis
+              </h3>
+
+              <p>
+                Filter the procurement records below.
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <div class="report-filters">
+
+
+            <div class="report-search">
+
+              <span>
+                ⌕
+              </span>
+
+              <input
+                type="text"
+                [(ngModel)]="searchTerm"
+                (ngModelChange)="onSearch()"
+                placeholder="Search request, employee or department...">
+
+              <button
+                type="button"
+                *ngIf="searchTerm"
+                (click)="searchTerm = ''; onSearch()">
+
+                ×
+
+              </button>
+
+            </div>
+
+
+            <div class="report-filter">
+
+              <label>
+                Status
+              </label>
+
+              <select
+                [(ngModel)]="selectedStatus"
+                (ngModelChange)="onStatusChange()">
+
+                <option value="ALL">
+                  All Status
+                </option>
+
+                <option value="PENDING">
+                  Pending
+                </option>
+
+                <option value="APPROVED">
+                  Approved
+                </option>
+
+                <option value="REJECTED">
+                  Rejected
+                </option>
+
+                <option value="CANCELLED">
+                  Cancelled
+                </option>
+
+              </select>
+
+            </div>
+
+
+            <div class="report-filter">
+
+              <label>
+                Department
+              </label>
+
+              <select
+                [(ngModel)]="selectedDepartment"
+                (ngModelChange)="onDepartmentChange()">
+
+                <option value="ALL">
+                  All Departments
+                </option>
+
+                <option
+                  *ngFor="
+                    let department of departments
+                  "
+                  [value]="department.departmentId">
+
+                  {{ department.departmentName }}
+
+                </option>
+
+              </select>
+
+            </div>
+
+
+            <div class="report-filter">
+
+              <label>
+                Period
+              </label>
+
+              <select
+                [(ngModel)]="selectedPeriod"
+                (ngModelChange)="onPeriodChange()">
+
+                <option value="ALL">
+                  All Time
+                </option>
+
+                <option value="MONTH">
+                  This Month
+                </option>
+
+                <option value="QUARTER">
+                  This Quarter
+                </option>
+
+                <option value="YEAR">
+                  This Year
+                </option>
+
+                <option value="CUSTOM">
+                  Custom Range
+                </option>
+
+              </select>
+
+            </div>
+
+
+            <button
+              type="button"
+              class="filter-clear-button"
+              (click)="clearFilters()">
+
+              ↺
+              Clear
+
+            </button>
+
+          </div>
+
+
+          <div
+            class="custom-date-row"
+            *ngIf="selectedPeriod === 'CUSTOM'">
+
+            <div class="date-field">
+
+              <label>
+                Start Date
+              </label>
+
+              <input
+                type="date"
+                [(ngModel)]="reportStartDate"
+                (ngModelChange)="onDateRangeChange()">
+
+            </div>
+
+
+            <div class="date-field">
+
+              <label>
+                End Date
+              </label>
+
+              <input
+                type="date"
+                [(ngModel)]="reportEndDate"
+                (ngModelChange)="onDateRangeChange()">
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- REQUEST TABLE -->
+
+        <div class="report-card table-card">
+
+          <div class="card-header">
+
+            <div>
+
+              <h3>
+                Procurement Requests
+              </h3>
+
+              <p>
+                {{ filteredPurchaseRequests.length }}
+                matching records
+              </p>
+
+            </div>
+
+            <button
+              type="button"
+              class="small-export-button"
+              (click)="exportReport()">
+
+              ↓
+              Export
+
+            </button>
+
+          </div>
+
+
+          <div
+            class="table-wrapper"
+            *ngIf="
+              filteredPurchaseRequests.length > 0
+            ">
+
+            <table class="report-table">
+
+              <thead>
+
+              <tr>
+
+                <th>
+                  REQUEST
+                </th>
+
+                <th>
+                  EMPLOYEE
+                </th>
+
+                <th>
+                  DEPARTMENT
+                </th>
+
+                <th>
+                  STATUS
+                </th>
+
+                <th>
+                  APPROVAL
+                </th>
+
+                <th>
+                  REQUEST DATE
+                </th>
+
+                <th>
+                  AMOUNT
+                </th>
+
+              </tr>
+
+              </thead>
+
+
+              <tbody>
+
+              <tr
+                *ngFor="
+                    let request of paginatedRequests;
+                    trackBy: trackByRequestId
+                  ">
+
+                <td>
+
+                  <div class="request-cell">
+
+                    <div class="request-icon">
+                      #
+                    </div>
+
+                    <div>
+
+                      <strong>
+                        PR-{{
+                        request.purchaseRequestId
+                        }}
+                      </strong>
+
+                      <span>
+                          {{
+                            getItemCount(request)
+                          }}
+                          {{
+                            getItemCount(request) === 1
+                              ? 'item'
+                              : 'items'
+                          }}
+                        </span>
+
+                    </div>
+
+                  </div>
+
+                </td>
+
+
+                <td>
+
+                  <div class="employee-cell">
+
+                    <div class="employee-avatar">
+
+                      {{
+                      getUserName(
+                      request.userId
+                      ).charAt(0).toUpperCase()
+                      }}
+
+                    </div>
+
+                    <span>
+                        {{
+                          getUserName(
+                            request.userId
+                          )
+                        }}
+                      </span>
+
+                  </div>
+
+                </td>
+
+
+                <td>
+
+                    <span class="department-text">
+
+                      {{
+                        getDepartmentName(
+                          getUserDepartmentId(
+                            request.userId
+                          )
+                        )
+                      }}
+
+                    </span>
+
+                </td>
+
+
+                <td>
+
+                    <span
+                      class="status-badge"
+                      [ngClass]="
+                        getStatusClass(
+                          request.status
+                        )
+                      ">
+
+                      <span class="status-dot"></span>
+
+                      {{
+                        getStatusLabel(
+                          request.status
+                        )
+                      }}
+
+                    </span>
+
+                </td>
+
+
+                <td>
+
+                  <div class="approval-cell">
+
+                    <strong>
+                      Level {{
+                      request.currentApprovalLevel || 0
+                      }}
+                    </strong>
+
+                    <span>
+                        {{
+                          request.status === 'APPROVED'
+                            ? 'Completed'
+                            : request.status === 'REJECTED'
+                              ? 'Rejected'
+                              : 'In progress'
+                        }}
+                      </span>
+
+                  </div>
+
+                </td>
+
+
+                <td>
+
+                    <span class="date-text">
+
+                      {{
+                        formatDate(
+                          request.requestDate
+                        )
+                      }}
+
+                    </span>
+
+                </td>
+
+
+                <td>
+
+                  <strong class="amount-text">
+
+                    {{
+                    formatCurrency(
+                    request.totalPrice
+                    )
+                    }}
+
+                  </strong>
+
+                </td>
+
+              </tr>
+
+              </tbody>
+
+            </table>
+
+          </div>
+
+
+          <div
+            class="table-empty"
+            *ngIf="
+              filteredPurchaseRequests.length === 0
+            ">
+
+            <div class="table-empty-icon">
+              ⌕
+            </div>
+
+            <h3>
+              No procurement records found
+            </h3>
+
+            <p>
+              Try changing your search criteria or filters.
+            </p>
+
+            <button
+              type="button"
+              (click)="clearFilters()">
+
+              Clear Filters
+
+            </button>
+
+          </div>
+
+
+          <!-- PAGINATION -->
+
+          <div
+            class="pagination-bar"
+            *ngIf="
+              filteredPurchaseRequests.length > 0
+            ">
+
+            <div class="pagination-info">
+
+              Showing
+
+              <strong>
+                {{
+                ((currentPage - 1) * pageSize) + 1
+                }}
+              </strong>
+
+              to
+
+              <strong>
+                {{
+                Math.min(
+                currentPage * pageSize,
+                filteredPurchaseRequests.length
+                )
+                }}
+              </strong>
+
+              of
+
+              <strong>
+                {{ filteredPurchaseRequests.length }}
+              </strong>
+
+              records
+
+            </div>
+
+
+            <div class="pagination-controls">
+
+              <button
+                type="button"
+                class="page-button"
+                [disabled]="currentPage === 1"
+                (click)="previousPage()">
+
+                ‹
+                Previous
+
+              </button>
+
+
+              <button
+                type="button"
+                class="page-number"
+                *ngFor="let page of pageNumbers"
+                [class.active]="
+                  page === currentPage
+                "
+                (click)="goToPage(page)">
+
+                {{ page }}
+
+              </button>
+
+
+              <button
+                type="button"
+                class="page-button"
+                [disabled]="
+                  currentPage === totalPages
+                "
+                (click)="nextPage()">
+
+                Next
+                ›
+
+              </button>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- ===================================================
+           DEPARTMENTS
+           =================================================== -->
+
+      <section
+        class="report-section"
+        *ngIf="selectedReport === 'departments'">
+
+
+        <div class="section-heading">
+
+          <div>
+
+            <p class="section-eyebrow">
+              DEPARTMENT ANALYSIS
+            </p>
+
+            <h2>
+              Department Procurement
+            </h2>
+
+            <p>
+              Compare procurement activity and spending
+              across departments.
+            </p>
+
+          </div>
+
+
+          <button
+            type="button"
+            class="section-export-button"
+            (click)="exportDepartmentReport()">
+
+            ↓
+            Export Department Report
+
+          </button>
+
+        </div>
+
+
+        <div class="department-highlight-grid">
+
+          <div class="highlight-card">
+
+            <span>
+              TOP DEPARTMENT
+            </span>
+
+            <strong>
+              {{
+              getTopDepartment()?.departmentName ||
+              '—'
+              }}
+            </strong>
+
+            <small>
+              {{
+              formatCurrency(
+              getTopDepartment()?.totalAmount || 0
+              )
+              }}
+            </small>
+
+          </div>
+
+
+          <div class="highlight-card">
+
+            <span>
+              DEPARTMENTS
+            </span>
+
+            <strong>
+              {{ totalDepartments }}
+            </strong>
+
+            <small>
+              Active organizational units
+            </small>
+
+          </div>
+
+
+          <div class="highlight-card">
+
+            <span>
+              APPROVED VALUE
+            </span>
+
+            <strong>
+              {{ formatCurrency(
+              approvedProcurementAmount
+              ) }}
+            </strong>
+
+            <small>
+              Across all departments
+            </small>
+
+          </div>
+
+        </div>
+
+
+        <div class="report-card table-card">
+
+          <div class="card-header">
+
+            <div>
+
+              <h3>
+                Department Performance
+              </h3>
+
+              <p>
+                Procurement activity by department
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <div
+            class="table-wrapper"
+            *ngIf="departmentReports.length > 0">
+
+            <table class="report-table department-table">
+
+              <thead>
+
+              <tr>
+
+                <th>
+                  DEPARTMENT
+                </th>
+
+                <th>
+                  EMPLOYEES
+                </th>
+
+                <th>
+                  REQUESTS
+                </th>
+
+                <th>
+                  APPROVED
+                </th>
+
+                <th>
+                  PENDING
+                </th>
+
+                <th>
+                  REJECTED
+                </th>
+
+                <th>
+                  TOTAL PROCUREMENT
+                </th>
+
+                <th>
+                  APPROVED VALUE
+                </th>
+
+              </tr>
+
+              </thead>
+
+
+              <tbody>
+
+              <tr
+                *ngFor="
+                    let row of departmentReports;
+                    trackBy: trackByDepartmentId
+                  ">
+
+                <td>
+
+                  <div class="department-report-cell">
+
+                    <div class="department-report-icon">
+                      ▦
+                    </div>
+
+                    <strong>
+                      {{ row.departmentName }}
+                    </strong>
+
+                  </div>
+
+                </td>
+
+
+                <td>
+                  <strong>
+                    {{ row.employeeCount }}
+                  </strong>
+                </td>
+
+
+                <td>
+                  {{ row.requestCount }}
+                </td>
+
+
+                <td>
+                    <span class="number-success">
+                      {{ row.approvedCount }}
+                    </span>
+                </td>
+
+
+                <td>
+                    <span class="number-warning">
+                      {{ row.pendingCount }}
+                    </span>
+                </td>
+
+
+                <td>
+                    <span class="number-danger">
+                      {{ row.rejectedCount }}
+                    </span>
+                </td>
+
+
+                <td>
+
+                  <strong class="amount-text">
+                    {{
+                    formatCurrency(
+                    row.totalAmount
+                    )
+                    }}
+                  </strong>
+
+                </td>
+
+
+                <td>
+
+                  <strong class="approved-amount">
+                    {{
+                    formatCurrency(
+                    row.approvedAmount
+                    )
+                    }}
+                  </strong>
+
+                </td>
+
+              </tr>
+
+              </tbody>
+
+            </table>
+
+          </div>
+
+
+          <div
+            class="table-empty"
+            *ngIf="departmentReports.length === 0">
+
+            No department procurement data available.
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- ===================================================
+           CATEGORIES
+           =================================================== -->
+
+      <section
+        class="report-section"
+        *ngIf="selectedReport === 'categories'">
+
+
+        <div class="section-heading">
+
+          <div>
+
+            <p class="section-eyebrow">
+              CATEGORY ANALYSIS
+            </p>
+
+            <h2>
+              Category Procurement
+            </h2>
+
+            <p>
+              Understand which product categories drive
+              procurement activity and spending.
+            </p>
+
+          </div>
+
+
+          <button
+            type="button"
+            class="section-export-button"
+            (click)="exportCategoryReport()">
+
+            ↓
+            Export Category Report
+
+          </button>
+
+        </div>
+
+
+        <div class="category-highlight-grid">
+
+          <div class="highlight-card">
+
+            <span>
+              TOP CATEGORY
+            </span>
+
+            <strong>
+              {{
+              getTopCategory()?.categoryName ||
+              '—'
+              }}
+            </strong>
+
+            <small>
+              {{
+              formatCurrency(
+              getTopCategory()?.totalAmount || 0
+              )
+              }}
+            </small>
+
+          </div>
+
+
+          <div class="highlight-card">
+
+            <span>
+              CATEGORIES
+            </span>
+
+            <strong>
+              {{ totalCategories }}
+            </strong>
+
+            <small>
+              Configured product categories
+            </small>
+
+          </div>
+
+
+          <div class="highlight-card">
+
+            <span>
+              PRODUCTS
+            </span>
+
+            <strong>
+              {{ totalProducts }}
+            </strong>
+
+            <small>
+              Available products
+            </small>
+
+          </div>
+
+        </div>
+
+
+        <div class="report-card table-card">
+
+          <div class="card-header">
+
+            <div>
+
+              <h3>
+                Category Performance
+              </h3>
+
+              <p>
+                Procurement activity by category
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <div
+            class="table-wrapper"
+            *ngIf="categoryReports.length > 0">
+
+            <table class="report-table">
+
+              <thead>
+
+              <tr>
+
+                <th>
+                  CATEGORY
+                </th>
+
+                <th>
+                  PRODUCTS
+                </th>
+
+                <th>
+                  SUPPLIERS
+                </th>
+
+                <th>
+                  REQUESTS
+                </th>
+
+                <th>
+                  QUANTITY
+                </th>
+
+                <th>
+                  PROCUREMENT
+                </th>
+
+              </tr>
+
+              </thead>
+
+
+              <tbody>
+
+              <tr
+                *ngFor="
+                    let row of categoryReports;
+                    trackBy: trackByCategoryId
+                  ">
+
+                <td>
+
+                  <div class="category-report-cell">
+
+                    <div class="category-report-icon">
+                      □
+                    </div>
+
+                    <strong>
+                      {{ row.categoryName }}
+                    </strong>
+
+                  </div>
+
+                </td>
+
+
+                <td>
+                  {{ row.productCount }}
+                </td>
+
+
+                <td>
+                  {{ row.supplierCount }}
+                </td>
+
+
+                <td>
+                  {{ row.requestCount }}
+                </td>
+
+
+                <td>
+
+                  <strong>
+                    {{ row.totalQuantity }}
+                  </strong>
+
+                </td>
+
+
+                <td>
+
+                  <strong class="amount-text">
+                    {{
+                    formatCurrency(
+                    row.totalAmount
+                    )
+                    }}
+                  </strong>
+
+                </td>
+
+              </tr>
+
+              </tbody>
+
+            </table>
+
+          </div>
+
+
+          <div
+            class="table-empty"
+            *ngIf="categoryReports.length === 0">
+
+            No category procurement data available.
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- ===================================================
+           SUPPLIERS
+           =================================================== -->
+
+      <section
+        class="report-section"
+        *ngIf="selectedReport === 'suppliers'">
+
+
+        <div class="section-heading">
+
+          <div>
+
+            <p class="section-eyebrow">
+              SUPPLIER ANALYSIS
+            </p>
+
+            <h2>
+              Supplier Performance
+            </h2>
+
+            <p>
+              Review supplier activity, ratings and
+              procurement value.
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <div class="supplier-highlight-grid">
+
+          <div class="highlight-card">
+
+            <span>
+              TOP SUPPLIER
+            </span>
+
+            <strong>
+              {{
+              getTopSupplier()?.supplierName ||
+              '—'
+              }}
+            </strong>
+
+            <small>
+              {{
+              formatCurrency(
+              getTopSupplier()?.totalAmount || 0
+              )
+              }}
+            </small>
+
+          </div>
+
+
+          <div class="highlight-card">
+
+            <span>
+              SUPPLIERS
+            </span>
+
+            <strong>
+              {{ totalSuppliers }}
+            </strong>
+
+            <small>
+              Registered suppliers
+            </small>
+
+          </div>
+
+
+          <div class="highlight-card">
+
+            <span>
+              SUCCESSFUL PAYMENTS
+            </span>
+
+            <strong>
+              {{ successfulPayments }}
+            </strong>
+
+            <small>
+              Completed payment records
+            </small>
+
+          </div>
+
+        </div>
+
+
+        <div class="report-card table-card">
+
+          <div class="card-header">
+
+            <div>
+
+              <h3>
+                Supplier Performance
+              </h3>
+
+              <p>
+                Procurement value associated with suppliers
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <div
+            class="table-wrapper"
+            *ngIf="supplierReports.length > 0">
+
+            <table class="report-table">
+
+              <thead>
+
+              <tr>
+
+                <th>
+                  SUPPLIER
+                </th>
+
+                <th>
+                  CATEGORY
+                </th>
+
+                <th>
+                  RATING
+                </th>
+
+                <th>
+                  STATUS
+                </th>
+
+                <th>
+                  ORDERS
+                </th>
+
+                <th>
+                  PROCUREMENT VALUE
+                </th>
+
+              </tr>
+
+              </thead>
+
+
+              <tbody>
+
+              <tr
+                *ngFor="
+                    let row of supplierReports;
+                    trackBy: trackBySupplierId
+                  ">
+
+                <td>
+
+                  <div class="supplier-report-cell">
+
+                    <div class="supplier-report-avatar">
+
+                      {{
+                      row.supplierName
+                      .charAt(0)
+                      .toUpperCase()
+                      }}
+
+                    </div>
+
+                    <strong>
+                      {{ row.supplierName }}
+                    </strong>
+
+                  </div>
+
+                </td>
+
+
+                <td>
+                  {{ row.categoryName }}
+                </td>
+
+
+                <td>
+
+                  <div class="rating-cell">
+
+                      <span>
+                        ★
+                      </span>
+
+                    <strong>
+                      {{
+                      row.rating > 0
+                      ? row.rating.toFixed(1)
+                      : '—'
+                      }}
+                    </strong>
+
+                  </div>
+
+                </td>
+
+
+                <td>
+
+                    <span
+                      class="supplier-status"
+                      [class.active]="
+                        normalize(row.status) === 'ACTIVE'
+                      "
+                      [class.inactive]="
+                        normalize(row.status) === 'INACTIVE'
+                      ">
+
+                      {{
+                        normalize(row.status) === 'ACTIVE'
+                          ? 'Active'
+                          : normalize(row.status) === 'INACTIVE'
+                            ? 'Inactive'
+                            : row.status
+                      }}
+
+                    </span>
+
+                </td>
+
+
+                <td>
+                  {{ row.orderCount }}
+                </td>
+
+
+                <td>
+
+                  <strong class="amount-text">
+                    {{
+                    formatCurrency(
+                    row.totalAmount
+                    )
+                    }}
+                  </strong>
+
+                </td>
+
+              </tr>
+
+              </tbody>
+
+            </table>
+
+          </div>
+
+
+          <div
+            class="table-empty"
+            *ngIf="supplierReports.length === 0">
+
+            No supplier procurement data available.
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- ===================================================
+           PAYMENTS
+           =================================================== -->
+
+      <section
+        class="report-section"
+        *ngIf="selectedReport === 'payments'">
+
+
+        <div class="section-heading">
+
+          <div>
+
+            <p class="section-eyebrow">
+              PAYMENT ANALYSIS
+            </p>
+
+            <h2>
+              Account & Payment Report
+            </h2>
+
+            <p>
+              Track payment records and the financial
+              status of procurement accounts.
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <div class="payment-stat-grid">
+
+
+          <div class="payment-stat-card">
+
+            <div class="payment-stat-icon">
+              ≡
+            </div>
+
+            <span>
+              TOTAL ACCOUNTS
+            </span>
+
+            <strong>
+              {{ totalAccounts }}
+            </strong>
+
+          </div>
+
+
+          <div class="payment-stat-card">
+
+            <div class="payment-stat-icon pending-payment">
+              ◷
+            </div>
+
+            <span>
+              PENDING PAYMENTS
+            </span>
+
+            <strong>
+              {{ pendingPayments }}
+            </strong>
+
+          </div>
+
+
+          <div class="payment-stat-card">
+
+            <div class="payment-stat-icon success-payment">
+              ✓
+            </div>
+
+            <span>
+              SUCCESSFUL PAYMENTS
+            </span>
+
+            <strong>
+              {{ successfulPayments }}
+            </strong>
+
+          </div>
+
+
+          <div class="payment-stat-card">
+
+            <div class="payment-stat-icon failed-payment">
+              !
+            </div>
+
+            <span>
+              FAILED PAYMENTS
+            </span>
+
+            <strong>
+              {{ failedPayments }}
+            </strong>
+
+          </div>
+
+        </div>
+
+
+        <div class="payment-financial-grid">
+
+
+          <div class="payment-financial-card">
+
+            <span>
+              TOTAL PAID
+            </span>
+
+            <strong>
+              {{ formatCurrency(totalPaidAmount) }}
+            </strong>
+
+            <small>
+              Successful payment value
+            </small>
+
+          </div>
+
+
+          <div class="payment-financial-card">
+
+            <span>
+              PENDING VALUE
+            </span>
+
+            <strong>
+              {{
+              formatCurrency(
+              totalPendingPaymentAmount
+              )
+              }}
+            </strong>
+
+            <small>
+              Awaiting payment
+            </small>
+
+          </div>
+
+
+          <div class="payment-financial-card">
+
+            <span>
+              PAYMENT SUCCESS RATE
+            </span>
+
+            <strong>
+              {{
+              getPercentage(
+              successfulPayments,
+              totalAccounts
+              )
+              }}%
+            </strong>
+
+            <small>
+              Successful payment records
+            </small>
+
+          </div>
+
+        </div>
+
+
+        <div class="report-card payment-overview-card">
+
+          <div class="card-header">
+
+            <div>
+
+              <h3>
+                Payment Distribution
+              </h3>
+
+              <p>
+                Current account payment status
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <div class="payment-distribution">
+
+
+            <div class="payment-distribution-row">
+
+              <div class="payment-label">
+
+                <span class="payment-dot pending"></span>
+
+                <strong>
+                  Pending
+                </strong>
+
+                <span>
+                  {{ pendingPayments }}
+                </span>
+
+              </div>
+
+              <div class="payment-progress">
+
+                <div
+                  class="payment-progress-fill pending"
+                  [style.width.%]="
+                    getPercentage(
+                      pendingPayments,
+                      totalAccounts
+                    )
+                  ">
+                </div>
+
+              </div>
+
+              <strong>
+                {{
+                getPercentage(
+                pendingPayments,
+                totalAccounts
+                )
+                }}%
+              </strong>
+
+            </div>
+
+
+            <div class="payment-distribution-row">
+
+              <div class="payment-label">
+
+                <span class="payment-dot success"></span>
+
+                <strong>
+                  Successful
+                </strong>
+
+                <span>
+                  {{ successfulPayments }}
+                </span>
+
+              </div>
+
+              <div class="payment-progress">
+
+                <div
+                  class="payment-progress-fill success"
+                  [style.width.%]="
+                    getPercentage(
+                      successfulPayments,
+                      totalAccounts
+                    )
+                  ">
+                </div>
+
+              </div>
+
+              <strong>
+                {{
+                getPercentage(
+                successfulPayments,
+                totalAccounts
+                )
+                }}%
+              </strong>
+
+            </div>
+
+
+            <div class="payment-distribution-row">
+
+              <div class="payment-label">
+
+                <span class="payment-dot failed"></span>
+
+                <strong>
+                  Failed
+                </strong>
+
+                <span>
+                  {{ failedPayments }}
+                </span>
+
+              </div>
+
+              <div class="payment-progress">
+
+                <div
+                  class="payment-progress-fill failed"
+                  [style.width.%]="
+                    getPercentage(
+                      failedPayments,
+                      totalAccounts
+                    )
+                  ">
+                </div>
+
+              </div>
+
+              <strong>
+                {{
+                getPercentage(
+                failedPayments,
+                totalAccounts
+                )
+                }}%
+              </strong>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- ===================================================
+           MONTHLY TREND
+           =================================================== -->
+
+      <section
+        class="monthly-section"
+        *ngIf="
+          selectedReport === 'overview' ||
+          selectedReport === 'procurement'
+        ">
+
+
+        <div class="report-card">
+
+          <div class="card-header">
+
+            <div>
+
+              <p class="card-eyebrow">
+                TREND ANALYSIS
+              </p>
+
+              <h3>
+                Monthly Procurement Activity
+              </h3>
+
+              <p>
+                Request volume and procurement value over
+                the available monthly periods.
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <div
+            class="monthly-empty"
+            *ngIf="monthlyReports.length === 0">
+
+            No dated procurement records are available
+            to calculate a monthly trend.
+
+          </div>
+
+
+          <div
+            class="monthly-chart"
+            *ngIf="monthlyReports.length > 0">
+
+            <div
+              class="monthly-column"
+              *ngFor="
+                let month of monthlyReports
+              ">
+
+              <div class="column-value">
+
+                {{
+                formatCurrency(
+                month.totalAmount
+                )
+                }}
+
+              </div>
+
+              <div class="column-track">
+
+                <div
+                  class="column-bar"
+                  [style.height.%]="
+                    getAmountPercentage(
+                      month.totalAmount,
+                      totalProcurementAmount
+                    ) * 4
+                  ">
+
+                </div>
+
+              </div>
+
+              <strong>
+                {{ month.requestCount }}
+              </strong>
+
+              <span>
+                {{ month.monthName }}
+              </span>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- ===================================================
+           RECENT REQUESTS
+           =================================================== -->
+
+      <section
+        class="recent-section"
+        *ngIf="selectedReport === 'overview'">
+
+
+        <div class="report-card">
+
+          <div class="card-header">
+
+            <div>
+
+              <p class="card-eyebrow">
+                ACTIVITY
+              </p>
+
+              <h3>
+                Recent Purchase Requests
+              </h3>
+
+              <p>
+                Latest procurement activity in the system.
+              </p>
+
+            </div>
+
+
+            <button
+              type="button"
+              class="view-all-button"
+              (click)="selectReport('procurement')">
+
+              View Full Report
+              →
+
+            </button>
+
+          </div>
+
+
+          <div
+            class="recent-list"
+            *ngIf="recentRequests.length > 0">
+
+            <div
+              class="recent-row"
+              *ngFor="
+                let request of recentRequests;
+                trackBy: trackByRequestId
+              ">
+
+              <div class="recent-request-icon">
+                #
+              </div>
+
+
+              <div class="recent-request-info">
+
+                <strong>
+                  PR-{{
+                  request.purchaseRequestId
+                  }}
+                </strong>
+
+                <span>
+                  {{
+                    getUserName(
+                      request.userId
+                    )
+                  }}
+                  ·
+                  {{
+                    getDepartmentName(
+                      getUserDepartmentId(
+                        request.userId
+                      )
+                    )
+                  }}
+                </span>
+
+              </div>
+
+
+              <span
+                class="status-badge"
+                [ngClass]="
+                  getStatusClass(
+                    request.status
+                  )
+                ">
+
+                <span class="status-dot"></span>
+
+                {{
+                  getStatusLabel(
+                    request.status
+                  )
+                }}
+
+              </span>
+
+
+              <strong class="recent-amount">
+
+                {{
+                formatCurrency(
+                request.totalPrice
+                )
+                }}
+
+              </strong>
+
+
+              <span class="recent-date">
+
+                {{
+                  formatDate(
+                    request.requestDate
+                  )
+                }}
+
+              </span>
+
+            </div>
+
+          </div>
+
+
+          <div
+            class="recent-empty"
+            *ngIf="recentRequests.length === 0">
+
+            No recent purchase requests available.
+
+          </div>
+
+        </div>
+
+      </section>
+
+    </div>
+
+  </main>
+
+</div>

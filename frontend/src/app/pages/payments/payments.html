@@ -1,0 +1,864 @@
+<div class="payments-page">
+
+  <!-- =====================================================
+       PAGE HEADER
+       ===================================================== -->
+
+  <header class="page-header">
+
+    <div class="header-left">
+
+      <button
+        type="button"
+        class="back-button"
+        (click)="goToDashboard()"
+        aria-label="Back to dashboard">
+
+        <span>←</span>
+
+      </button>
+
+      <div class="header-icon">
+        ▣
+      </div>
+
+      <div class="header-copy">
+
+        <span class="eyebrow">
+          EMPLOYEE PORTAL
+        </span>
+
+        <h1>
+          Payments
+        </h1>
+
+        <p>
+          View payment information for your approved
+          procurement requests.
+        </p>
+
+      </div>
+
+    </div>
+
+
+    <div class="header-actions">
+
+      <button
+        type="button"
+        class="secondary-button"
+        (click)="goToPurchaseRequests()">
+
+        <span>☷</span>
+        My Requests
+
+      </button>
+
+
+      <button
+        type="button"
+        class="refresh-button"
+        [disabled]="isRefreshing"
+        (click)="refreshPayments()">
+
+        <span
+          [class.spinning]="isRefreshing">
+          ↻
+        </span>
+
+        {{ isRefreshing ? 'Refreshing...' : 'Refresh' }}
+
+      </button>
+
+    </div>
+
+  </header>
+
+
+
+  <!-- =====================================================
+       INFORMATION BANNER
+       ===================================================== -->
+
+  <section class="information-banner">
+
+    <div class="information-icon">
+      ✓
+    </div>
+
+    <div class="information-content">
+
+      <strong>
+        Payment information is view-only
+      </strong>
+
+      <p>
+        Payments for purchased products are processed
+        by the Administrator. You can view the payment
+        status, amount, reference and payment date here.
+      </p>
+
+    </div>
+
+    <div class="view-only-badge">
+      VIEW ONLY
+    </div>
+
+  </section>
+
+
+
+  <!-- =====================================================
+       STATISTICS
+       ===================================================== -->
+
+  <section
+    class="stats-grid"
+    *ngIf="!isLoading">
+
+    <!-- TOTAL -->
+
+    <article class="stat-card">
+
+      <div class="stat-icon total-icon">
+        ▣
+      </div>
+
+      <div class="stat-content">
+
+        <span class="stat-label">
+          PAYMENT ACCOUNTS
+        </span>
+
+        <strong class="stat-value">
+          {{ totalPayments }}
+        </strong>
+
+        <span class="stat-description">
+          Your payment records
+        </span>
+
+      </div>
+
+    </article>
+
+
+    <!-- PENDING -->
+
+    <article class="stat-card">
+
+      <div class="stat-icon pending-icon">
+        ◷
+      </div>
+
+      <div class="stat-content">
+
+        <span class="stat-label">
+          PENDING
+        </span>
+
+        <strong class="stat-value">
+          {{ pendingPayments }}
+        </strong>
+
+        <span class="stat-description">
+          Awaiting administrator payment
+        </span>
+
+      </div>
+
+    </article>
+
+
+    <!-- PAID -->
+
+    <article class="stat-card">
+
+      <div class="stat-icon success-icon">
+        ✓
+      </div>
+
+      <div class="stat-content">
+
+        <span class="stat-label">
+          PAID
+        </span>
+
+        <strong class="stat-value">
+          {{ successfulPayments }}
+        </strong>
+
+        <span class="stat-description">
+          Payments completed
+        </span>
+
+      </div>
+
+    </article>
+
+
+    <!-- FAILED -->
+
+    <article class="stat-card">
+
+      <div class="stat-icon failed-icon">
+        ×
+      </div>
+
+      <div class="stat-content">
+
+        <span class="stat-label">
+          FAILED
+        </span>
+
+        <strong class="stat-value">
+          {{ failedPayments }}
+        </strong>
+
+        <span class="stat-description">
+          Payment attempts failed
+        </span>
+
+      </div>
+
+    </article>
+
+  </section>
+
+
+
+  <!-- =====================================================
+       FINANCIAL SUMMARY
+       ===================================================== -->
+
+  <section
+    class="financial-grid"
+    *ngIf="!isLoading">
+
+    <div class="financial-card">
+
+      <div class="financial-header">
+
+        <div>
+
+          <span class="financial-label">
+            TOTAL PROCUREMENT VALUE
+          </span>
+
+          <strong>
+            {{ formatCurrency(totalAmount) }}
+          </strong>
+
+        </div>
+
+        <div class="financial-icon total-financial-icon">
+          ₹
+        </div>
+
+      </div>
+
+      <p>
+        Total value of your payment accounts
+      </p>
+
+    </div>
+
+
+    <div class="financial-card">
+
+      <div class="financial-header">
+
+        <div>
+
+          <span class="financial-label">
+            PENDING PAYMENT VALUE
+          </span>
+
+          <strong>
+            {{ formatCurrency(pendingAmount) }}
+          </strong>
+
+        </div>
+
+        <div class="financial-icon pending-financial-icon">
+          ◷
+        </div>
+
+      </div>
+
+      <p>
+        Amount awaiting administrator payment
+      </p>
+
+    </div>
+
+
+    <div class="financial-card">
+
+      <div class="financial-header">
+
+        <div>
+
+          <span class="financial-label">
+            COMPLETED PAYMENT VALUE
+          </span>
+
+          <strong>
+            {{ formatCurrency(successfulAmount) }}
+          </strong>
+
+        </div>
+
+        <div class="financial-icon success-financial-icon">
+          ✓
+        </div>
+
+      </div>
+
+      <p>
+        Amount successfully paid by Administrator
+      </p>
+
+    </div>
+
+  </section>
+
+
+
+  <!-- =====================================================
+       ERROR
+       ===================================================== -->
+
+  <section
+    class="error-state"
+    *ngIf="!isLoading && errorMessage">
+
+    <div class="error-icon">
+      !
+    </div>
+
+    <div>
+
+      <strong>
+        Unable to load payment information
+      </strong>
+
+      <p>
+        {{ errorMessage }}
+      </p>
+
+    </div>
+
+    <button
+      type="button"
+      class="retry-button"
+      (click)="loadPayments()">
+
+      Try Again
+
+    </button>
+
+  </section>
+
+
+
+  <!-- =====================================================
+       MAIN CONTENT
+       ===================================================== -->
+
+  <section
+    class="content-card"
+    *ngIf="!isLoading && !errorMessage">
+
+    <!-- ===================================================
+         TOOLBAR
+         =================================================== -->
+
+    <div class="toolbar">
+
+      <div class="toolbar-heading">
+
+        <div class="toolbar-icon">
+          ▣
+        </div>
+
+        <div>
+
+          <span class="section-eyebrow">
+            PAYMENT HISTORY
+          </span>
+
+          <h2>
+            My Payment Accounts
+          </h2>
+
+          <p>
+            {{ filteredPayments.length }}
+            {{
+            filteredPayments.length === 1
+            ? 'record'
+            : 'records'
+            }}
+            displayed
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <div class="toolbar-controls">
+
+        <!-- SEARCH -->
+
+        <div class="search-box">
+
+          <span class="search-icon">
+            ⌕
+          </span>
+
+          <input
+            type="text"
+            [(ngModel)]="searchTerm"
+            (ngModelChange)="onSearch()"
+            placeholder="Search account, request or reference..."
+            aria-label="Search payment records">
+
+          <button
+            type="button"
+            class="search-clear"
+            *ngIf="searchTerm"
+            (click)="searchTerm = ''; onSearch()">
+
+            ×
+
+          </button>
+
+        </div>
+
+
+        <!-- STATUS -->
+
+        <div class="filter-box">
+
+          <label>
+            Status
+          </label>
+
+          <select
+            [(ngModel)]="selectedStatus"
+            (ngModelChange)="onStatusChange()">
+
+            <option value="ALL">
+              All Status
+            </option>
+
+            <option value="PENDING">
+              Pending
+            </option>
+
+            <option value="SUCCESS">
+              Paid
+            </option>
+
+            <option value="FAILED">
+              Failed
+            </option>
+
+          </select>
+
+        </div>
+
+
+        <!-- CLEAR -->
+
+        <button
+          type="button"
+          class="clear-button"
+          [disabled]="
+            !searchTerm &&
+            selectedStatus === 'ALL'
+          "
+          (click)="clearFilters()">
+
+          ↺
+          Clear
+
+        </button>
+
+      </div>
+
+    </div>
+
+
+
+    <!-- ===================================================
+         EMPTY STATE
+         =================================================== -->
+
+    <div
+      class="empty-state"
+      *ngIf="filteredPayments.length === 0">
+
+      <div class="empty-icon">
+        ▣
+      </div>
+
+      <h3>
+        No payment records found
+      </h3>
+
+      <p
+        *ngIf="
+          searchTerm ||
+          selectedStatus !== 'ALL'
+        ">
+
+        No payment records match your
+        current search or filter.
+
+      </p>
+
+      <p
+        *ngIf="
+          !searchTerm &&
+          selectedStatus === 'ALL'
+        ">
+
+        Payment information will appear here
+        when payment accounts are created for
+        your purchase requests.
+
+      </p>
+
+      <button
+        type="button"
+        class="empty-clear-button"
+        *ngIf="
+          searchTerm ||
+          selectedStatus !== 'ALL'
+        "
+        (click)="clearFilters()">
+
+        Clear Filters
+
+      </button>
+
+    </div>
+
+
+
+    <!-- ===================================================
+         PAYMENT TABLE
+         =================================================== -->
+
+    <div
+      class="table-wrapper"
+      *ngIf="filteredPayments.length > 0">
+
+      <table class="payments-table">
+
+        <thead>
+
+        <tr>
+
+          <th>
+            ACCOUNT
+          </th>
+
+          <th>
+            PURCHASE REQUEST
+          </th>
+
+          <th>
+            AMOUNT
+          </th>
+
+          <th>
+            PAYMENT STATUS
+          </th>
+
+          <th>
+            REFERENCE
+          </th>
+
+          <th>
+            PAYMENT DATE
+          </th>
+
+        </tr>
+
+        </thead>
+
+
+        <tbody>
+
+        <tr
+          *ngFor="
+              let payment of filteredPayments;
+              trackBy: trackByAccountId
+            ">
+
+          <!-- ACCOUNT -->
+
+          <td>
+
+            <div class="account-cell">
+
+              <div class="account-icon">
+                AC
+              </div>
+
+              <div class="account-info">
+
+                <strong>
+                  #{{ payment.accountId }}
+                </strong>
+
+                <span>
+                    Payment account
+                  </span>
+
+              </div>
+
+            </div>
+
+          </td>
+
+
+          <!-- PURCHASE REQUEST -->
+
+          <td>
+
+            <div class="request-cell">
+
+                <span class="request-icon">
+                  PR
+                </span>
+
+              <div>
+
+                <strong>
+                  #{{ payment.purchaseRequestId }}
+                </strong>
+
+                <span>
+                    Purchase request
+                  </span>
+
+              </div>
+
+            </div>
+
+          </td>
+
+
+          <!-- AMOUNT -->
+
+          <td>
+
+            <div class="amount-cell">
+
+              <strong>
+                {{ formatCurrency(payment.amount) }}
+              </strong>
+
+              <span>
+                  Procurement amount
+                </span>
+
+            </div>
+
+          </td>
+
+
+          <!-- STATUS -->
+
+          <td>
+
+              <span
+                class="status-badge"
+                [ngClass]="
+                  getStatusClass(
+                    payment.paymentStatus
+                  )
+                ">
+
+                <span class="status-dot"></span>
+
+                {{
+                  getStatusLabel(
+                    payment.paymentStatus
+                  )
+                }}
+
+              </span>
+
+          </td>
+
+
+          <!-- REFERENCE -->
+
+          <td>
+
+            <div class="reference-cell">
+
+              <strong
+                *ngIf="payment.paymentReference">
+
+                {{ payment.paymentReference }}
+
+              </strong>
+
+              <span
+                *ngIf="!payment.paymentReference">
+
+                  Not available
+
+                </span>
+
+            </div>
+
+          </td>
+
+
+          <!-- PAYMENT DATE -->
+
+          <td>
+
+            <div class="date-cell">
+
+              <strong
+                *ngIf="payment.paymentDate">
+
+                {{
+                formatDate(
+                payment.paymentDate
+                )
+                }}
+
+              </strong>
+
+              <span
+                *ngIf="payment.paymentDate">
+
+                  {{
+                    formatDateTime(
+                      payment.paymentDate
+                    )
+                  }}
+
+                </span>
+
+              <span
+                *ngIf="!payment.paymentDate">
+
+                  Awaiting payment
+
+                </span>
+
+            </div>
+
+          </td>
+
+        </tr>
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+
+
+    <!-- ===================================================
+         VIEW-ONLY FOOTER
+         =================================================== -->
+
+    <div
+      class="view-only-footer"
+      *ngIf="filteredPayments.length > 0">
+
+      <div class="view-only-footer-icon">
+        ✓
+      </div>
+
+      <div>
+
+        <strong>
+          Payment records are managed by the Administrator
+        </strong>
+
+        <p>
+          This page is for viewing payment information only.
+          Employees cannot initiate, modify or record payments.
+        </p>
+
+      </div>
+
+      <span class="secure-label">
+        VIEW ONLY
+      </span>
+
+    </div>
+
+  </section>
+
+
+
+  <!-- =====================================================
+       LOADING STATE
+       ===================================================== -->
+
+  <section
+    class="loading-state"
+    *ngIf="isLoading">
+
+    <div class="loading-spinner"></div>
+
+    <h3>
+      Loading payment information
+    </h3>
+
+    <p>
+      Please wait while your payment records are loaded.
+    </p>
+
+  </section>
+
+
+
+  <!-- =====================================================
+       FOOTER
+       ===================================================== -->
+
+  <footer class="page-footer">
+
+    <div>
+
+      <span class="footer-icon">
+        ✓
+      </span>
+
+      <div>
+
+        <strong>
+          Secure payment information
+        </strong>
+
+        <p>
+          Payment records are securely maintained
+          within the procurement system.
+        </p>
+
+      </div>
+
+    </div>
+
+    <span class="footer-status">
+      VIEW ONLY
+    </span>
+
+  </footer>
+
+</div>

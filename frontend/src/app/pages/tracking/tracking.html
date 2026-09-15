@@ -1,0 +1,845 @@
+<div class="tracking-page">
+
+  <!-- =========================================================
+       TOP HEADER
+       ========================================================= -->
+  <header class="tracking-header">
+
+    <div class="header-left">
+
+      <button
+        type="button"
+        class="header-back-button"
+        (click)="goBack()">
+
+        <span class="back-icon">←</span>
+
+        <span>
+          Purchase Requests
+        </span>
+
+      </button>
+
+      <div class="header-divider"></div>
+
+      <div class="header-title-block">
+
+        <span class="header-eyebrow">
+          PROCUREMENT
+        </span>
+
+        <h1>
+          Order Tracking
+        </h1>
+
+      </div>
+
+    </div>
+
+
+    <div class="header-actions">
+
+      <button
+        type="button"
+        class="header-dashboard-button"
+        (click)="goToDashboard()">
+
+        <span class="dashboard-icon">⌂</span>
+
+        <span>
+          Dashboard
+        </span>
+
+      </button>
+
+
+      <button
+        type="button"
+        class="header-refresh-button"
+        title="Refresh tracking"
+        (click)="refresh()">
+
+        <span>
+          ↻
+        </span>
+
+      </button>
+
+    </div>
+
+  </header>
+
+
+  <!-- =========================================================
+       MAIN CONTENT
+       ========================================================= -->
+  <main class="tracking-content">
+
+
+    <!-- =======================================================
+         PAGE INTRO
+         ======================================================= -->
+    <section class="page-intro">
+
+      <div class="intro-copy">
+
+        <span class="intro-eyebrow">
+          PROCUREMENT JOURNEY
+        </span>
+
+        <h2>
+          Track your order
+        </h2>
+
+        <p>
+          Follow your purchase request from approval through
+          delivery and successful completion.
+        </p>
+
+      </div>
+
+
+      <!-- Current status -->
+      <div
+        class="current-status-card"
+        *ngIf="tracking">
+
+        <span class="status-card-eyebrow">
+          CURRENT STATUS
+        </span>
+
+        <div class="current-status-row">
+
+          <span
+            class="status-indicator"
+            [ngClass]="currentStatusClass">
+          </span>
+
+          <strong>
+            {{ currentStatusLabel }}
+          </strong>
+
+        </div>
+
+        <span class="last-updated">
+          Last updated {{ getUpdatedDate() }}
+        </span>
+
+      </div>
+
+    </section>
+
+
+
+    <!-- =======================================================
+         REQUEST SELECTOR
+         ======================================================= -->
+    <section
+      class="request-selector-card"
+      *ngIf="employeeRequests.length > 0">
+
+      <div class="selector-header">
+
+        <div>
+
+          <span class="section-eyebrow">
+            YOUR PURCHASE REQUESTS
+          </span>
+
+          <h3>
+            Select a request to track
+          </h3>
+
+        </div>
+
+        <span class="request-count">
+          {{ employeeRequests.length }}
+          request{{ employeeRequests.length === 1 ? '' : 's' }}
+        </span>
+
+      </div>
+
+
+      <div class="request-selector-list">
+
+        <button
+          type="button"
+          class="request-selector-item"
+          *ngFor="let request of employeeRequests"
+          [class.selected]="
+            request.purchaseRequestId === purchaseRequestId
+          "
+          [class.disabled-request]="
+            normalizeStatus(request.status) !== 'APPROVED'
+          "
+          [disabled]="
+            normalizeStatus(request.status) !== 'APPROVED'
+          "
+          (click)="
+            purchaseRequestId = request.purchaseRequestId;
+            loadTracking()
+          ">
+
+          <div class="selector-request-icon">
+            PR
+          </div>
+
+
+          <div class="selector-request-info">
+
+            <strong>
+              Request #{{ request.purchaseRequestId }}
+            </strong>
+
+            <span>
+              {{ request.items?.length || 0 }}
+              product{{ (request.items?.length || 0) === 1 ? '' : 's' }}
+            </span>
+
+          </div>
+
+
+          <div class="selector-request-value">
+
+            <span>
+              VALUE
+            </span>
+
+            <strong>
+              ₹{{ (request.totalPrice || 0) | number:'1.2-2' }}
+            </strong>
+
+          </div>
+
+
+          <span
+            class="selector-status"
+            [ngClass]="
+              normalizeStatus(request.status).toLowerCase()
+            ">
+
+            {{ request.status }}
+
+          </span>
+
+
+          <span class="selector-arrow">
+            →
+          </span>
+
+        </button>
+
+      </div>
+
+
+      <div class="selector-note">
+
+        <span class="note-icon">
+          i
+        </span>
+
+        <span>
+          Tracking becomes available after a purchase request
+          receives final approval.
+        </span>
+
+      </div>
+
+    </section>
+
+
+
+    <!-- =======================================================
+         LOADING
+         ======================================================= -->
+    <section
+      class="state-card loading-card"
+      *ngIf="isLoading">
+
+      <div class="loading-animation">
+
+        <span></span>
+        <span></span>
+        <span></span>
+
+      </div>
+
+      <div>
+
+        <span class="state-eyebrow">
+          PLEASE WAIT
+        </span>
+
+        <h3>
+          Loading tracking
+        </h3>
+
+        <p>
+          We're retrieving the latest procurement update.
+        </p>
+
+      </div>
+
+    </section>
+
+
+
+    <!-- =======================================================
+         ERROR
+         ======================================================= -->
+    <section
+      class="state-card error-card"
+      *ngIf="!isLoading && errorMessage">
+
+      <div class="error-state-icon">
+        !
+      </div>
+
+      <div class="state-copy">
+
+        <span class="state-eyebrow error-eyebrow">
+          TRACKING UNAVAILABLE
+        </span>
+
+        <h3>
+          Unable to display tracking
+        </h3>
+
+        <p>
+          {{ errorMessage }}
+        </p>
+
+
+        <div class="state-actions">
+
+          <button
+            type="button"
+            class="primary-state-button"
+            (click)="refresh()">
+
+            Try Again
+
+          </button>
+
+
+          <button
+            type="button"
+            class="secondary-state-button"
+            (click)="goBack()">
+
+            Back to Requests
+
+          </button>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+
+    <!-- =======================================================
+         TRACKING CONTENT
+         ======================================================= -->
+    <ng-container *ngIf="!isLoading && !errorMessage && tracking">
+
+
+      <!-- =====================================================
+           REQUEST SUMMARY
+           ===================================================== -->
+      <section class="request-summary-card">
+
+        <div class="summary-main">
+
+          <span class="summary-eyebrow">
+            PURCHASE REQUEST
+          </span>
+
+          <h2>
+            Request #{{ purchaseRequestId }}
+          </h2>
+
+          <p>
+            Your procurement request is currently being processed
+            through the supplier fulfilment journey.
+          </p>
+
+        </div>
+
+
+        <div class="summary-status">
+
+          <span class="summary-status-label">
+            STATUS
+          </span>
+
+          <div
+            class="summary-status-value"
+            [ngClass]="currentStatusClass">
+
+            <span class="summary-status-dot"></span>
+
+            {{ currentStatusLabel }}
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+
+      <!-- =====================================================
+           REQUEST INFORMATION
+           ===================================================== -->
+      <section class="information-grid">
+
+
+        <article class="information-card">
+
+          <div class="information-icon request-info-icon">
+            #
+          </div>
+
+          <div>
+
+            <span class="information-label">
+              REQUEST ID
+            </span>
+
+            <strong>
+              #{{ purchaseRequestId }}
+            </strong>
+
+          </div>
+
+        </article>
+
+
+        <article class="information-card">
+
+          <div class="information-icon status-info-icon">
+            ✓
+          </div>
+
+          <div>
+
+            <span class="information-label">
+              CURRENT STAGE
+            </span>
+
+            <strong>
+              {{ currentStatusLabel }}
+            </strong>
+
+          </div>
+
+        </article>
+
+
+        <article class="information-card">
+
+          <div class="information-icon progress-info-icon">
+            %
+          </div>
+
+          <div>
+
+            <span class="information-label">
+              PROGRESS
+            </span>
+
+            <strong>
+              {{ getCurrentStageIndex() + 1 }}
+              / {{ trackingStages.length }}
+            </strong>
+
+          </div>
+
+        </article>
+
+
+        <article class="information-card">
+
+          <div class="information-icon update-info-icon">
+            ↻
+          </div>
+
+          <div>
+
+            <span class="information-label">
+              LAST UPDATED
+            </span>
+
+            <strong>
+              {{ getUpdatedDate() }}
+            </strong>
+
+          </div>
+
+        </article>
+
+      </section>
+
+
+
+      <!-- =====================================================
+           TRACKING JOURNEY
+           ===================================================== -->
+      <section class="tracking-journey-card">
+
+        <div class="journey-header">
+
+          <div>
+
+            <span class="section-eyebrow">
+              ORDER JOURNEY
+            </span>
+
+            <h3>
+              Tracking Progress
+            </h3>
+
+          </div>
+
+
+          <div class="journey-progress-summary">
+
+            <strong>
+              {{ getCurrentStageIndex() + 1 }}
+              <span>/ {{ trackingStages.length }}</span>
+            </strong>
+
+            <span>
+              stages completed
+            </span>
+
+          </div>
+
+        </div>
+
+
+        <div class="progress-bar-wrapper">
+
+          <div class="progress-bar-track">
+
+            <div
+              class="progress-bar-fill"
+              [style.width.%]="
+                (
+                  getCurrentStageIndex()
+                  /
+                  (trackingStages.length - 1)
+                ) * 100
+              ">
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <div class="tracking-timeline">
+
+          <div
+            class="timeline-stage"
+            *ngFor="
+              let stage of trackingStages;
+              let index = index;
+              let last = last
+            "
+            [class.completed]="isStageCompleted(stage)"
+            [class.current]="isCurrentStage(stage)"
+            [class.upcoming]="
+              !isStageCompleted(stage) &&
+              !isCurrentStage(stage)
+            ">
+
+
+            <!-- Connector -->
+            <div
+              class="timeline-connector"
+              *ngIf="!last"
+              [class.connector-completed]="
+                isStageCompleted(trackingStages[index + 1])
+              ">
+            </div>
+
+
+            <!-- Circle -->
+            <div class="timeline-marker">
+
+              <span
+                *ngIf="isStageCompleted(stage) && !isCurrentStage(stage)">
+                ✓
+              </span>
+
+              <span
+                *ngIf="isCurrentStage(stage)"
+                class="current-marker-dot">
+              </span>
+
+              <span
+                *ngIf="
+                  !isStageCompleted(stage) &&
+                  !isCurrentStage(stage)
+                ">
+                {{ index + 1 }}
+              </span>
+
+            </div>
+
+
+            <!-- Content -->
+            <div class="timeline-content">
+
+              <div class="timeline-topline">
+
+                <span class="timeline-step">
+                  STEP {{ index + 1 }}
+                </span>
+
+
+                <span
+                  class="timeline-state"
+                  *ngIf="isStageCompleted(stage) && !isCurrentStage(stage)">
+
+                  COMPLETED
+
+                </span>
+
+
+                <span
+                  class="timeline-state current-state"
+                  *ngIf="isCurrentStage(stage)">
+
+                  CURRENT
+
+                </span>
+
+
+                <span
+                  class="timeline-state upcoming-state"
+                  *ngIf="
+                    !isStageCompleted(stage) &&
+                    !isCurrentStage(stage)
+                  ">
+
+                  UPCOMING
+
+                </span>
+
+              </div>
+
+
+              <h4>
+                {{ getStatusLabel(stage) }}
+              </h4>
+
+
+              <p>
+                {{ getStageDescription(stage) }}
+              </p>
+
+
+              <div
+                class="current-stage-note"
+                *ngIf="isCurrentStage(stage)">
+
+                <span class="pulse-dot"></span>
+
+                <span>
+                  Your order is currently at this stage.
+                </span>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+
+      <!-- =====================================================
+           LATEST UPDATE + REMARKS
+           ===================================================== -->
+      <section class="update-grid">
+
+
+        <!-- Latest update -->
+        <article class="latest-update-card">
+
+          <div class="update-card-header">
+
+            <div class="update-icon">
+              ↻
+            </div>
+
+            <div>
+
+              <span class="section-eyebrow">
+                LATEST UPDATE
+              </span>
+
+              <h3>
+                Procurement activity
+              </h3>
+
+            </div>
+
+          </div>
+
+
+          <div class="update-date">
+
+            {{ getUpdatedDate() }}
+
+          </div>
+
+
+          <div class="update-status">
+
+            <span
+              class="update-status-dot"
+              [ngClass]="currentStatusClass">
+            </span>
+
+            <strong>
+              {{ currentStatusLabel }}
+            </strong>
+
+          </div>
+
+
+          <p>
+            The tracking information above reflects the latest
+            status provided by the procurement workflow.
+          </p>
+
+        </article>
+
+
+
+        <!-- Remarks -->
+        <article
+          class="remarks-card"
+          *ngIf="tracking.remarks">
+
+          <div class="update-card-header">
+
+            <div class="remarks-icon">
+              “
+            </div>
+
+            <div>
+
+              <span class="section-eyebrow">
+                UPDATE NOTE
+              </span>
+
+              <h3>
+                Procurement remarks
+              </h3>
+
+            </div>
+
+          </div>
+
+
+          <div class="remarks-content">
+
+            <p>
+              {{ tracking.remarks }}
+            </p>
+
+          </div>
+
+
+          <div class="remarks-footer">
+
+            <span>
+              Provided by procurement / supplier
+            </span>
+
+          </div>
+
+        </article>
+
+
+        <!-- No remarks -->
+        <article
+          class="remarks-card empty-remarks-card"
+          *ngIf="!tracking.remarks">
+
+          <div class="update-card-header">
+
+            <div class="remarks-icon">
+              i
+            </div>
+
+            <div>
+
+              <span class="section-eyebrow">
+                UPDATE NOTE
+              </span>
+
+              <h3>
+                No additional remarks
+              </h3>
+
+            </div>
+
+          </div>
+
+
+          <div class="remarks-content">
+
+            <p>
+              No additional remarks have been provided for this
+              tracking update.
+            </p>
+
+          </div>
+
+        </article>
+
+      </section>
+
+
+
+      <!-- =====================================================
+           VIEW-ONLY NOTICE
+           ===================================================== -->
+      <section class="view-only-notice">
+
+        <div class="view-only-icon">
+          ◉
+        </div>
+
+        <div>
+
+          <strong>
+            Tracking is view-only
+          </strong>
+
+          <p>
+            Procurement administrators and suppliers maintain
+            tracking updates. Your tracking information is
+            automatically refreshed from the latest system update.
+          </p>
+
+        </div>
+
+      </section>
+
+
+    </ng-container>
+
+  </main>
+
+</div>

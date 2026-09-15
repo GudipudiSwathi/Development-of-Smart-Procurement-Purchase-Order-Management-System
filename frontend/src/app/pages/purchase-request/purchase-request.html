@@ -1,0 +1,766 @@
+<div class="purchase-page">
+
+  <!-- =====================================================
+       PAGE HEADER
+       ===================================================== -->
+
+  <div class="page-header">
+
+    <div class="page-heading">
+
+      <p class="eyebrow">
+        PROCUREMENT
+      </p>
+
+      <h1>
+        Purchase Requests
+      </h1>
+
+      <p class="subtitle">
+        Create and manage your purchase requests.
+      </p>
+
+    </div>
+
+
+    <button
+      class="create-button"
+      type="button"
+      *ngIf="!showCreateForm"
+      (click)="openCreateForm()">
+
+      <span>+</span>
+      Create Request
+
+    </button>
+
+  </div>
+
+
+  <!-- =====================================================
+       SUCCESS MESSAGE
+       ===================================================== -->
+
+  <div
+    class="message success"
+    *ngIf="successMessage">
+
+    <span class="message-icon">
+      ✓
+    </span>
+
+    {{ successMessage }}
+
+  </div>
+
+
+  <!-- =====================================================
+       ERROR MESSAGE
+       ===================================================== -->
+
+  <div
+    class="message error"
+    *ngIf="errorMessage">
+
+    <span class="message-icon">
+      !
+    </span>
+
+    {{ errorMessage }}
+
+  </div>
+
+
+  <!-- =====================================================
+       CREATE REQUEST FORM
+       ===================================================== -->
+
+  <div
+    class="create-form"
+    *ngIf="showCreateForm">
+
+
+    <!-- ===================================================
+         FORM HEADER
+         =================================================== -->
+
+    <div class="form-header">
+
+      <div>
+
+        <p class="eyebrow">
+          NEW REQUEST
+        </p>
+
+        <h2>
+          Create Purchase Request
+        </h2>
+
+        <p class="form-subtitle">
+          Select the products and quantities you need.
+        </p>
+
+      </div>
+
+
+      <button
+        class="close-button"
+        type="button"
+        (click)="closeCreateForm()"
+        [disabled]="isSubmitting">
+
+        ×
+
+      </button>
+
+    </div>
+
+
+    <!-- ===================================================
+         PRODUCT LOADING
+         =================================================== -->
+
+    <div
+      class="message loading"
+      *ngIf="isLoadingProducts">
+
+      <span class="loading-dot"></span>
+
+      Loading available products...
+
+    </div>
+
+
+    <!-- ===================================================
+         NO PRODUCTS
+         =================================================== -->
+
+    <div
+      class="message error"
+      *ngIf="
+        !isLoadingProducts &&
+        products.length === 0
+      ">
+
+      No active products are currently available.
+
+    </div>
+
+
+    <!-- ===================================================
+         CREATE FORM
+         =================================================== -->
+
+    <form
+      [formGroup]="createRequestForm"
+      (ngSubmit)="submitPurchaseRequest()"
+      *ngIf="
+        !isLoadingProducts &&
+        products.length > 0
+      ">
+
+
+      <!-- =================================================
+           REQUESTED PRODUCTS
+           ================================================= -->
+
+      <div class="items-section">
+
+
+        <!-- SECTION HEADER -->
+
+        <div class="items-title-row">
+
+          <div>
+
+            <p class="section-eyebrow">
+              REQUEST DETAILS
+            </p>
+
+            <h3>
+              Requested Products
+            </h3>
+
+            <p>
+              Add one or more products to this request.
+            </p>
+
+          </div>
+
+
+          <button
+            class="add-item-button"
+            type="button"
+            (click)="addItem()">
+
+            + Add Product
+
+          </button>
+
+        </div>
+
+
+        <!-- =================================================
+             PRODUCT LIST
+             ================================================= -->
+
+        <div
+          formArrayName="items"
+          class="product-list">
+
+
+          <div
+            class="product-row"
+            *ngFor="
+              let item of items.controls;
+              let i = index
+            "
+            [formGroupName]="i">
+
+
+            <!-- PRODUCT -->
+
+            <div class="form-group product-field">
+
+              <label>
+                Product
+              </label>
+
+              <select
+                formControlName="productId">
+
+                <option
+                  value=""
+                  disabled>
+
+                  Select a product
+
+                </option>
+
+
+                <option
+                  *ngFor="let product of products"
+                  [value]="product.productId">
+
+                  {{ product.name }}
+                  — ₹{{ product.price }}
+                  — Available: {{ product.numberOfQuantities }}
+
+                </option>
+
+              </select>
+
+
+              <small
+                class="field-error"
+                *ngIf="
+                  item.get('productId')?.touched &&
+                  item.get('productId')?.invalid
+                ">
+
+                Please select a product.
+
+              </small>
+
+            </div>
+
+
+            <!-- QUANTITY -->
+
+            <div class="form-group quantity-field">
+
+              <label>
+                Quantity
+              </label>
+
+              <input
+                type="number"
+                formControlName="quantity"
+                min="1"
+                placeholder="Quantity">
+
+
+              <small
+                class="field-error"
+                *ngIf="
+                  item.get('quantity')?.touched &&
+                  item.get('quantity')?.invalid
+                ">
+
+                Quantity must be at least 1.
+
+              </small>
+
+            </div>
+
+
+            <!-- REMOVE -->
+
+            <button
+              class="remove-item-button"
+              type="button"
+              (click)="removeItem(i)"
+              [disabled]="
+                items.length === 1 ||
+                isSubmitting
+              ">
+
+              Remove
+
+            </button>
+
+          </div>
+
+        </div>
+
+
+        <!-- =================================================
+             TOTAL REQUEST PRICE
+             ================================================= -->
+
+        <div class="request-total">
+
+          <div class="request-total-left">
+
+            <span class="total-icon">
+              ₹
+            </span>
+
+            <div>
+
+              <span class="total-label">
+                TOTAL REQUEST PRICE
+              </span>
+
+              <span class="total-description">
+                Based on selected products and quantities
+              </span>
+
+            </div>
+
+          </div>
+
+
+          <strong class="total-value">
+
+            {{
+            getTotalPrice()
+            | currency:'INR':'symbol':'1.2-2'
+            }}
+
+          </strong>
+
+        </div>
+
+
+      </div>
+
+
+      <!-- =================================================
+           REMARKS
+           ================================================= -->
+
+      <div class="form-group remarks-group">
+
+        <label>
+          Remarks
+        </label>
+
+        <textarea
+          rows="3"
+          formControlName="remarks"
+          placeholder="Enter any additional information about this request">
+        </textarea>
+
+      </div>
+
+
+      <!-- =================================================
+           FORM ACTIONS
+           ================================================= -->
+
+      <div class="form-actions">
+
+        <button
+          class="cancel-button"
+          type="button"
+          (click)="closeCreateForm()"
+          [disabled]="isSubmitting">
+
+          Cancel
+
+        </button>
+
+
+        <button
+          class="submit-button"
+          type="submit"
+          [disabled]="
+            isSubmitting ||
+            createRequestForm.invalid
+          ">
+
+          <span *ngIf="!isSubmitting">
+            Submit Request →
+          </span>
+
+          <span *ngIf="isSubmitting">
+            Submitting...
+          </span>
+
+        </button>
+
+      </div>
+
+
+    </form>
+
+  </div>
+
+
+  <!-- =====================================================
+       LOADING REQUESTS
+       ===================================================== -->
+
+  <div
+    class="message loading"
+    *ngIf="
+      isLoading &&
+      !showCreateForm
+    ">
+
+    <span class="loading-dot"></span>
+
+    Loading purchase requests...
+
+  </div>
+
+
+  <!-- =====================================================
+       EMPTY STATE
+       ===================================================== -->
+
+  <div
+    class="empty-state"
+    *ngIf="
+      !isLoading &&
+      !errorMessage &&
+      purchaseRequests.length === 0 &&
+      !showCreateForm
+    ">
+
+    <div class="empty-icon">
+      📋
+    </div>
+
+    <h2>
+      No purchase requests yet
+    </h2>
+
+    <p>
+      You haven't created any purchase requests.
+    </p>
+
+    <button
+      class="create-button"
+      type="button"
+      (click)="openCreateForm()">
+
+      Create Your First Request →
+
+    </button>
+
+  </div>
+
+
+  <!-- =====================================================
+       PURCHASE REQUEST LIST
+       ===================================================== -->
+
+  <div
+    class="requests-container"
+    *ngIf="
+      !isLoading &&
+      !errorMessage &&
+      purchaseRequests.length > 0
+    ">
+
+
+    <!-- ===================================================
+         REQUEST CARD
+         =================================================== -->
+
+    <div
+      class="request-card"
+      *ngFor="let request of purchaseRequests">
+
+
+      <!-- CARD HEADER -->
+
+      <div class="request-top">
+
+        <div class="request-number">
+
+          <div class="request-icon">
+            📋
+          </div>
+
+          <div>
+
+            <span class="request-label">
+              PURCHASE REQUEST
+            </span>
+
+            <h2>
+              #{{ request.purchaseRequestId }}
+            </h2>
+
+          </div>
+
+        </div>
+
+
+        <span
+          class="status"
+          [class.pending]="request.status === 'PENDING'"
+          [class.approved]="request.status === 'APPROVED'"
+          [class.rejected]="request.status === 'REJECTED'">
+
+          <span class="status-dot"></span>
+
+          {{ request.status || 'PENDING' }}
+
+        </span>
+
+      </div>
+
+
+      <!-- QUICK SUMMARY -->
+
+      <div class="request-summary">
+
+
+        <!-- TOTAL -->
+
+        <div class="summary-box amount-box">
+
+          <span class="summary-label">
+            TOTAL AMOUNT
+          </span>
+
+          <strong>
+
+            {{
+            request.totalPrice != null
+            ? (
+            request.totalPrice
+            | currency:'INR':'symbol':'1.2-2'
+            )
+            : 'Not available'
+            }}
+
+          </strong>
+
+        </div>
+
+
+        <!-- USER -->
+
+        <div class="summary-box">
+
+          <span class="summary-label">
+            REQUESTED BY
+          </span>
+
+          <strong>
+            User #{{ request.userId }}
+          </strong>
+
+        </div>
+
+
+        <!-- PRODUCTS -->
+
+        <div class="summary-box">
+
+          <span class="summary-label">
+            PRODUCTS
+          </span>
+
+          <strong>
+
+            {{ request.items?.length || 0 }}
+
+            {{
+            (request.items?.length || 0) === 1
+            ? 'item'
+            : 'items'
+            }}
+
+          </strong>
+
+        </div>
+
+      </div>
+
+
+      <!-- REMARKS -->
+
+      <div
+        class="request-remarks"
+        *ngIf="request.remarks">
+
+        <div class="remarks-heading">
+
+          <span>
+            💬
+          </span>
+
+          Remarks
+
+        </div>
+
+        <p>
+          {{ request.remarks }}
+        </p>
+
+      </div>
+
+
+      <!-- =================================================
+           COLLAPSIBLE PRODUCTS
+           ================================================= -->
+
+      <details class="request-details">
+
+        <summary>
+
+          <div class="details-title">
+
+            <span class="details-icon">
+              📦
+            </span>
+
+            <div>
+
+              <strong>
+                View Requested Products
+              </strong>
+
+              <span>
+
+                {{ request.items?.length || 0 }}
+
+                {{
+                  (request.items?.length || 0) === 1
+                    ? 'product'
+                    : 'products'
+                }}
+
+              </span>
+
+            </div>
+
+          </div>
+
+
+          <span class="details-arrow">
+            ↓
+          </span>
+
+        </summary>
+
+
+        <!-- PRODUCT ITEMS -->
+
+        <div class="requested-items">
+
+          <div
+            class="request-item"
+            *ngFor="
+              let item of request.items;
+              let i = index
+            ">
+
+            <div class="item-number">
+              {{ i + 1 }}
+            </div>
+
+
+            <div class="item-info">
+
+              <strong>
+                {{ getProductName(item.productId) }}
+              </strong>
+
+              <span>
+                Product ID: {{ item.productId }}
+              </span>
+
+            </div>
+
+
+            <div class="item-quantity">
+
+              <span>
+                Quantity
+              </span>
+
+              <strong>
+                {{ item.quantity }}
+              </strong>
+
+            </div>
+
+
+            <div class="item-price">
+
+              <span>
+                Item Total
+              </span>
+
+              <strong>
+
+                {{
+                (
+                getProductPrice(item.productId)
+                * item.quantity
+                )
+                | currency:'INR':'symbol':'1.2-2'
+                }}
+
+              </strong>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </details>
+
+
+      <!-- CARD FOOTER -->
+
+      <div class="request-footer">
+
+        <span>
+          Request #{{ request.purchaseRequestId }}
+        </span>
+
+        <span class="footer-status">
+
+          <span class="status-dot"></span>
+
+          {{ request.status || 'PENDING' }}
+
+        </span>
+
+      </div>
+
+
+    </div>
+
+  </div>
+
+</div>

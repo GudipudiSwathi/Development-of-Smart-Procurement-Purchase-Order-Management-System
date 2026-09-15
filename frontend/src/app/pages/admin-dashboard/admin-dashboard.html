@@ -1,0 +1,639 @@
+<div class="admin-dashboard">
+
+  <!-- =====================================================
+       COMMON ADMIN SIDEBAR
+       ===================================================== -->
+
+  <app-admin-sidebar></app-admin-sidebar>
+
+
+  <!-- =====================================================
+       MAIN AREA
+       ===================================================== -->
+
+  <div class="main-area">
+
+
+    <!-- ===================================================
+         DASHBOARD CONTENT
+         =================================================== -->
+
+    <main class="dashboard-content">
+
+
+      <!-- =================================================
+           WELCOME SECTION
+           ================================================= -->
+
+      <section class="welcome-section">
+
+        <div>
+
+          <p class="eyebrow">
+            ADMINISTRATOR
+          </p>
+
+          <h1>
+            Welcome back,
+            <span>
+              {{ adminName }}
+            </span>
+            👋
+          </h1>
+
+          <p class="subtitle">
+            Manage and monitor your enterprise
+            procurement system from one place.
+          </p>
+
+        </div>
+
+
+        <!-- TODAY -->
+
+        <div class="date-card">
+
+          <span>
+            TODAY
+          </span>
+
+          <strong>
+            {{ currentDate | date:'EEE, d MMM yyyy' }}
+          </strong>
+
+        </div>
+
+      </section>
+
+
+
+      <!-- =================================================
+           WELCOME CARD
+           ================================================= -->
+
+      <section class="welcome-card">
+
+        <div class="welcome-content">
+
+          <span>
+            ADMIN CONTROL CENTER
+          </span>
+
+          <h2>
+            Everything your procurement team needs.
+          </h2>
+
+          <p>
+            Monitor procurement activity, manage users,
+            review purchase requests and keep your
+            organization running smoothly.
+          </p>
+
+        </div>
+
+
+        <!-- ILLUSTRATION -->
+
+        <div class="welcome-illustration">
+
+          <div
+            class="illustration-circle circle-one">
+          </div>
+
+          <div
+            class="illustration-circle circle-two">
+          </div>
+
+          <div class="illustration-box">
+
+            <span>
+              EP
+            </span>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+
+      <!-- =================================================
+           KPI STATISTICS
+           ================================================= -->
+
+      <section class="stats-grid">
+
+
+        <!-- TOTAL USERS -->
+
+        <div class="stat-card">
+
+          <div class="stat-card-top">
+
+            <div class="stat-icon users-icon">
+              👥
+            </div>
+
+            <span class="stat-label">
+              USERS
+            </span>
+
+          </div>
+
+
+          <div class="stat-value">
+            {{ stats.totalUsers }}
+          </div>
+
+
+          <div class="stat-description">
+            Registered users
+          </div>
+
+        </div>
+
+
+
+        <!-- PURCHASE REQUESTS -->
+
+        <div class="stat-card">
+
+          <div class="stat-card-top">
+
+            <div class="stat-icon requests-icon">
+              📝
+            </div>
+
+            <span class="stat-label">
+              REQUESTS
+            </span>
+
+          </div>
+
+
+          <div class="stat-value">
+            {{ stats.totalPurchaseRequests }}
+          </div>
+
+
+          <div class="stat-description">
+            Total purchase requests
+          </div>
+
+        </div>
+
+
+
+        <!-- PRODUCTS -->
+
+        <div class="stat-card">
+
+          <div class="stat-card-top">
+
+            <div class="stat-icon products-icon">
+              📦
+            </div>
+
+            <span class="stat-label">
+              PRODUCTS
+            </span>
+
+          </div>
+
+
+          <div class="stat-value">
+            {{ stats.totalProducts }}
+          </div>
+
+
+          <div class="stat-description">
+            Available products
+          </div>
+
+        </div>
+
+
+
+        <!-- PROCUREMENT -->
+
+        <div class="stat-card">
+
+          <div class="stat-card-top">
+
+            <div class="stat-icon money-icon">
+              💰
+            </div>
+
+            <span class="stat-label">
+              PROCUREMENT
+            </span>
+
+          </div>
+
+
+          <div class="stat-value money-value">
+            {{ formatCurrency(stats.totalProcurementAmount) }}
+          </div>
+
+
+          <div class="stat-description">
+            Total procurement value
+          </div>
+
+        </div>
+
+      </section>
+
+
+
+      <!-- =================================================
+           SECONDARY STATISTICS
+           ================================================= -->
+
+      <section class="secondary-stats">
+
+
+        <!-- PENDING -->
+
+        <div class="mini-stat">
+
+          <div class="mini-stat-icon pending-icon">
+            ⏳
+          </div>
+
+          <div>
+
+            <span>
+              Pending Requests
+            </span>
+
+            <strong>
+              {{ stats.pendingRequests }}
+            </strong>
+
+          </div>
+
+        </div>
+
+
+
+        <!-- APPROVED -->
+
+        <div class="mini-stat">
+
+          <div class="mini-stat-icon approved-icon">
+            ✓
+          </div>
+
+          <div>
+
+            <span>
+              Approved Requests
+            </span>
+
+            <strong>
+              {{ stats.approvedRequests }}
+            </strong>
+
+          </div>
+
+        </div>
+
+
+
+        <!-- REJECTED -->
+
+        <div class="mini-stat">
+
+          <div class="mini-stat-icon rejected-icon">
+            ×
+          </div>
+
+          <div>
+
+            <span>
+              Rejected Requests
+            </span>
+
+            <strong>
+              {{ stats.rejectedRequests }}
+            </strong>
+
+          </div>
+
+        </div>
+
+
+
+        <!-- SUPPLIERS -->
+
+        <div class="mini-stat">
+
+          <div class="mini-stat-icon supplier-icon">
+            ♢
+          </div>
+
+          <div>
+
+            <span>
+              Suppliers
+            </span>
+
+            <strong>
+              {{ stats.totalSuppliers }}
+            </strong>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+
+      <!-- =================================================
+           QUICK OVERVIEW
+           ================================================= -->
+
+      <section class="overview-section">
+
+
+        <div class="section-heading">
+
+          <div>
+
+            <p class="section-eyebrow">
+              SYSTEM OVERVIEW
+            </p>
+
+            <h2>
+              Procurement at a glance
+            </h2>
+
+          </div>
+
+
+          <button
+            type="button"
+            class="refresh-button"
+            (click)="refreshDashboard()">
+
+            ↻
+            Refresh
+
+          </button>
+
+        </div>
+
+
+
+        <div class="overview-grid">
+
+
+          <!-- =============================================
+               ORGANIZATION
+               ============================================= -->
+
+          <div class="overview-card">
+
+            <div class="overview-card-header">
+
+              <div>
+
+                <span>
+                  ORGANIZATION
+                </span>
+
+                <h3>
+                  Enterprise Resources
+                </h3>
+
+              </div>
+
+
+              <div class="overview-symbol">
+                ✦
+              </div>
+
+            </div>
+
+
+            <div class="overview-list">
+
+
+              <div class="overview-row">
+
+                <span>
+                  Employees
+                </span>
+
+                <strong>
+                  {{ stats.totalEmployees }}
+                </strong>
+
+              </div>
+
+
+              <div class="overview-row">
+
+                <span>
+                  Departments
+                </span>
+
+                <strong>
+                  {{ stats.totalDepartments }}
+                </strong>
+
+              </div>
+
+
+              <div class="overview-row">
+
+                <span>
+                  Categories
+                </span>
+
+                <strong>
+                  {{ stats.totalCategories }}
+                </strong>
+
+              </div>
+
+
+              <div class="overview-row">
+
+                <span>
+                  Suppliers
+                </span>
+
+                <strong>
+                  {{ stats.totalSuppliers }}
+                </strong>
+
+              </div>
+
+
+              <div class="overview-row">
+
+                <span>
+                  Products
+                </span>
+
+                <strong>
+                  {{ stats.totalProducts }}
+                </strong>
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+
+          <!-- =============================================
+               REQUEST STATUS
+               ============================================= -->
+
+          <div class="overview-card">
+
+            <div class="overview-card-header">
+
+              <div>
+
+                <span>
+                  REQUEST STATUS
+                </span>
+
+                <h3>
+                  Purchase Requests
+                </h3>
+
+              </div>
+
+
+              <div class="overview-symbol">
+                ◒
+              </div>
+
+            </div>
+
+
+            <div class="request-status">
+
+
+              <!-- PENDING -->
+
+              <div class="status-row">
+
+                <div class="status-name">
+
+                  <span
+                    class="status-dot pending-dot">
+                  </span>
+
+                  Pending
+
+                </div>
+
+                <strong>
+                  {{ stats.pendingRequests }}
+                </strong>
+
+              </div>
+
+
+
+              <!-- APPROVED -->
+
+              <div class="status-row">
+
+                <div class="status-name">
+
+                  <span
+                    class="status-dot approved-dot">
+                  </span>
+
+                  Approved
+
+                </div>
+
+                <strong>
+                  {{ stats.approvedRequests }}
+                </strong>
+
+              </div>
+
+
+
+              <!-- REJECTED -->
+
+              <div class="status-row">
+
+                <div class="status-name">
+
+                  <span
+                    class="status-dot rejected-dot">
+                  </span>
+
+                  Rejected
+
+                </div>
+
+                <strong>
+                  {{ stats.rejectedRequests }}
+                </strong>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+
+      <!-- =================================================
+           LOADING
+           ================================================= -->
+
+      <div
+        class="dashboard-loading"
+        *ngIf="isLoading">
+
+        <div class="loading-spinner"></div>
+
+        <span>
+          Loading dashboard...
+        </span>
+
+      </div>
+
+
+
+      <!-- =================================================
+           ERROR
+           ================================================= -->
+
+      <div
+        class="dashboard-error"
+        *ngIf="errorMessage">
+
+        <span>
+          ⚠
+        </span>
+
+        {{ errorMessage }}
+
+      </div>
+
+
+    </main>
+
+  </div>
+
+</div>

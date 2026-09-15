@@ -1,0 +1,1873 @@
+<div class="admin-page">
+
+  <!-- COMMON ADMIN SIDEBAR -->
+  <app-admin-sidebar></app-admin-sidebar>
+
+
+  <!-- MAIN CONTENT -->
+  <main class="main-area">
+
+    <!-- =====================================================
+         PAGE HEADER
+         ===================================================== -->
+
+    <header class="page-header">
+
+      <div class="header-content">
+
+        <div class="breadcrumb">
+          <span>Admin</span>
+          <span class="separator">/</span>
+          <strong>Purchase Requests</strong>
+        </div>
+
+        <p class="eyebrow">
+          PROCUREMENT MANAGEMENT
+        </p>
+
+        <h1>Purchase Requests</h1>
+
+        <p class="page-subtitle">
+          Monitor and manage purchase requests submitted across the organization.
+        </p>
+
+      </div>
+
+
+      <div class="header-actions">
+
+        <button
+          type="button"
+          class="refresh-button"
+          (click)="refreshRequests()"
+          [disabled]="isRefreshing">
+
+          <span
+            class="refresh-icon"
+            [class.spinning]="isRefreshing">
+            ↻
+          </span>
+
+          {{ isRefreshing ? 'Refreshing...' : 'Refresh' }}
+
+        </button>
+
+      </div>
+
+    </header>
+
+
+    <!-- =====================================================
+         ALERTS
+         ===================================================== -->
+
+    <div
+      class="alert success-alert"
+      *ngIf="successMessage">
+
+      <span class="alert-symbol">✓</span>
+
+      <span>{{ successMessage }}</span>
+
+      <button
+        type="button"
+        class="alert-close"
+        (click)="successMessage = ''">
+
+        ×
+
+      </button>
+
+    </div>
+
+
+    <div
+      class="alert error-alert"
+      *ngIf="errorMessage">
+
+      <span class="alert-symbol">!</span>
+
+      <span>{{ errorMessage }}</span>
+
+      <button
+        type="button"
+        class="alert-close"
+        (click)="errorMessage = ''">
+
+        ×
+
+      </button>
+
+    </div>
+
+
+    <!-- =====================================================
+         STATISTICS
+         ===================================================== -->
+
+    <section class="stats-grid">
+
+      <!-- TOTAL REQUESTS -->
+      <div class="stat-card">
+        <div class="stat-icon total-icon">
+          ☷
+        </div>
+
+        <div class="stat-info">
+          <span class="stat-label">
+            Total Requests
+          </span>
+
+          <strong class="stat-value">
+            {{ totalRequests }}
+          </strong>
+
+          <span class="stat-note">
+            All submitted requests
+          </span>
+        </div>
+      </div>
+
+
+      <!-- PENDING -->
+      <div class="stat-card">
+        <div class="stat-icon pending-icon">
+          ◷
+        </div>
+
+        <div class="stat-info">
+          <span class="stat-label">
+            Pending
+          </span>
+
+          <strong class="stat-value">
+            {{ pendingRequests }}
+          </strong>
+
+          <span class="stat-note">
+            Awaiting approval
+          </span>
+        </div>
+      </div>
+
+
+      <!-- APPROVED -->
+      <div class="stat-card">
+        <div class="stat-icon approved-icon">
+          ✓
+        </div>
+
+        <div class="stat-info">
+          <span class="stat-label">
+            Approved
+          </span>
+
+          <strong class="stat-value">
+            {{ approvedRequests }}
+          </strong>
+
+          <span class="stat-note">
+            Successfully approved
+          </span>
+        </div>
+      </div>
+
+
+      <!-- REJECTED -->
+      <div class="stat-card">
+        <div class="stat-icon rejected-icon">
+          ×
+        </div>
+
+        <div class="stat-info">
+          <span class="stat-label">
+            Rejected
+          </span>
+
+          <strong class="stat-value">
+            {{ rejectedRequests }}
+          </strong>
+
+          <span class="stat-note">
+            Requests rejected
+          </span>
+        </div>
+      </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         FINANCIAL SUMMARY
+         ===================================================== -->
+
+    <style>
+      /* FINAL INLINE LAYOUT OVERRIDE */
+      .stats-grid {
+        display: grid !important;
+        grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+        width: 100% !important;
+        gap: 14px !important;
+        margin-bottom: 24px !important;
+      }
+
+      .financial-summary {
+        display: block !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+        margin: 0 0 24px !important;
+        padding: 22px !important;
+        border: 1px solid #ebe6f1 !important;
+        border-radius: 16px !important;
+        background: #ffffff !important;
+        box-shadow: 0 8px 26px rgba(61, 45, 82, 0.045) !important;
+      }
+
+      .financial-summary-header {
+        width: 100% !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        gap: 20px !important;
+        margin: 0 0 18px !important;
+      }
+
+      .financial-summary-grid {
+        width: 100% !important;
+        display: grid !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 14px !important;
+      }
+
+      .financial-card {
+        width: 100% !important;
+        min-width: 0 !important;
+        min-height: 118px !important;
+        box-sizing: border-box !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 16px !important;
+        padding: 20px !important;
+        border: 1px solid #eee9f3 !important;
+        border-radius: 13px !important;
+        background: #fbfaff !important;
+      }
+
+      .financial-card-content {
+        min-width: 0 !important;
+        flex: 1 !important;
+      }
+
+      .financial-value {
+        display: block !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        font-size: 24px !important;
+        line-height: 1.2 !important;
+      }
+
+      @media (max-width: 900px) {
+        .stats-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        }
+
+        .financial-summary-grid {
+          grid-template-columns: 1fr !important;
+        }
+      }
+
+      @media (max-width: 650px) {
+        .stats-grid {
+          grid-template-columns: 1fr !important;
+        }
+
+        .financial-summary {
+          padding: 15px !important;
+        }
+
+        .financial-value {
+          font-size: 18px !important;
+        }
+      }
+    </style>
+
+    <section class="financial-summary">
+
+      <div class="financial-summary-header">
+        <div>
+          <p class="financial-eyebrow">
+            FINANCIAL OVERVIEW
+          </p>
+
+          <h2>
+            Procurement Value Summary
+          </h2>
+
+          <p class="financial-subtitle">
+            Overview of total requested value and value currently awaiting approval.
+          </p>
+        </div>
+
+        <div class="financial-summary-icon">
+          ₹
+        </div>
+      </div>
+
+
+      <div class="financial-summary-grid">
+
+        <!-- PROCUREMENT VALUE -->
+        <div class="financial-card total-financial-card">
+
+          <div class="financial-card-icon">
+            ₹
+          </div>
+
+          <div class="financial-card-content">
+
+            <span class="financial-label">
+              PROCUREMENT VALUE
+            </span>
+
+            <strong class="financial-value">
+              {{ formatCurrency(totalProcurementAmount) }}
+            </strong>
+
+            <span class="financial-note">
+              Total requested value
+            </span>
+
+          </div>
+
+        </div>
+
+
+        <!-- PENDING VALUE -->
+        <div class="financial-card pending-financial-card">
+
+          <div class="financial-card-icon">
+            ◫
+          </div>
+
+          <div class="financial-card-content">
+
+            <span class="financial-label">
+              PENDING VALUE
+            </span>
+
+            <strong class="financial-value">
+              {{ formatCurrency(pendingAmount) }}
+            </strong>
+
+            <span class="financial-note">
+              Awaiting approval value
+            </span>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         MAIN CONTENT CARD
+         ===================================================== -->
+
+    <!-- =====================================================
+         CUSTOMER REVIEWS
+         ===================================================== -->
+
+    <section class="admin-reviews-card">
+
+      <div class="admin-reviews-header">
+        <div>
+          <p class="admin-reviews-eyebrow">CUSTOMER FEEDBACK</p>
+          <h2>Employee Product Reviews</h2>
+          <p>Monitor ratings and feedback submitted after delivered products are reviewed.</p>
+        </div>
+
+        <div class="admin-reviews-summary">
+          <strong>{{ getAverageReviewRating() || '—' }}</strong>
+          <span>{{ getReviewStars(getAverageReviewRating()) }}</span>
+          <small>{{ reviews.length }} review{{ reviews.length === 1 ? '' : 's' }}</small>
+        </div>
+      </div>
+
+      <div class="admin-review-loading" *ngIf="isLoadingReviews">
+        <div class="loading-spinner"></div>
+        <span>Loading customer reviews...</span>
+      </div>
+
+      <div class="admin-review-error" *ngIf="!isLoadingReviews && reviewsError">
+        {{ reviewsError }}
+        <button type="button" (click)="loadReviews()">Try Again</button>
+      </div>
+
+      <div class="admin-review-empty" *ngIf="!isLoadingReviews && !reviewsError && reviews.length === 0">
+        <span>★</span>
+        <strong>No customer reviews yet</strong>
+        <small>Reviews will appear here after employees review delivered products.</small>
+      </div>
+
+      <div class="admin-review-table-wrap" *ngIf="!isLoadingReviews && !reviewsError && reviews.length > 0">
+        <table class="admin-review-table">
+          <thead>
+          <tr>
+            <th>Product</th>
+            <th>Request</th>
+            <th>Employee</th>
+            <th>Supplier</th>
+            <th>Rating</th>
+            <th>Feedback</th>
+            <th>Date</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let review of reviews">
+            <td>
+              <strong>{{ review.productName || 'Product' }}</strong>
+            </td>
+            <td>#{{ review.purchaseRequestId }}</td>
+            <td>{{ review.employeeName || 'Employee' }}</td>
+            <td>{{ review.supplierName || 'Supplier' }}</td>
+            <td>
+                <span class="admin-review-rating">
+                  {{ getReviewStars(review.rating) }}
+                  <b>{{ review.rating }}/5</b>
+                </span>
+            </td>
+            <td>
+                <span class="admin-review-feedback">
+                  {{ review.feedback || 'No written feedback.' }}
+                </span>
+            </td>
+            <td>
+              {{ review.createdAt ? (review.createdAt | date:'dd MMM yyyy') : '—' }}
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </section>
+
+
+    <section class="content-card">
+
+
+      <!-- ===================================================
+           TOOLBAR
+           =================================================== -->
+
+      <div class="toolbar">
+
+        <div class="toolbar-heading">
+
+          <div class="toolbar-icon">
+            ☷
+          </div>
+
+          <div>
+
+            <h2>
+              All Purchase Requests
+            </h2>
+
+            <p>
+              {{ filteredRequests.length }}
+              {{
+              filteredRequests.length === 1
+              ? 'request'
+              : 'requests'
+              }}
+              displayed
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <div class="toolbar-controls">
+
+
+          <!-- SEARCH -->
+
+          <div class="search-box">
+
+            <span class="search-icon">
+              ⌕
+            </span>
+
+            <input
+              type="text"
+              [(ngModel)]="searchTerm"
+              (ngModelChange)="onSearch()"
+              placeholder="Search requests, users or products..."
+              aria-label="Search purchase requests">
+
+            <button
+              type="button"
+              class="search-clear"
+              *ngIf="searchTerm"
+              (click)="searchTerm = ''; onSearch()">
+
+              ×
+
+            </button>
+
+          </div>
+
+
+          <!-- STATUS FILTER -->
+
+          <div class="filter-box">
+
+            <label>
+              Status
+            </label>
+
+            <select
+              [(ngModel)]="selectedStatus"
+              (ngModelChange)="onStatusChange()">
+
+              <option value="ALL">
+                All Status
+              </option>
+
+              <option value="PENDING">
+                Pending
+              </option>
+
+              <option value="APPROVED">
+                Approved
+              </option>
+
+              <option value="REJECTED">
+                Rejected
+              </option>
+
+              <option value="CANCELLED">
+                Cancelled
+              </option>
+
+            </select>
+
+          </div>
+
+
+          <!-- APPROVAL FILTER -->
+
+          <div class="filter-box">
+
+            <label>
+              Approval
+            </label>
+
+            <select
+              [(ngModel)]="selectedApprovalLevel"
+              (ngModelChange)="onApprovalLevelChange()">
+
+              <option value="ALL">
+                All Levels
+              </option>
+
+              <option value="1">
+                Level 1 · Manager
+              </option>
+
+              <option value="2">
+                Level 2 · Finance
+              </option>
+
+              <option value="3">
+                Level 3 · Procurement
+              </option>
+
+            </select>
+
+          </div>
+
+
+          <!-- CLEAR -->
+
+          <button
+            type="button"
+            class="clear-button"
+            (click)="clearFilters()"
+            [disabled]="
+              !searchTerm &&
+              selectedStatus === 'ALL' &&
+              selectedApprovalLevel === 'ALL'
+            ">
+
+            ↺
+            Clear
+
+          </button>
+
+        </div>
+
+      </div>
+
+
+      <!-- ===================================================
+           LOADING
+           =================================================== -->
+
+      <div
+        class="loading-state"
+        *ngIf="isLoading">
+
+        <div class="loading-spinner"></div>
+
+        <h3>
+          Loading purchase requests
+        </h3>
+
+        <p>
+          Please wait while the procurement records are loaded.
+        </p>
+
+      </div>
+
+
+      <!-- ===================================================
+           EMPTY
+           =================================================== -->
+
+      <div
+        class="empty-state"
+        *ngIf="
+          !isLoading &&
+          filteredRequests.length === 0
+        ">
+
+        <div class="empty-icon">
+          ☷
+        </div>
+
+        <h3>
+          No purchase requests found
+        </h3>
+
+        <p *ngIf="
+          searchTerm ||
+          selectedStatus !== 'ALL' ||
+          selectedApprovalLevel !== 'ALL'
+        ">
+          No requests match the current search or filters.
+        </p>
+
+        <p *ngIf="
+          !searchTerm &&
+          selectedStatus === 'ALL' &&
+          selectedApprovalLevel === 'ALL'
+        ">
+          There are currently no purchase requests.
+        </p>
+
+        <button
+          type="button"
+          class="empty-clear-button"
+          *ngIf="
+            searchTerm ||
+            selectedStatus !== 'ALL' ||
+            selectedApprovalLevel !== 'ALL'
+          "
+          (click)="clearFilters()">
+
+          Clear Filters
+
+        </button>
+
+      </div>
+
+
+      <!-- ===================================================
+           REQUEST TABLE
+           =================================================== -->
+
+      <div
+        class="table-wrapper"
+        *ngIf="
+          !isLoading &&
+          filteredRequests.length > 0
+        ">
+
+        <table class="requests-table">
+
+          <thead>
+
+          <tr>
+
+            <th>
+              REQUEST
+            </th>
+
+            <th>
+              REQUESTER
+            </th>
+
+            <th>
+              DEPARTMENT
+            </th>
+
+            <th>
+              ITEMS
+            </th>
+
+            <th>
+              AMOUNT
+            </th>
+
+            <th>
+              DECISION
+            </th>
+
+            <th>
+              STATUS
+            </th>
+
+            <th>
+              DATE
+            </th>
+
+            <th class="actions-column">
+              ACTIONS
+            </th>
+
+          </tr>
+
+          </thead>
+
+
+          <tbody>
+
+          <tr
+            *ngFor="
+                let request of paginatedRequests;
+                trackBy: trackByRequestId
+              ">
+
+
+            <!-- REQUEST -->
+
+            <td>
+
+              <div class="request-cell">
+
+                <div class="request-icon">
+                  PR
+                </div>
+
+                <div class="request-info">
+
+                  <strong>
+                    #{{ request.purchaseRequestId }}
+                  </strong>
+
+                  <span>
+                      Purchase Request
+                    </span>
+
+                </div>
+
+              </div>
+
+            </td>
+
+
+            <!-- REQUESTER -->
+
+            <td>
+
+              <div class="requester-cell">
+
+                <div class="requester-avatar">
+
+                  {{
+                  (
+                  request.userName ||
+                  'U'
+                  ).charAt(0).toUpperCase()
+                  }}
+
+                </div>
+
+                <div class="requester-info">
+
+                  <strong>
+                    {{
+                    request.userName ||
+                    'User #' + request.userId
+                    }}
+                  </strong>
+
+                  <span *ngIf="request.userEmail">
+                      {{ request.userEmail }}
+                    </span>
+
+                  <span *ngIf="!request.userEmail">
+                      User ID: {{ request.userId }}
+                    </span>
+
+                </div>
+
+              </div>
+
+            </td>
+
+
+            <!-- DEPARTMENT -->
+
+            <td>
+
+              <div class="department-cell">
+
+                  <span class="department-icon">
+                    ▦
+                  </span>
+
+                <span>
+                    {{
+                      request.departmentName ||
+                      'Not assigned'
+                    }}
+                  </span>
+
+              </div>
+
+            </td>
+
+
+            <!-- ITEMS -->
+
+            <td>
+
+              <div class="items-cell">
+
+                <strong>
+                  {{ getItemCount(request) }}
+                  {{
+                  getItemCount(request) === 1
+                  ? 'item'
+                  : 'items'
+                  }}
+                </strong>
+
+                <span>
+                    {{ getTotalQuantity(request) }}
+                    {{
+                      getTotalQuantity(request) === 1
+                        ? 'unit'
+                        : 'units'
+                    }}
+                  </span>
+
+              </div>
+
+            </td>
+
+
+            <!-- AMOUNT -->
+
+            <td>
+
+              <div class="amount-cell">
+
+                <strong>
+                  {{
+                  formatCurrency(
+                  request.totalPrice
+                  )
+                  }}
+                </strong>
+
+                <span>
+                    Request value
+                  </span>
+
+              </div>
+
+            </td>
+
+
+            <!-- APPROVAL / DECISION -->
+
+            <td>
+
+              <div class="approval-cell">
+
+                <span class="approval-name">
+
+                  {{
+                    getApprovalLevelLabel(
+                      request.currentApprovalLevel,
+                      request.status
+                    )
+                  }}
+
+                </span>
+
+              </div>
+
+            </td>
+
+
+            <!-- STATUS -->
+
+            <td>
+
+                <span
+                  class="status-badge"
+                  [ngClass]="
+                    getStatusClass(
+                      request.status
+                    )
+                  ">
+
+                  <span class="status-dot"></span>
+
+                  {{
+                    getStatusLabel(
+                      request.status
+                    )
+                  }}
+
+                </span>
+
+            </td>
+
+
+            <!-- DATE -->
+
+            <td>
+
+              <div class="date-cell">
+
+                <strong>
+                  {{
+                  formatDate(
+                  request.requestDate
+                  )
+                  }}
+                </strong>
+
+                <span
+                  *ngIf="
+                      request.approvedDate
+                    ">
+
+                    Decision:
+                    {{
+                      formatDate(
+                        request.approvedDate
+                      )
+                    }}
+
+                  </span>
+
+              </div>
+
+            </td>
+
+
+            <!-- ACTIONS -->
+
+            <td class="actions-column">
+
+              <div class="row-actions">
+
+                <button
+                  type="button"
+                  class="action-button view-button"
+                  title="View request details"
+                  (click)="viewDetails(request)">
+
+                  ◉
+
+                </button>
+
+
+                <button
+                  type="button"
+                  class="action-button delete-button"
+                  title="Delete purchase request"
+                  (click)="confirmDelete(request)">
+
+                  ×
+
+                </button>
+
+              </div>
+
+            </td>
+
+          </tr>
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+
+      <!-- ===================================================
+           PAGINATION
+           =================================================== -->
+
+      <div
+        class="pagination-bar"
+        *ngIf="
+          !isLoading &&
+          filteredRequests.length > 0
+        ">
+
+        <div class="pagination-info">
+
+          Showing
+
+          <strong>
+            {{
+            ((currentPage - 1) * pageSize) + 1
+            }}
+          </strong>
+
+          to
+
+          <strong>
+            {{
+            Math.min(
+            currentPage * pageSize,
+            filteredRequests.length
+            )
+            }}
+          </strong>
+
+          of
+
+          <strong>
+            {{ filteredRequests.length }}
+          </strong>
+
+          requests
+
+        </div>
+
+
+        <div class="pagination-controls">
+
+          <button
+            type="button"
+            class="page-button"
+            (click)="previousPage()"
+            [disabled]="currentPage === 1">
+
+            ‹
+
+            <span>
+              Previous
+            </span>
+
+          </button>
+
+
+          <button
+            type="button"
+            class="page-number"
+            *ngFor="let page of pageNumbers"
+            [class.active]="page === currentPage"
+            (click)="goToPage(page)">
+
+            {{ page }}
+
+          </button>
+
+
+          <button
+            type="button"
+            class="page-button"
+            (click)="nextPage()"
+            [disabled]="currentPage === totalPages">
+
+            <span>
+              Next
+            </span>
+
+            ›
+
+          </button>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+</div>
+
+
+<!-- =========================================================
+     REQUEST DETAILS MODAL
+     ========================================================= -->
+
+<div
+  class="modal-backdrop"
+  *ngIf="showDetailsModal"
+  (click)="closeDetails()">
+
+  <section
+    class="modal details-modal"
+    (click)="$event.stopPropagation()">
+
+
+    <!-- MODAL HEADER -->
+
+    <div class="modal-header">
+
+      <div class="modal-title">
+
+        <div class="modal-request-icon">
+          PR
+        </div>
+
+        <div>
+
+          <span class="modal-eyebrow">
+            PURCHASE REQUEST
+          </span>
+
+          <h2>
+            #{{ selectedRequest?.purchaseRequestId }}
+          </h2>
+
+        </div>
+
+      </div>
+
+
+      <button
+        type="button"
+        class="modal-close"
+        (click)="closeDetails()">
+
+        ×
+
+      </button>
+
+    </div>
+
+
+    <!-- MODAL BODY -->
+
+    <div
+      class="modal-body"
+      *ngIf="selectedRequest">
+
+
+      <!-- SUMMARY -->
+
+      <div class="request-summary">
+
+        <div>
+
+          <span class="summary-label">
+            Total Request Value
+          </span>
+
+          <strong>
+            {{
+            formatCurrency(
+            selectedRequest.totalPrice
+            )
+            }}
+          </strong>
+
+        </div>
+
+
+        <span
+          class="status-badge large-status"
+          [ngClass]="
+            getStatusClass(
+              selectedRequest.status
+            )
+          ">
+
+          <span class="status-dot"></span>
+
+          {{
+            getStatusLabel(
+              selectedRequest.status
+            )
+          }}
+
+        </span>
+
+      </div>
+
+
+      <!-- REQUEST INFORMATION -->
+
+      <section class="details-section">
+
+        <div class="section-title">
+
+          <span class="section-icon">
+            ◈
+          </span>
+
+          <h3>
+            Request Information
+          </h3>
+
+        </div>
+
+
+        <div class="details-grid">
+
+          <div class="detail-item">
+
+            <span>
+              Request ID
+            </span>
+
+            <strong>
+              #{{ selectedRequest.purchaseRequestId }}
+            </strong>
+
+          </div>
+
+
+          <div class="detail-item">
+
+            <span>
+              Request Date
+            </span>
+
+            <strong>
+              {{
+              formatDateTime(
+              selectedRequest.requestDate
+              )
+              }}
+            </strong>
+
+          </div>
+
+
+          <div class="detail-item">
+
+            <span>
+              Requester
+            </span>
+
+            <strong>
+              {{
+              selectedRequest.userName ||
+              'User #' + selectedRequest.userId
+              }}
+            </strong>
+
+          </div>
+
+
+          <div class="detail-item">
+
+            <span>
+              User ID
+            </span>
+
+            <strong>
+              {{ selectedRequest.userId }}
+            </strong>
+
+          </div>
+
+
+          <div class="detail-item">
+
+            <span>
+              Email
+            </span>
+
+            <strong>
+              {{
+              selectedRequest.userEmail ||
+              'Not available'
+              }}
+            </strong>
+
+          </div>
+
+
+          <div class="detail-item">
+
+            <span>
+              Phone
+            </span>
+
+            <strong>
+              {{
+              selectedRequest.userPhone ||
+              'Not available'
+              }}
+            </strong>
+
+          </div>
+
+
+          <div class="detail-item">
+
+            <span>
+              Department
+            </span>
+
+            <strong>
+              {{
+              selectedRequest.departmentName ||
+              'Not assigned'
+              }}
+            </strong>
+
+          </div>
+
+
+          <div class="detail-item">
+
+            <span>
+              Approval Status
+            </span>
+
+            <strong>
+              {{
+              getApprovalLevelLabel(
+              selectedRequest.currentApprovalLevel,
+              selectedRequest.status
+              )
+              }}
+            </strong>
+
+          </div>
+
+
+          <div
+            class="detail-item"
+            *ngIf="
+              selectedRequest.approvedDate
+            ">
+
+            <span>
+              Decision Date
+            </span>
+
+            <strong>
+              {{
+              formatDateTime(
+              selectedRequest.approvedDate
+              )
+              }}
+            </strong>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- ===================================================
+           DELIVERY TRACKING
+           =================================================== -->
+
+      <section
+        class="details-section delivery-tracking-section"
+        *ngIf="isDeliveryTrackingVisible(selectedRequest)"
+      >
+
+        <div class="section-title">
+
+          <span class="section-icon delivery-section-icon">
+            🚚
+          </span>
+
+          <div>
+            <h3>
+              Delivery Tracking
+            </h3>
+
+            <p class="delivery-subtitle">
+              Follow the delivery progress of this purchase request.
+            </p>
+          </div>
+
+          <span
+            class="delivery-current-badge"
+            [ngClass]="getDeliveryStatusClass(selectedRequest)"
+          >
+            {{ getDeliveryStatusLabel(selectedRequest) }}
+          </span>
+
+        </div>
+
+
+        <div class="delivery-tracker">
+
+          <div
+            class="delivery-step"
+            *ngFor="let step of deliverySteps; let i = index"
+            [class.completed]="
+              isDeliveryStepCompleted(
+                selectedRequest,
+                step.status
+              )
+            "
+            [class.current]="
+              isDeliveryStepCurrent(
+                selectedRequest,
+                step.status
+              )
+            "
+            [class.last-step]="i === deliverySteps.length - 1"
+          >
+
+            <div class="delivery-step-line" *ngIf="i < deliverySteps.length - 1"></div>
+
+            <div class="delivery-step-circle">
+
+              <span
+                *ngIf="
+                  isDeliveryStepCompleted(
+                    selectedRequest,
+                    step.status
+                  )
+                "
+              >
+                ✓
+              </span>
+
+              <span
+                *ngIf="
+                  !isDeliveryStepCompleted(
+                    selectedRequest,
+                    step.status
+                  )
+                "
+              >
+                {{ i + 1 }}
+              </span>
+
+            </div>
+
+
+            <div class="delivery-step-content">
+
+              <strong>
+                {{ step.label }}
+              </strong>
+
+              <span>
+                {{ step.description }}
+              </span>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <div class="delivery-admin-note">
+
+          <span class="delivery-note-icon">ℹ</span>
+
+          <span>
+            Delivery updates are managed by the supplier.
+            Admin can monitor the current delivery status here.
+          </span>
+
+        </div>
+
+      </section>
+
+
+      <!-- ===================================================
+           REQUESTED ITEMS
+           =================================================== -->
+
+      <section class="details-section">
+
+        <div class="section-title">
+
+          <span class="section-icon">
+            □
+          </span>
+
+          <h3>
+            Requested Items
+          </h3>
+
+          <span class="section-count">
+            {{
+              getItemCount(
+                selectedRequest
+              )
+            }}
+          </span>
+
+        </div>
+
+
+        <div class="items-list">
+
+          <div
+            class="item-row"
+            *ngFor="
+              let item of selectedRequest.items;
+              let i = index;
+              trackBy: trackByItemId
+            ">
+
+
+            <div class="item-number">
+              {{ i + 1 }}
+            </div>
+
+
+            <div class="item-product">
+
+              <strong>
+                {{
+                item.productName ||
+                'Product #' + item.productId
+                }}
+              </strong>
+
+              <span>
+                Product ID:
+                {{ item.productId }}
+              </span>
+
+            </div>
+
+
+            <div class="item-quantity">
+
+              <span>
+                Quantity
+              </span>
+
+              <strong>
+                {{ item.quantity }}
+              </strong>
+
+            </div>
+
+
+            <div class="item-total">
+
+              <span>
+                Item Total
+              </span>
+
+              <strong>
+                {{
+                formatCurrency(
+                item.itemTotalPrice
+                )
+                }}
+              </strong>
+
+            </div>
+
+          </div>
+
+
+          <div
+            class="no-items"
+            *ngIf="
+              !selectedRequest.items ||
+              selectedRequest.items.length === 0
+            ">
+
+            No items available.
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- ADMIN DECISION -->
+
+      <section
+        class="details-section decision-section"
+        *ngIf="
+          selectedRequest &&
+          normalizeStatus(selectedRequest.status) === 'PENDING'
+        "
+      >
+
+        <div class="section-title">
+
+          <span class="section-icon decision-icon">
+            ✓
+          </span>
+
+          <div>
+            <h3>
+              Admin Decision
+            </h3>
+
+            <p class="decision-subtitle">
+              Review this request and approve or reject it.
+            </p>
+          </div>
+
+        </div>
+
+
+        <div class="admin-decision-box">
+
+          <label for="adminRemarks">
+            Admin Remarks
+            <span>Optional</span>
+          </label>
+
+          <textarea
+            id="adminRemarks"
+            rows="3"
+            [(ngModel)]="adminRemarks"
+            [disabled]="isUpdatingStatus"
+            placeholder="Add a reason, note, or approval comment..."
+          ></textarea>
+
+          <div class="decision-actions">
+
+            <button
+              type="button"
+              class="approve-button"
+              [disabled]="isUpdatingStatus"
+              (click)="approveRequest()"
+            >
+              <span
+                class="button-spinner"
+                *ngIf="isUpdatingStatus && selectedDecision === 'APPROVED'"
+              ></span>
+              <span *ngIf="!(isUpdatingStatus && selectedDecision === 'APPROVED')">
+                ✓
+              </span>
+              {{
+              isUpdatingStatus && selectedDecision === 'APPROVED'
+              ? 'Approving...'
+              : 'Approve Request'
+              }}
+            </button>
+
+            <button
+              type="button"
+              class="reject-button"
+              [disabled]="isUpdatingStatus"
+              (click)="rejectRequest()"
+            >
+              <span
+                class="button-spinner"
+                *ngIf="isUpdatingStatus && selectedDecision === 'REJECTED'"
+              ></span>
+              <span *ngIf="!(isUpdatingStatus && selectedDecision === 'REJECTED')">
+                ×
+              </span>
+              {{
+              isUpdatingStatus && selectedDecision === 'REJECTED'
+              ? 'Rejecting...'
+              : 'Reject Request'
+              }}
+            </button>
+
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- REMARKS -->
+
+      <section
+        class="details-section"
+        *ngIf="
+          selectedRequest.remarks ||
+          selectedRequest.adminRemarks
+        ">
+
+        <div class="section-title">
+
+          <span class="section-icon">
+            ≡
+          </span>
+
+          <h3>
+            Remarks
+          </h3>
+
+        </div>
+
+
+        <div
+          class="remark-box"
+          *ngIf="
+            selectedRequest.remarks
+          ">
+
+          <span>
+            Requester Remarks
+          </span>
+
+          <p>
+            {{ selectedRequest.remarks }}
+          </p>
+
+        </div>
+
+
+        <div
+          class="remark-box admin-remark"
+          *ngIf="
+            selectedRequest.adminRemarks
+          ">
+
+          <span>
+            Admin Remarks
+          </span>
+
+          <p>
+            {{ selectedRequest.adminRemarks }}
+          </p>
+
+        </div>
+
+      </section>
+
+    </div>
+
+
+    <!-- MODAL FOOTER -->
+
+    <div class="modal-footer">
+
+      <button
+        type="button"
+        class="secondary-button"
+        (click)="closeDetails()"
+        [disabled]="isUpdatingStatus">
+
+        Close
+
+      </button>
+
+
+      <button
+        type="button"
+        class="danger-button"
+        *ngIf="selectedRequest && !isUpdatingStatus"
+        (click)="
+          closeDetails();
+          confirmDelete(selectedRequest)
+        ">
+
+        ×
+        Delete Request
+
+      </button>
+
+    </div>
+
+  </section>
+
+</div>
+
+
+<!-- =========================================================
+     DELETE CONFIRMATION MODAL
+     ========================================================= -->
+
+<div
+  class="modal-backdrop delete-backdrop"
+  *ngIf="showDeleteModal"
+  (click)="closeDeleteModal()">
+
+  <section
+    class="modal delete-modal"
+    (click)="$event.stopPropagation()">
+
+
+    <div class="delete-icon">
+      !
+    </div>
+
+
+    <h2>
+      Delete Purchase Request?
+    </h2>
+
+
+    <p>
+
+      Are you sure you want to permanently delete
+
+      <strong>
+        #{{ requestToDelete?.purchaseRequestId }}
+      </strong>?
+
+    </p>
+
+
+    <span class="delete-warning">
+      This action cannot be undone.
+    </span>
+
+
+    <div class="delete-actions">
+
+      <button
+        type="button"
+        class="secondary-button"
+        [disabled]="isDeleting"
+        (click)="closeDeleteModal()">
+
+        Cancel
+
+      </button>
+
+
+      <button
+        type="button"
+        class="danger-button"
+        [disabled]="isDeleting"
+        (click)="deleteRequest()">
+
+        <span
+          class="button-spinner"
+          *ngIf="isDeleting">
+        </span>
+
+        {{
+        isDeleting
+        ? 'Deleting...'
+        : 'Delete Request'
+        }}
+
+      </button>
+
+    </div>
+
+  </section>
+
+</div>

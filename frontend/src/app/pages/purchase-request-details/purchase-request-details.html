@@ -1,0 +1,689 @@
+<div class="details-page">
+
+  <!-- ============================= -->
+  <!-- PAGE HEADER -->
+  <!-- ============================= -->
+
+  <div class="page-header">
+
+    <button
+      type="button"
+      class="back-button"
+      (click)="goBack()">
+
+      <span class="back-icon">←</span>
+
+      <span>Back to My Requests</span>
+
+    </button>
+
+
+    <div class="header-content">
+
+      <div>
+
+        <span class="page-label">
+          PURCHASE REQUEST
+        </span>
+
+        <h1>
+          Request Details
+        </h1>
+
+        <p>
+          View complete information about your purchase request.
+        </p>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- ============================= -->
+  <!-- LOADING -->
+  <!-- ============================= -->
+
+  <div
+    class="loading-container"
+    *ngIf="isLoading">
+
+    <div class="spinner"></div>
+
+    <p>
+      Loading purchase request...
+    </p>
+
+  </div>
+
+
+  <!-- ============================= -->
+  <!-- ERROR -->
+  <!-- ============================= -->
+
+  <div
+    class="error-container"
+    *ngIf="!isLoading && errorMessage">
+
+    <div class="error-icon">
+      !
+    </div>
+
+    <div>
+
+      <h3>
+        Unable to Load Request
+      </h3>
+
+      <p>
+        {{ errorMessage }}
+      </p>
+
+    </div>
+
+    <button
+      type="button"
+      (click)="loadRequest()">
+
+      Try Again
+
+    </button>
+
+  </div>
+
+
+  <!-- ============================= -->
+  <!-- REQUEST DETAILS -->
+  <!-- ============================= -->
+
+  <div
+    class="details-content"
+    *ngIf="!isLoading && !errorMessage && request">
+
+
+    <!-- ============================= -->
+    <!-- REQUEST OVERVIEW -->
+    <!-- ============================= -->
+
+    <section class="overview-card">
+
+      <div class="overview-top">
+
+        <div class="request-heading">
+
+          <div class="request-icon">
+            📋
+          </div>
+
+          <div>
+
+            <span class="request-label">
+              PURCHASE REQUEST
+            </span>
+
+            <h2>
+              #{{ request.purchaseRequestId }}
+            </h2>
+
+          </div>
+
+        </div>
+
+
+        <span
+          class="status"
+          [ngClass]="getStatusClass()">
+
+          <span class="status-dot"></span>
+
+          {{ request.status || 'PENDING' }}
+
+        </span>
+
+      </div>
+
+
+      <div class="overview-grid">
+
+
+        <!-- TOTAL -->
+
+        <div class="overview-item amount">
+
+          <span class="overview-label">
+            TOTAL AMOUNT
+          </span>
+
+          <strong>
+
+            {{
+            request.totalPrice != null
+            ? (request.totalPrice | currency:'INR':'symbol':'1.2-2')
+            : (getTotalPrice() | currency:'INR':'symbol':'1.2-2')
+            }}
+
+          </strong>
+
+        </div>
+
+
+        <!-- USER -->
+
+        <div class="overview-item">
+
+          <span class="overview-label">
+            REQUESTED BY
+          </span>
+
+          <strong>
+            User #{{ request.userId }}
+          </strong>
+
+        </div>
+
+
+        <!-- PRODUCTS -->
+
+        <div class="overview-item">
+
+          <span class="overview-label">
+            PRODUCTS
+          </span>
+
+          <strong>
+
+            {{ request.items?.length || 0 }}
+
+            {{
+            (request.items?.length || 0) === 1
+            ? 'Item'
+            : 'Items'
+            }}
+
+          </strong>
+
+        </div>
+
+
+        <!-- STATUS -->
+
+        <div class="overview-item">
+
+          <span class="overview-label">
+            REQUEST STATUS
+          </span>
+
+          <strong class="status-text">
+
+            <span
+              class="status-dot"
+              [ngClass]="getStatusClass()">
+            </span>
+
+            {{ request.status || 'PENDING' }}
+
+          </strong>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ============================= -->
+    <!-- REMARKS SECTION -->
+    <!-- ============================= -->
+
+    <section
+      class="remarks-grid"
+      *ngIf="request.remarks || request.adminRemarks">
+
+
+      <!-- EMPLOYEE REMARKS -->
+
+      <div
+        class="remark-card employee-remark"
+        *ngIf="request.remarks">
+
+        <div class="remark-header">
+
+          <div class="remark-icon">
+            💬
+          </div>
+
+          <div>
+
+            <span class="remark-label">
+              EMPLOYEE REMARKS
+            </span>
+
+            <h3>
+              Your Request Note
+            </h3>
+
+          </div>
+
+        </div>
+
+        <p>
+          {{ request.remarks }}
+        </p>
+
+      </div>
+
+
+      <!-- ADMIN REMARKS -->
+
+      <div
+        class="remark-card admin-remark"
+        *ngIf="request.adminRemarks">
+
+        <div class="remark-header">
+
+          <div class="remark-icon">
+            🛡️
+          </div>
+
+          <div>
+
+            <span class="remark-label">
+              ADMIN REMARKS
+            </span>
+
+            <h3>
+              Administrator Response
+            </h3>
+
+          </div>
+
+        </div>
+
+        <p>
+          {{ request.adminRemarks }}
+        </p>
+
+      </div>
+
+    </section>
+
+
+    <!-- ============================= -->
+    <!-- PRODUCTS -->
+    <!-- ============================= -->
+
+    <section class="products-card">
+
+      <div class="section-header">
+
+        <div>
+
+          <span class="section-label">
+            REQUESTED ITEMS
+          </span>
+
+          <h2>
+            Products
+          </h2>
+
+          <p>
+            Products included in this purchase request.
+          </p>
+
+        </div>
+
+
+        <div class="product-count">
+
+          {{ request.items?.length || 0 }}
+
+          {{
+          (request.items?.length || 0) === 1
+          ? 'Product'
+          : 'Products'
+          }}
+
+        </div>
+
+      </div>
+
+
+      <!-- PRODUCT TABLE -->
+
+      <div
+        class="products-table"
+        *ngIf="request.items?.length">
+
+
+        <!-- TABLE HEADER -->
+
+        <div class="table-header">
+
+          <div>
+            #
+          </div>
+
+          <div>
+            PRODUCT
+          </div>
+
+          <div>
+            PRODUCT ID
+          </div>
+
+          <div>
+            QUANTITY
+          </div>
+
+          <div>
+            UNIT PRICE
+          </div>
+
+          <div>
+            ITEM TOTAL
+          </div>
+
+        </div>
+
+
+        <!-- TABLE ROWS -->
+
+        <div
+          class="product-row"
+          *ngFor="
+            let item of request.items;
+            let i = index
+          ">
+
+
+          <!-- NUMBER -->
+
+          <div class="item-number">
+
+            {{ i + 1 }}
+
+          </div>
+
+
+          <!-- PRODUCT -->
+
+          <div class="product-info">
+
+            <div class="product-image">
+
+              📦
+
+            </div>
+
+            <div>
+
+              <strong>
+                {{ getProductName(item.productId) }}
+              </strong>
+
+              <span>
+                Requested product
+              </span>
+
+            </div>
+
+          </div>
+
+
+          <!-- PRODUCT ID -->
+
+          <div class="product-id">
+
+            #{{ item.productId }}
+
+          </div>
+
+
+          <!-- QUANTITY -->
+
+          <div class="quantity">
+
+            <span>
+              {{ item.quantity }}
+            </span>
+
+          </div>
+
+
+          <!-- UNIT PRICE -->
+
+          <div class="unit-price">
+
+            {{
+            getProductPrice(item.productId)
+            | currency:'INR':'symbol':'1.2-2'
+            }}
+
+          </div>
+
+
+          <!-- ITEM TOTAL -->
+
+          <div class="item-total">
+
+            {{
+            getItemTotal(
+            item.productId,
+            item.quantity
+            )
+            | currency:'INR':'symbol':'1.2-2'
+            }}
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- NO PRODUCTS -->
+
+      <div
+        class="no-products"
+        *ngIf="!request.items?.length">
+
+        <div class="no-products-icon">
+          📦
+        </div>
+
+        <h3>
+          No Products Found
+        </h3>
+
+        <p>
+          There are no products associated with this request.
+        </p>
+
+      </div>
+
+
+      <!-- TOTAL -->
+
+      <div
+        class="products-total"
+        *ngIf="request.items?.length">
+
+        <div>
+
+          <span>
+            REQUEST TOTAL
+          </span>
+
+          <small>
+            {{ request.items.length }}
+            {{
+            request.items.length === 1
+            ? 'product'
+            : 'products'
+            }}
+          </small>
+
+        </div>
+
+
+        <strong>
+
+          {{
+          request.totalPrice != null
+          ? (request.totalPrice | currency:'INR':'symbol':'1.2-2')
+          : (getTotalPrice() | currency:'INR':'symbol':'1.2-2')
+          }}
+
+        </strong>
+
+      </div>
+
+    </section>
+
+
+    <!-- ============================= -->
+    <!-- REQUEST STATUS TIMELINE -->
+    <!-- ============================= -->
+
+    <section class="status-card">
+
+      <div class="section-header">
+
+        <div>
+
+          <span class="section-label">
+            REQUEST STATUS
+          </span>
+
+          <h2>
+            Current Status
+          </h2>
+
+        </div>
+
+      </div>
+
+
+      <div class="status-timeline">
+
+
+        <!-- PENDING -->
+
+        <div
+          class="timeline-item active"
+          [class.current]="
+            !request.status ||
+            request.status === 'PENDING'
+          ">
+
+          <div class="timeline-icon">
+            ✓
+          </div>
+
+          <div class="timeline-content">
+
+            <strong>
+              Request Submitted
+            </strong>
+
+            <span>
+              Your purchase request has been submitted.
+            </span>
+
+          </div>
+
+        </div>
+
+
+        <!-- APPROVED -->
+
+        <div
+          class="timeline-item"
+          [class.active]="
+            request.status === 'APPROVED'
+          "
+          [class.current]="
+            request.status === 'APPROVED'
+          ">
+
+          <div class="timeline-icon">
+
+            <span *ngIf="request.status === 'APPROVED'">
+              ✓
+            </span>
+
+            <span *ngIf="request.status !== 'APPROVED'">
+              2
+            </span>
+
+          </div>
+
+          <div class="timeline-content">
+
+            <strong>
+              Request Approved
+            </strong>
+
+            <span *ngIf="request.status === 'APPROVED'">
+              Your purchase request has been approved.
+            </span>
+
+            <span *ngIf="request.status !== 'APPROVED'">
+              Waiting for administrator approval.
+            </span>
+
+          </div>
+
+        </div>
+
+
+        <!-- REJECTED -->
+
+        <div
+          class="timeline-item rejected-item"
+          *ngIf="request.status === 'REJECTED'">
+
+          <div class="timeline-icon">
+            !
+          </div>
+
+          <div class="timeline-content">
+
+            <strong>
+              Request Rejected
+            </strong>
+
+            <span>
+              This purchase request was rejected by the administrator.
+            </span>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ============================= -->
+    <!-- BOTTOM ACTION -->
+    <!-- ============================= -->
+
+    <div class="bottom-actions">
+
+      <button
+        type="button"
+        class="back-button-large"
+        (click)="goBack()">
+
+        ← Back to My Requests
+
+      </button>
+
+    </div>
+
+  </div>
+
+</div>

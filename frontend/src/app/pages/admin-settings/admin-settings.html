@@ -1,0 +1,1141 @@
+<div class="admin-page">
+
+  <app-admin-sidebar></app-admin-sidebar>
+
+  <main class="main-area">
+
+    <!-- =====================================================
+         HEADER
+         ===================================================== -->
+
+    <header class="page-header">
+
+      <div class="header-content">
+
+        <p class="eyebrow">SYSTEM MANAGEMENT</p>
+
+        <h1>Settings</h1>
+
+        <p class="page-subtitle">
+          Configure administrator preferences, notifications and
+          application display settings.
+        </p>
+
+      </div>
+
+      <div class="header-actions">
+
+        <span
+          class="saved-indicator"
+          *ngIf="lastSavedText">
+          {{ lastSavedText }}
+        </span>
+
+        <button
+          type="button"
+          class="reset-button"
+          (click)="openResetConfirmation()">
+          <span>↺</span>
+          Reset
+        </button>
+
+        <button
+          type="button"
+          class="save-button"
+          [disabled]="isSaving"
+          (click)="saveSettings()">
+
+          <span *ngIf="!isSaving">✓</span>
+          <span
+            *ngIf="isSaving"
+            class="button-spinner">
+          </span>
+
+          {{ isSaving ? 'Saving...' : 'Save Changes' }}
+
+        </button>
+
+      </div>
+
+    </header>
+
+
+    <!-- =====================================================
+         ALERTS
+         ===================================================== -->
+
+    <div
+      class="alert success-alert"
+      *ngIf="successMessage">
+
+      <span class="alert-icon">✓</span>
+
+      <span>{{ successMessage }}</span>
+
+      <button
+        type="button"
+        class="alert-close"
+        (click)="clearMessages()">
+        ×
+      </button>
+
+    </div>
+
+
+    <div
+      class="alert error-alert"
+      *ngIf="errorMessage">
+
+      <span class="alert-icon">!</span>
+
+      <span>{{ errorMessage }}</span>
+
+      <button
+        type="button"
+        class="alert-close"
+        (click)="clearMessages()">
+        ×
+      </button>
+
+    </div>
+
+
+    <!-- =====================================================
+         CONTENT
+         ===================================================== -->
+
+    <div class="settings-content">
+
+      <!-- ===================================================
+           SETTINGS NAVIGATION
+           =================================================== -->
+
+      <aside class="settings-navigation">
+
+        <div class="settings-nav-header">
+
+          <div class="settings-nav-icon">
+            ⚙
+          </div>
+
+          <div>
+            <strong>Preferences</strong>
+            <span>Administrator settings</span>
+          </div>
+
+        </div>
+
+
+        <button
+          type="button"
+          class="settings-nav-item"
+          [class.active]="activeSection === 'general'"
+          (click)="selectSection('general')">
+
+          <span class="nav-item-icon">◈</span>
+
+          <span class="nav-item-content">
+            <strong>General</strong>
+            <small>Application preferences</small>
+          </span>
+
+          <span class="nav-arrow">›</span>
+
+        </button>
+
+
+        <button
+          type="button"
+          class="settings-nav-item"
+          [class.active]="activeSection === 'profile'"
+          (click)="selectSection('profile')">
+
+          <span class="nav-item-icon">♙</span>
+
+          <span class="nav-item-content">
+            <strong>Profile</strong>
+            <small>Administrator information</small>
+          </span>
+
+          <span class="nav-arrow">›</span>
+
+        </button>
+
+
+        <button
+          type="button"
+          class="settings-nav-item"
+          [class.active]="activeSection === 'notifications'"
+          (click)="selectSection('notifications')">
+
+          <span class="nav-item-icon">◉</span>
+
+          <span class="nav-item-content">
+            <strong>Notifications</strong>
+            <small>Email preferences</small>
+          </span>
+
+          <span class="nav-arrow">›</span>
+
+        </button>
+
+
+        <button
+          type="button"
+          class="settings-nav-item"
+          [class.active]="activeSection === 'display'"
+          (click)="selectSection('display')">
+
+          <span class="nav-item-icon">▤</span>
+
+          <span class="nav-item-content">
+            <strong>Display</strong>
+            <small>Tables and statistics</small>
+          </span>
+
+          <span class="nav-arrow">›</span>
+
+        </button>
+
+
+        <button
+          type="button"
+          class="settings-nav-item"
+          [class.active]="activeSection === 'system'"
+          (click)="selectSection('system')">
+
+          <span class="nav-item-icon">⚙</span>
+
+          <span class="nav-item-content">
+            <strong>System</strong>
+            <small>Refresh and formatting</small>
+          </span>
+
+          <span class="nav-arrow">›</span>
+
+        </button>
+
+
+        <div class="settings-summary">
+
+          <span class="summary-label">
+            CURRENT STATUS
+          </span>
+
+          <strong>
+            {{ getSettingsStatus() }}
+          </strong>
+
+          <small>
+            Your preferences are stored locally.
+          </small>
+
+        </div>
+
+      </aside>
+
+
+      <!-- ===================================================
+           SETTINGS PANELS
+           =================================================== -->
+
+      <section class="settings-panels">
+
+
+        <!-- =================================================
+             GENERAL
+             ================================================= -->
+
+        <div
+          class="settings-panel"
+          *ngIf="activeSection === 'general'">
+
+          <div class="panel-header">
+
+            <div>
+
+              <p class="panel-eyebrow">
+                APPLICATION
+              </p>
+
+              <h2>General Preferences</h2>
+
+              <p>
+                Configure the basic behaviour of your
+                procurement administration interface.
+              </p>
+
+            </div>
+
+            <div class="panel-icon purple">
+              ◈
+            </div>
+
+          </div>
+
+
+          <div class="settings-grid">
+
+            <div class="setting-card">
+
+              <div class="setting-card-icon">
+                ₹
+              </div>
+
+              <div class="setting-card-content">
+
+                <label for="currency">
+                  Currency
+                </label>
+
+                <span>
+                  Currency used when displaying monetary values.
+                </span>
+
+                <select
+                  id="currency"
+                  [(ngModel)]="settings.currency"
+                  (change)="onCurrencyChange()">
+
+                  <option value="INR">
+                    Indian Rupee (₹)
+                  </option>
+
+                  <option value="USD">
+                    US Dollar ($)
+                  </option>
+
+                  <option value="EUR">
+                    Euro (€)
+                  </option>
+
+                  <option value="GBP">
+                    British Pound (£)
+                  </option>
+
+                </select>
+
+              </div>
+
+            </div>
+
+
+            <div class="setting-card">
+
+              <div class="setting-card-icon">
+                #
+              </div>
+
+              <div class="setting-card-content">
+
+                <label for="pageSize">
+                  Default Page Size
+                </label>
+
+                <span>
+                  Number of records displayed per page.
+                </span>
+
+                <select
+                  id="pageSize"
+                  [(ngModel)]="settings.defaultPageSize"
+                  (change)="onPageSizeChange()">
+
+                  <option [ngValue]="5">5 records</option>
+                  <option [ngValue]="10">10 records</option>
+                  <option [ngValue]="20">20 records</option>
+                  <option [ngValue]="25">25 records</option>
+                  <option [ngValue]="50">50 records</option>
+
+                </select>
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <div class="info-banner">
+
+            <span class="info-icon">i</span>
+
+            <div>
+              <strong>Settings are saved automatically</strong>
+
+              <p>
+                Changes made to preference controls are saved
+                in your browser. Use <strong>Save Changes</strong>
+                above to explicitly save all current settings.
+              </p>
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- =================================================
+             PROFILE
+             ================================================= -->
+
+        <div
+          class="settings-panel"
+          *ngIf="activeSection === 'profile'">
+
+          <div class="panel-header">
+
+            <div>
+
+              <p class="panel-eyebrow">
+                ADMINISTRATOR
+              </p>
+
+              <h2>Profile Information</h2>
+
+              <p>
+                View your administrator account information
+                and configure your contact email.
+              </p>
+
+            </div>
+
+            <div class="panel-icon blue">
+              ♙
+            </div>
+
+          </div>
+
+
+          <div class="profile-card">
+
+            <div class="profile-hero">
+
+              <div class="profile-avatar">
+                {{ adminInitial }}
+              </div>
+
+              <div class="profile-hero-info">
+
+                <h3>
+                  {{ adminName }}
+                </h3>
+
+                <span>
+                  {{ adminRole }}
+                </span>
+
+                <small>
+                  Enterprise Procurement Administrator
+                </small>
+
+              </div>
+
+            </div>
+
+
+            <div class="profile-divider"></div>
+
+
+            <div class="profile-fields">
+
+              <div class="profile-field">
+
+                <label>
+                  Username
+                </label>
+
+                <div class="readonly-field">
+                  <span>♙</span>
+                  {{ adminName }}
+                  <small>Read only</small>
+                </div>
+
+              </div>
+
+
+              <div class="profile-field">
+
+                <label>
+                  Role
+                </label>
+
+                <div class="readonly-field">
+                  <span>◆</span>
+                  {{ adminRole }}
+                  <small>Read only</small>
+                </div>
+
+              </div>
+
+
+              <div class="profile-field full-width">
+
+                <label for="adminEmail">
+                  Contact Email
+                </label>
+
+                <input
+                  id="adminEmail"
+                  type="email"
+                  [(ngModel)]="adminEmail"
+                  placeholder="administrator@example.com"
+                  autocomplete="email">
+
+                <small class="field-hint">
+                  Used for administrator contact information.
+                </small>
+
+              </div>
+
+            </div>
+
+
+            <div class="profile-actions">
+
+              <button
+                type="button"
+                class="save-profile-button"
+                (click)="saveProfile()">
+
+                <span>✓</span>
+                Save Profile
+
+              </button>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- =================================================
+             NOTIFICATIONS
+             ================================================= -->
+
+        <div
+          class="settings-panel"
+          *ngIf="activeSection === 'notifications'">
+
+          <div class="panel-header">
+
+            <div>
+
+              <p class="panel-eyebrow">
+                COMMUNICATION
+              </p>
+
+              <h2>Notification Preferences</h2>
+
+              <p>
+                Choose which procurement events should trigger
+                administrator notifications.
+              </p>
+
+            </div>
+
+            <div class="panel-icon orange">
+              ◉
+            </div>
+
+          </div>
+
+
+          <div class="notification-list">
+
+
+            <div class="notification-row">
+
+              <div class="notification-icon purple">
+                ✉
+              </div>
+
+              <div class="notification-content">
+
+                <strong>
+                  Email Notifications
+                </strong>
+
+                <span>
+                  Receive general system notifications and
+                  important administrative updates.
+                </span>
+
+              </div>
+
+              <button
+                type="button"
+                class="toggle"
+                [class.enabled]="settings.emailNotifications"
+                [attr.aria-pressed]="settings.emailNotifications"
+                (click)="toggleEmailNotifications()">
+
+                <span></span>
+
+              </button>
+
+            </div>
+
+
+            <div class="notification-row">
+
+              <div class="notification-icon blue">
+                ✓
+              </div>
+
+              <div class="notification-content">
+
+                <strong>
+                  Approval Notifications
+                </strong>
+
+                <span>
+                  Receive notifications when purchase requests
+                  move through the approval hierarchy.
+                </span>
+
+              </div>
+
+              <button
+                type="button"
+                class="toggle"
+                [class.enabled]="settings.approvalNotifications"
+                [attr.aria-pressed]="settings.approvalNotifications"
+                (click)="toggleApprovalNotifications()">
+
+                <span></span>
+
+              </button>
+
+            </div>
+
+
+            <div class="notification-row">
+
+              <div class="notification-icon green">
+                ₹
+              </div>
+
+              <div class="notification-content">
+
+                <strong>
+                  Payment Notifications
+                </strong>
+
+                <span>
+                  Receive notifications about successful,
+                  pending or failed payments.
+                </span>
+
+              </div>
+
+              <button
+                type="button"
+                class="toggle"
+                [class.enabled]="settings.paymentNotifications"
+                [attr.aria-pressed]="settings.paymentNotifications"
+                (click)="togglePaymentNotifications()">
+
+                <span></span>
+
+              </button>
+
+            </div>
+
+
+            <div class="notification-row">
+
+              <div class="notification-icon orange">
+                ◇
+              </div>
+
+              <div class="notification-content">
+
+                <strong>
+                  Procurement Notifications
+                </strong>
+
+                <span>
+                  Receive updates related to procurement activity,
+                  supplier events and purchase processing.
+                </span>
+
+              </div>
+
+              <button
+                type="button"
+                class="toggle"
+                [class.enabled]="settings.procurementNotifications"
+                [attr.aria-pressed]="settings.procurementNotifications"
+                (click)="toggleProcurementNotifications()">
+
+                <span></span>
+
+              </button>
+
+            </div>
+
+          </div>
+
+
+          <div class="status-preview">
+
+            <div class="status-preview-icon">
+              ✓
+            </div>
+
+            <div>
+
+              <strong>
+                Notification status
+              </strong>
+
+              <span>
+                {{ getSettingsStatus() }}
+              </span>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- =================================================
+             DISPLAY
+             ================================================= -->
+
+        <div
+          class="settings-panel"
+          *ngIf="activeSection === 'display'">
+
+          <div class="panel-header">
+
+            <div>
+
+              <p class="panel-eyebrow">
+                USER INTERFACE
+              </p>
+
+              <h2>Display Preferences</h2>
+
+              <p>
+                Adjust how information is presented throughout
+                the administration interface.
+              </p>
+
+            </div>
+
+            <div class="panel-icon green">
+              ▤
+            </div>
+
+          </div>
+
+
+          <div class="display-options">
+
+
+            <div class="display-option">
+
+              <div class="display-option-left">
+
+                <div class="display-icon">
+                  ≡
+                </div>
+
+                <div>
+
+                  <strong>
+                    Compact Tables
+                  </strong>
+
+                  <span>
+                    Reduce row spacing to display more records
+                    on the screen at once.
+                  </span>
+
+                </div>
+
+              </div>
+
+              <button
+                type="button"
+                class="toggle"
+                [class.enabled]="settings.compactTables"
+                [attr.aria-pressed]="settings.compactTables"
+                (click)="toggleCompactTables()">
+
+                <span></span>
+
+              </button>
+
+            </div>
+
+
+            <div class="display-option">
+
+              <div class="display-option-left">
+
+                <div class="display-icon statistics-icon">
+                  ▥
+                </div>
+
+                <div>
+
+                  <strong>
+                    Show Statistics
+                  </strong>
+
+                  <span>
+                    Display summary statistics and analytical
+                    cards where available.
+                  </span>
+
+                </div>
+
+              </div>
+
+              <button
+                type="button"
+                class="toggle"
+                [class.enabled]="settings.showStatistics"
+                [attr.aria-pressed]="settings.showStatistics"
+                (click)="toggleStatistics()">
+
+                <span></span>
+
+              </button>
+
+            </div>
+
+
+          </div>
+
+
+          <div class="display-preview">
+
+            <div class="preview-header">
+
+              <div>
+                <span>PREVIEW</span>
+                <strong>Current table appearance</strong>
+              </div>
+
+              <span class="preview-mode">
+                {{ getDisplayModeLabel() }}
+              </span>
+
+            </div>
+
+
+            <div
+              class="preview-table"
+              [class.compact-preview]="settings.compactTables">
+
+              <div class="preview-row preview-heading">
+                <span>REQUEST</span>
+                <span>STATUS</span>
+                <span>AMOUNT</span>
+              </div>
+
+              <div class="preview-row">
+                <span>
+                  PR-00126
+                </span>
+
+                <span class="preview-status approved">
+                  Approved
+                </span>
+
+                <strong>
+                  ₹45,000
+                </strong>
+              </div>
+
+              <div class="preview-row">
+                <span>
+                  PR-00127
+                </span>
+
+                <span class="preview-status pending">
+                  Pending
+                </span>
+
+                <strong>
+                  ₹28,500
+                </strong>
+              </div>
+
+              <div class="preview-row">
+                <span>
+                  PR-00128
+                </span>
+
+                <span class="preview-status rejected">
+                  Rejected
+                </span>
+
+                <strong>
+                  ₹12,750
+                </strong>
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- =================================================
+             SYSTEM
+             ================================================= -->
+
+        <div
+          class="settings-panel"
+          *ngIf="activeSection === 'system'">
+
+          <div class="panel-header">
+
+            <div>
+
+              <p class="panel-eyebrow">
+                SYSTEM BEHAVIOUR
+              </p>
+
+              <h2>System Preferences</h2>
+
+              <p>
+                Configure refresh behaviour, date formatting
+                and other application-wide preferences.
+              </p>
+
+            </div>
+
+            <div class="panel-icon purple">
+              ⚙
+            </div>
+
+          </div>
+
+
+          <div class="system-settings">
+
+
+            <div class="system-setting-row">
+
+              <div class="system-setting-icon">
+                ↻
+              </div>
+
+              <div class="system-setting-content">
+
+                <strong>
+                  Automatic Refresh
+                </strong>
+
+                <span>
+                  Automatically refresh dashboard and report
+                  information at the selected interval.
+                </span>
+
+              </div>
+
+              <button
+                type="button"
+                class="toggle"
+                [class.enabled]="settings.autoRefresh"
+                [attr.aria-pressed]="settings.autoRefresh"
+                (click)="toggleAutoRefresh()">
+
+                <span></span>
+
+              </button>
+
+            </div>
+
+
+            <div
+              class="system-control"
+              [class.disabled-control]="!settings.autoRefresh">
+
+              <div>
+
+                <label for="refreshInterval">
+                  Refresh Interval
+                </label>
+
+                <span>
+                  Choose how frequently data should refresh.
+                </span>
+
+              </div>
+
+              <div class="control-input">
+
+                <input
+                  id="refreshInterval"
+                  type="number"
+                  min="1"
+                  max="60"
+                  [(ngModel)]="settings.autoRefreshInterval"
+                  [disabled]="!settings.autoRefresh"
+                  (change)="onRefreshIntervalChange()">
+
+                <span>minutes</span>
+
+              </div>
+
+            </div>
+
+
+            <div class="system-setting-row">
+
+              <div class="system-setting-icon">
+                ◷
+              </div>
+
+              <div class="system-setting-content">
+
+                <strong>
+                  Date Format
+                </strong>
+
+                <span>
+                  Select the format used for dates throughout
+                  the administration interface.
+                </span>
+
+              </div>
+
+              <select
+                class="system-select"
+                [(ngModel)]="settings.dateFormat"
+                (change)="onDateFormatChange()">
+
+                <option value="DD/MM/YYYY">
+                  DD/MM/YYYY
+                </option>
+
+                <option value="MM/DD/YYYY">
+                  MM/DD/YYYY
+                </option>
+
+                <option value="YYYY-MM-DD">
+                  YYYY-MM-DD
+                </option>
+
+              </select>
+
+            </div>
+
+
+          </div>
+
+
+          <div class="system-summary">
+
+            <div class="summary-item">
+
+              <span>Auto Refresh</span>
+
+              <strong>
+                {{ getAutoRefreshLabel() }}
+              </strong>
+
+            </div>
+
+            <div class="summary-item">
+
+              <span>Page Size</span>
+
+              <strong>
+                {{ settings.defaultPageSize }} records
+              </strong>
+
+            </div>
+
+            <div class="summary-item">
+
+              <span>Currency</span>
+
+              <strong>
+                {{ settings.currency }}
+              </strong>
+
+            </div>
+
+            <div class="summary-item">
+
+              <span>Date Format</span>
+
+              <strong>
+                {{ settings.dateFormat }}
+              </strong>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+      </section>
+
+    </div>
+
+  </main>
+
+
+  <!-- =======================================================
+       RESET CONFIRMATION MODAL
+       ======================================================= -->
+
+  <div
+    class="modal-overlay"
+    *ngIf="showResetConfirmation"
+    (click)="closeResetConfirmation()">
+
+    <div
+      class="confirmation-modal"
+      (click)="$event.stopPropagation()">
+
+      <div class="confirmation-icon">
+        ↺
+      </div>
+
+      <h2>
+        Reset Settings?
+      </h2>
+
+      <p>
+        This will restore all administrator preferences
+        to their default values. Your current settings
+        will be replaced.
+      </p>
+
+      <div class="confirmation-actions">
+
+        <button
+          type="button"
+          class="cancel-button"
+          (click)="closeResetConfirmation()">
+          Cancel
+        </button>
+
+        <button
+          type="button"
+          class="confirm-reset-button"
+          (click)="resetSettings()">
+          Reset Settings
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

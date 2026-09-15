@@ -1,0 +1,696 @@
+<div class="register-page">
+
+  <div class="register-container">
+
+
+    <!-- =================================================
+         LEFT SIDE
+         ================================================= -->
+
+    <div class="register-info">
+
+      <div class="brand">
+
+        <div class="brand-icon">
+          EP
+        </div>
+
+        <div>
+
+          <h2>
+            Enterprise
+          </h2>
+
+          <span>
+            Procurement System
+          </span>
+
+        </div>
+
+      </div>
+
+
+      <div class="info-content">
+
+        <p class="small-title">
+          WELCOME TO EPS
+        </p>
+
+        <h1>
+          Manage your procurement
+          <span>smarter.</span>
+        </h1>
+
+        <p>
+          Create your account to access purchase requests,
+          approvals, payments, tracking and more.
+        </p>
+
+
+        <div class="features">
+
+          <div class="feature">
+
+            <span>
+              ✓
+            </span>
+
+            <p>
+              Secure procurement management
+            </p>
+
+          </div>
+
+
+          <div class="feature">
+
+            <span>
+              ✓
+            </span>
+
+            <p>
+              Track purchase requests
+            </p>
+
+          </div>
+
+
+          <div class="feature">
+
+            <span>
+              ✓
+            </span>
+
+            <p>
+              Manage approvals and payments
+            </p>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- =================================================
+         RIGHT SIDE
+         ================================================= -->
+
+    <div class="register-card">
+
+
+      <!-- =================================================
+           ACCOUNT TYPE
+           ================================================= -->
+
+      <div class="account-type">
+
+        <p class="account-type-label">
+          CREATE ACCOUNT AS
+        </p>
+
+
+        <div class="type-switch">
+
+
+          <!-- EMPLOYEE -->
+
+          <button
+            type="button"
+            class="type-button"
+            [class.active]="userType === 'EMPLOYEE'"
+            (click)="changeAccountType('EMPLOYEE')">
+
+            <span class="type-icon">
+              👤
+            </span>
+
+            <span>
+              Employee
+            </span>
+
+          </button>
+
+
+          <!-- BUSINESS -->
+
+          <button
+            type="button"
+            class="type-button"
+            [class.active]="userType === 'BUSINESS'"
+            (click)="changeAccountType('BUSINESS')">
+
+            <span class="type-icon">
+              🏢
+            </span>
+
+            <span>
+              Business
+            </span>
+
+          </button>
+
+        </div>
+
+      </div>
+
+
+      <!-- =================================================
+           HEADER
+           ================================================= -->
+
+      <div class="form-header">
+
+        <p>
+          GET STARTED
+        </p>
+
+        <h2>
+          Create your {{ accountTypeLabel.toLowerCase() }} account
+        </h2>
+
+        <span>
+
+          <ng-container
+            *ngIf="userType === 'EMPLOYEE'">
+
+            Register to manage your procurement requests.
+
+          </ng-container>
+
+          <ng-container
+            *ngIf="userType === 'BUSINESS'">
+
+            Register your business to work with
+            the Enterprise Procurement System.
+
+          </ng-container>
+
+        </span>
+
+      </div>
+
+
+      <!-- =================================================
+           SUCCESS
+           ================================================= -->
+
+      <div
+        class="success-message"
+        *ngIf="successMessage">
+
+        <span>
+          ✓
+        </span>
+
+        {{ successMessage }}
+
+      </div>
+
+
+      <!-- =================================================
+           ERROR
+           ================================================= -->
+
+      <div
+        class="error-message"
+        *ngIf="errorMessage">
+
+        {{ errorMessage }}
+
+      </div>
+
+
+      <!-- =================================================
+           FORM
+           ================================================= -->
+
+      <form
+        [formGroup]="registerForm"
+        (ngSubmit)="onSubmit()">
+
+
+        <!-- =================================================
+             ACCOUNT INFORMATION
+             ================================================= -->
+
+        <div class="form-section">
+
+          <div class="form-section-heading">
+
+            <span class="section-number">
+              01
+            </span>
+
+            <div>
+
+              <h3>
+                Account Information
+              </h3>
+
+              <p>
+                Create your login credentials.
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <!-- USERNAME -->
+
+          <div class="form-group">
+
+            <label for="registerUsername">
+              Username
+            </label>
+
+            <input
+              id="registerUsername"
+              type="text"
+              formControlName="username"
+              placeholder="Enter your username"
+              autocomplete="username"
+            />
+
+            <small
+              *ngIf="
+                submitted &&
+                f['username'].errors
+              ">
+
+              {{ getFieldError('username') }}
+
+            </small>
+
+          </div>
+
+
+          <!-- EMAIL -->
+
+          <div class="form-group">
+
+            <label for="registerEmail">
+              Email Address
+            </label>
+
+            <input
+              id="registerEmail"
+              type="email"
+              formControlName="email"
+              placeholder="Enter your email"
+              autocomplete="email"
+            />
+
+            <small
+              *ngIf="
+                submitted &&
+                f['email'].errors
+              ">
+
+              {{ getFieldError('email') }}
+
+            </small>
+
+          </div>
+
+
+          <!-- PASSWORD -->
+
+          <div class="form-group">
+
+            <label for="registerPassword">
+              Password
+            </label>
+
+            <div class="password-wrapper">
+
+              <input
+                id="registerPassword"
+                [type]="
+                  showPassword
+                    ? 'text'
+                    : 'password'
+                "
+                formControlName="password"
+                placeholder="Create a password"
+                autocomplete="new-password"
+              />
+
+              <button
+                type="button"
+                class="password-toggle"
+                (click)="togglePassword()">
+
+                {{
+                showPassword
+                ? 'Hide'
+                : 'Show'
+                }}
+
+              </button>
+
+            </div>
+
+
+            <small
+              *ngIf="
+                submitted &&
+                f['password'].errors
+              ">
+
+              {{ getFieldError('password') }}
+
+            </small>
+
+          </div>
+
+        </div>
+
+
+        <!-- =================================================
+             EMPLOYEE INFORMATION
+             ================================================= -->
+
+        <div
+          class="form-section"
+          *ngIf="userType === 'EMPLOYEE'">
+
+          <div class="form-section-heading">
+
+            <span class="section-number">
+              02
+            </span>
+
+            <div>
+
+              <h3>
+                Work Information
+              </h3>
+
+              <p>
+                Tell us about your role in the organization.
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <!-- EMPLOYEE PHONE -->
+
+          <div class="form-group">
+
+            <label for="employeePhoneNumber">
+              Phone Number
+            </label>
+
+            <input
+              id="employeePhoneNumber"
+              type="tel"
+              formControlName="phoneNumber"
+              placeholder="10-digit phone number"
+              autocomplete="tel"
+            />
+
+            <small
+              *ngIf="
+                submitted &&
+                f['phoneNumber'].errors
+              ">
+
+              Phone number is required.
+
+            </small>
+
+          </div>
+
+
+          <!-- EMPLOYEE DESIGNATION -->
+
+          <div class="form-group">
+
+            <label for="employeeDesignation">
+              Designation
+            </label>
+
+            <input
+              id="employeeDesignation"
+              type="text"
+              formControlName="designation"
+              placeholder="e.g. Software Engineer"
+            />
+
+            <small
+              *ngIf="
+                submitted &&
+                f['designation'].errors
+              ">
+
+              Designation is required.
+
+            </small>
+
+          </div>
+
+
+          <!-- EMPLOYEE DEPARTMENT -->
+
+          <div class="form-group">
+
+            <label for="employeeDepartment">
+              Department
+            </label>
+
+            <select
+              id="employeeDepartment"
+              formControlName="departmentId">
+
+              <option
+                [ngValue]="null"
+                disabled>
+
+                {{
+                departmentsLoading
+                ? 'Loading departments...'
+                : 'Select your department'
+                }}
+
+              </option>
+
+
+              <option
+                *ngFor="let department of departments"
+                [ngValue]="department.departmentId">
+
+                {{ department.departmentName }}
+
+              </option>
+
+            </select>
+
+
+            <small
+              class="department-loading"
+              *ngIf="departmentsLoading">
+
+              Loading available departments...
+
+            </small>
+
+
+            <small
+              class="department-error"
+              *ngIf="departmentError">
+
+              {{ departmentError }}
+
+            </small>
+
+
+            <small
+              *ngIf="
+                submitted &&
+                f['departmentId'].errors
+              ">
+
+              Please select a department.
+
+            </small>
+
+          </div>
+
+        </div>
+
+
+        <!-- =================================================
+             BUSINESS INFORMATION
+             ================================================= -->
+
+        <div
+          class="form-section"
+          *ngIf="userType === 'BUSINESS'">
+
+          <div class="form-section-heading">
+
+            <span class="section-number">
+              02
+            </span>
+
+            <div>
+
+              <h3>
+                Business Information
+              </h3>
+
+              <p>
+                Tell us about your business contact.
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <!-- BUSINESS PHONE -->
+
+          <div class="form-group">
+
+            <label for="businessPhoneNumber">
+              Business Contact Number
+            </label>
+
+            <input
+              id="businessPhoneNumber"
+              type="tel"
+              formControlName="phoneNumber"
+              placeholder="Business contact number"
+              autocomplete="tel"
+            />
+
+            <small
+              *ngIf="
+                submitted &&
+                f['phoneNumber'].errors
+              ">
+
+              Contact number is required.
+
+            </small>
+
+          </div>
+
+
+          <!-- BUSINESS CONTACT PERSON -->
+
+          <div class="form-group">
+
+            <label for="businessDesignation">
+              Contact Person / Designation
+            </label>
+
+            <input
+              id="businessDesignation"
+              type="text"
+              formControlName="designation"
+              placeholder="e.g. Business Owner"
+            />
+
+            <small
+              *ngIf="
+                submitted &&
+                f['designation'].errors
+              ">
+
+              Contact person or designation is required.
+
+            </small>
+
+          </div>
+
+
+          <!-- BUSINESS INFORMATION BOX -->
+
+          <div class="business-info-box">
+
+            <span class="business-info-icon">
+              🏢
+            </span>
+
+            <div>
+
+              <strong>
+                Business Account
+              </strong>
+
+              <p>
+                Your account will be registered as a
+                business supplier. You will be able to
+                access the supplier dashboard after
+                registration.
+              </p>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- =================================================
+             SUBMIT
+             ================================================= -->
+
+        <button
+          type="submit"
+          class="register-button"
+          [disabled]="isLoading">
+
+          <span>
+
+            {{
+              isLoading
+                ? 'Creating Account...'
+                : 'Create Account'
+            }}
+
+          </span>
+
+          <span
+            *ngIf="!isLoading">
+
+            →
+
+          </span>
+
+        </button>
+
+      </form>
+
+
+      <!-- =================================================
+           LOGIN
+           ================================================= -->
+
+      <div class="login-link">
+
+        Already have an account?
+
+        <a
+          [routerLink]="['/login']"
+          [queryParams]="{ type: userType }">
+
+          Login
+
+        </a>
+
+      </div>
+
+
+    </div>
+
+  </div>
+
+</div>

@@ -1,0 +1,1347 @@
+<div class="employee-dashboard">
+
+  <!-- =====================================================
+       TOP HEADER
+       ===================================================== -->
+
+  <header class="dashboard-header">
+
+    <div class="header-left">
+
+      <div class="brand-mark">
+        <span>EP</span>
+      </div>
+
+      <div class="brand-copy">
+        <h1>Enterprise</h1>
+        <span>Procurement</span>
+      </div>
+
+    </div>
+
+
+    <div class="header-right">
+
+      <button
+        type="button"
+        class="refresh-button"
+        (click)="refreshDashboard()"
+        title="Refresh dashboard">
+
+        <span class="refresh-icon">↻</span>
+        <span>Refresh</span>
+
+      </button>
+
+
+      <!-- PROFILE -->
+
+      <div class="profile-wrapper">
+
+        <button
+          type="button"
+          class="profile-button"
+          (click)="toggleProfileMenu()">
+
+          <div class="profile-avatar">
+            {{ userInitial }}
+          </div>
+
+          <div class="profile-summary">
+            <strong>{{ username }}</strong>
+            <span>{{ displayRole }}</span>
+          </div>
+
+          <span
+            class="profile-arrow"
+            [class.open]="profileMenuOpen">
+            ▾
+          </span>
+
+        </button>
+
+
+        <!-- PROFILE DROPDOWN -->
+
+        <div
+          class="profile-menu"
+          *ngIf="profileMenuOpen">
+
+          <div class="profile-menu-header">
+
+            <div class="menu-avatar">
+              {{ userInitial }}
+            </div>
+
+            <div>
+              <strong>{{ username }}</strong>
+              <span>{{ displayRole }}</span>
+            </div>
+
+          </div>
+
+
+          <div class="profile-menu-divider"></div>
+
+
+          <button
+            type="button"
+            class="profile-menu-item"
+            (click)="openProfile()">
+
+            <span class="menu-item-icon">◉</span>
+            <span>My Profile</span>
+
+          </button>
+
+
+          <button
+            type="button"
+            class="profile-menu-item"
+            (click)="viewPurchaseRequests()">
+
+            <span class="menu-item-icon">☷</span>
+            <span>My Requests</span>
+
+          </button>
+
+
+          <div class="profile-menu-divider"></div>
+
+
+          <button
+            type="button"
+            class="profile-menu-item logout-item"
+            (click)="logout()">
+
+            <span class="menu-item-icon">↪</span>
+            <span>Logout</span>
+
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </header>
+
+
+
+  <!-- =====================================================
+       MAIN CONTENT
+       ===================================================== -->
+
+  <main class="dashboard-content">
+
+
+    <!-- PAGE INTRO -->
+
+    <section class="welcome-section">
+
+      <div class="welcome-copy">
+
+        <span class="eyebrow">
+          EMPLOYEE PORTAL
+        </span>
+
+        <h2>
+          Welcome back, {{ username }}
+        </h2>
+
+        <p>
+          Manage your procurement requests, track approvals,
+          and monitor your spending from one place.
+        </p>
+
+      </div>
+
+
+      <button
+        type="button"
+        class="primary-action"
+        (click)="createPurchaseRequest()">
+
+        <span class="action-icon">＋</span>
+
+        <span>
+          New Purchase Request
+        </span>
+
+      </button>
+
+    </section>
+
+
+
+    <!-- ===================================================
+         STATISTICS
+         =================================================== -->
+
+    <section class="stats-grid">
+
+
+      <!-- TOTAL -->
+
+      <article class="stat-card">
+
+        <div class="stat-icon total-icon">
+          ☷
+        </div>
+
+        <div class="stat-content">
+
+          <span class="stat-label">
+            TOTAL REQUESTS
+          </span>
+
+          <strong class="stat-value">
+            {{ totalRequests }}
+          </strong>
+
+          <span class="stat-description">
+            All submitted requests
+          </span>
+
+        </div>
+
+      </article>
+
+
+
+      <!-- PENDING -->
+
+      <article class="stat-card">
+
+        <div class="stat-icon pending-icon">
+          ◷
+        </div>
+
+        <div class="stat-content">
+
+          <span class="stat-label">
+            PENDING
+          </span>
+
+          <strong class="stat-value">
+            {{ pendingRequests }}
+          </strong>
+
+          <span class="stat-description">
+            Awaiting approval
+          </span>
+
+        </div>
+
+      </article>
+
+
+
+      <!-- APPROVED -->
+
+      <article class="stat-card">
+
+        <div class="stat-icon approved-icon">
+          ✓
+        </div>
+
+        <div class="stat-content">
+
+          <span class="stat-label">
+            APPROVED
+          </span>
+
+          <strong class="stat-value">
+            {{ approvedRequests }}
+          </strong>
+
+          <span class="stat-description">
+            Successfully approved
+          </span>
+
+        </div>
+
+      </article>
+
+
+
+      <!-- REJECTED -->
+
+      <article class="stat-card">
+
+        <div class="stat-icon rejected-icon">
+          ×
+        </div>
+
+        <div class="stat-content">
+
+          <span class="stat-label">
+            REJECTED
+          </span>
+
+          <strong class="stat-value">
+            {{ rejectedRequests }}
+          </strong>
+
+          <span class="stat-description">
+            Requests rejected
+          </span>
+
+        </div>
+
+      </article>
+
+    </section>
+
+
+
+    <!-- ===================================================
+         FINANCIAL OVERVIEW
+         =================================================== -->
+
+    <section class="financial-grid">
+
+
+      <!-- TOTAL SPEND -->
+
+      <article class="financial-card">
+
+        <div class="financial-header">
+
+          <div>
+            <span class="financial-label">
+              TOTAL REQUEST VALUE
+            </span>
+
+            <h3>
+              ₹{{ totalSpend | number:'1.2-2' }}
+            </h3>
+          </div>
+
+          <div class="financial-icon">
+            ₹
+          </div>
+
+        </div>
+
+        <p>
+          Total value of all your purchase requests.
+        </p>
+
+      </article>
+
+
+
+      <!-- APPROVED VALUE -->
+
+      <article class="financial-card">
+
+        <div class="financial-header">
+
+          <div>
+            <span class="financial-label">
+              APPROVED VALUE
+            </span>
+
+            <h3>
+              ₹{{ approvedSpend | number:'1.2-2' }}
+            </h3>
+          </div>
+
+          <div class="financial-icon approved-financial">
+            ✓
+          </div>
+
+        </div>
+
+        <p>
+          Value of requests that have been approved.
+        </p>
+
+      </article>
+
+
+
+      <!-- PENDING VALUE -->
+
+      <article class="financial-card">
+
+        <div class="financial-header">
+
+          <div>
+            <span class="financial-label">
+              PENDING VALUE
+            </span>
+
+            <h3>
+              ₹{{ pendingSpend | number:'1.2-2' }}
+            </h3>
+          </div>
+
+          <div class="financial-icon pending-financial">
+            ◷
+          </div>
+
+        </div>
+
+        <p>
+          Value currently waiting for approval.
+        </p>
+
+      </article>
+
+    </section>
+
+
+
+    <!-- ===================================================
+         QUICK ACTIONS + REQUEST SUMMARY
+         =================================================== -->
+
+    <section class="dashboard-columns">
+
+
+      <!-- QUICK ACTIONS -->
+
+      <article class="panel quick-actions-panel">
+
+        <div class="panel-header">
+
+          <div>
+            <span class="panel-eyebrow">
+              SHORTCUTS
+            </span>
+
+            <h3>
+              Quick Actions
+            </h3>
+          </div>
+
+        </div>
+
+
+        <div class="quick-actions">
+
+
+          <button
+            type="button"
+            class="quick-action"
+            (click)="createPurchaseRequest()">
+
+            <div class="quick-action-icon request-icon">
+              ＋
+            </div>
+
+            <div class="quick-action-copy">
+
+              <strong>
+                Create Request
+              </strong>
+
+              <span>
+                Submit a new procurement request
+              </span>
+
+            </div>
+
+            <span class="quick-arrow">
+              →
+            </span>
+
+          </button>
+
+
+
+          <button
+            type="button"
+            class="quick-action"
+            (click)="viewPurchaseRequests()">
+
+            <div class="quick-action-icon requests-icon">
+              ☷
+            </div>
+
+            <div class="quick-action-copy">
+
+              <strong>
+                My Requests
+              </strong>
+
+              <span>
+                View and manage your requests
+              </span>
+
+            </div>
+
+            <span class="quick-arrow">
+              →
+            </span>
+
+          </button>
+
+
+
+          <button
+            type="button"
+            class="quick-action"
+            (click)="viewTracking()">
+
+            <div class="quick-action-icon tracking-icon">
+              ◌
+            </div>
+
+            <div class="quick-action-copy">
+
+              <strong>
+                Track Orders
+              </strong>
+
+              <span>
+                Follow your procurement progress
+              </span>
+
+            </div>
+
+            <span class="quick-arrow">
+              →
+            </span>
+
+          </button>
+
+
+
+          <button
+            type="button"
+            class="quick-action"
+            (click)="viewPayments()">
+
+            <div class="quick-action-icon payment-icon">
+              ₹
+            </div>
+
+            <div class="quick-action-copy">
+
+              <strong>
+                Payments
+              </strong>
+
+              <span>
+                View payment information
+              </span>
+
+            </div>
+
+            <span class="quick-arrow">
+              →
+            </span>
+
+          </button>
+
+        </div>
+
+      </article>
+
+
+
+      <!-- RECENT REQUESTS -->
+
+      <article class="panel recent-panel">
+
+        <div class="panel-header">
+
+          <div>
+
+            <span class="panel-eyebrow">
+              PROCUREMENT ACTIVITY
+            </span>
+
+            <h3>
+              Recent Requests
+            </h3>
+
+          </div>
+
+
+          <div class="recent-actions">
+
+            <button
+              type="button"
+              class="download-button"
+              (click)="toggleDownloadMenu()">
+
+              <span class="download-icon">↓</span>
+              <span>Download</span>
+
+            </button>
+
+            <button
+              type="button"
+              class="view-all-button"
+              (click)="viewPurchaseRequests()">
+
+              View all
+              <span>→</span>
+
+            </button>
+
+          </div>
+
+        </div>
+
+
+        <!-- LOADING -->
+
+        <div
+          class="requests-loading"
+          *ngIf="isLoading">
+
+          <div class="loading-spinner"></div>
+
+          <span>
+            Loading your requests...
+          </span>
+
+        </div>
+
+
+        <!-- ERROR -->
+
+        <div
+          class="requests-error"
+          *ngIf="!isLoading && errorMessage">
+
+          <div class="error-icon">
+            !
+          </div>
+
+          <div>
+
+            <strong>
+              Unable to load requests
+            </strong>
+
+            <span>
+              {{ errorMessage }}
+            </span>
+
+          </div>
+
+        </div>
+
+
+        <!-- EMPTY -->
+
+        <div
+          class="empty-requests"
+          *ngIf="
+            !isLoading &&
+            !errorMessage &&
+            recentRequests.length === 0
+          ">
+
+          <div class="empty-icon">
+            ☷
+          </div>
+
+          <strong>
+            No purchase requests yet
+          </strong>
+
+          <span>
+            Create your first procurement request
+            to get started.
+          </span>
+
+          <button
+            type="button"
+            class="empty-action"
+            (click)="createPurchaseRequest()">
+
+            Create Request
+          </button>
+
+        </div>
+
+
+        <!-- REQUEST LIST -->
+
+        <div
+          class="request-list"
+          *ngIf="
+            !isLoading &&
+            !errorMessage &&
+            recentRequests.length > 0
+          ">
+
+          <button
+            type="button"
+            class="request-row"
+            *ngFor="let request of recentRequests"
+            (click)="viewRequest(request)">
+
+            <div class="request-number">
+
+              <span>
+                PR
+              </span>
+
+              <strong>
+                #{{ request.purchaseRequestId }}
+              </strong>
+
+            </div>
+
+
+            <div class="request-details">
+
+              <strong>
+                Purchase Request #{{ request.purchaseRequestId }}
+              </strong>
+
+              <span>
+                {{ request.items?.length || 0 }}
+                product{{ (request.items?.length || 0) === 1 ? '' : 's' }}
+              </span>
+
+            </div>
+
+
+            <div class="request-amount">
+
+              <span>
+                VALUE
+              </span>
+
+              <strong>
+                ₹{{ getRequestAmount(request) | number:'1.2-2' }}
+              </strong>
+
+            </div>
+
+
+            <span
+              class="request-status"
+              [ngClass]="getStatusClass(request.status)">
+
+              {{ getStatusLabel(request.status) }}
+
+            </span>
+
+
+            <span class="request-arrow">
+              →
+            </span>
+
+          </button>
+
+        </div>
+
+      </article>
+
+    </section>
+
+
+
+    <!-- ===================================================
+     DELIVERY TRACKING
+     =================================================== -->
+
+    <section id="employee-delivery-tracking" class="panel employee-delivery-tracking-panel">
+      <div class="panel-header">
+        <div>
+          <span class="panel-eyebrow">ORDER TRACKING</span>
+          <h3>Delivery Tracking</h3>
+          <p class="tracking-subtitle">Follow the delivery progress of your approved purchase requests.</p>
+        </div>
+      </div>
+
+      <div class="employee-tracking-empty" *ngIf="!isLoading && approvedTrackingRequests.length === 0">
+        <div class="tracking-empty-icon">◌</div>
+        <strong>No approved orders to track</strong>
+        <span>Delivery tracking will appear here after the Administrator approves a purchase request.</span>
+      </div>
+
+      <div class="employee-tracking-list" *ngIf="!isLoading && approvedTrackingRequests.length > 0">
+        <article class="employee-tracking-card" *ngFor="let request of purchaseRequests" [hidden]="normalizeStatus(request.status) !== 'APPROVED'">
+          <div class="employee-tracking-card-header">
+            <div><span class="tracking-order-label">PURCHASE ORDER</span><h4>#{{ request.purchaseRequestId }}</h4></div>
+            <span class="employee-delivery-badge" [class.delivered]="getDeliveryStatus(request) === 'DELIVERED'" [class.shipped]="getDeliveryStatus(request) === 'SHIPPED'" [class.packed]="getDeliveryStatus(request) === 'PACKED'">{{ getDeliveryStatusLabel(getDeliveryStatus(request)) }}</span>
+          </div>
+
+          <div class="employee-tracking-items">
+            <div class="tracking-item" *ngFor="let item of request.items">
+              <span class="tracking-item-name">{{ item.productName || 'Product' }}</span>
+              <span>Qty: {{ item.quantity || 0 }}</span>
+            </div>
+          </div>
+
+          <div class="employee-delivery-progress">
+            <div class="employee-delivery-step" *ngFor="let step of deliverySteps; let i = index" [class.completed]="isDeliveryStepCompleted(getDeliveryStatus(request), step.status)" [class.current]="isDeliveryStepCurrent(getDeliveryStatus(request), step.status)">
+              <div class="employee-delivery-line" *ngIf="i > 0"></div>
+              <div class="employee-delivery-marker">
+                <span *ngIf="isDeliveryStepCompleted(getDeliveryStatus(request), step.status)">✓</span>
+                <span *ngIf="!isDeliveryStepCompleted(getDeliveryStatus(request), step.status)">{{ i + 1 }}</span>
+              </div>
+              <div class="employee-delivery-step-copy"><strong>{{ step.label }}</strong><small>{{ step.description }}</small></div>
+            </div>
+          </div>
+
+          <div class="employee-delivered-note" *ngIf="getDeliveryStatus(request) === 'DELIVERED'">
+            <span>✓</span>
+            <div>
+              <strong>Delivered successfully</strong>
+              <p>You can now review and provide feedback for the products.</p>
+            </div>
+          </div>
+
+          <div class="employee-review-products" *ngIf="getDeliveryStatus(request) === 'DELIVERED'">
+            <div class="employee-review-header">
+              <div>
+                <span class="review-eyebrow">FEEDBACK</span>
+                <h5>Review Your Products</h5>
+                <p>Your feedback helps suppliers improve their products and service.</p>
+              </div>
+            </div>
+
+            <div class="employee-review-product-list" *ngIf="request.items && request.items.length > 0">
+              <div class="employee-review-product-row" *ngFor="let item of request.items">
+                <div class="employee-review-product-info">
+                  <strong>{{ item.productName || 'Product' }}</strong>
+                  <span>Quantity: {{ item.quantity || 0 }}</span>
+                </div>
+
+                <button
+                  type="button"
+                  class="employee-review-button"
+                  [class.reviewed]="hasReviewedProduct(request.purchaseRequestId, item.productId)"
+                  [disabled]="hasReviewedProduct(request.purchaseRequestId, item.productId)"
+                  (click)="openReviewModal(request, item)">
+                  <span *ngIf="!hasReviewedProduct(request.purchaseRequestId, item.productId)">★</span>
+                  <span *ngIf="hasReviewedProduct(request.purchaseRequestId, item.productId)">✓</span>
+                  {{ getReviewButtonLabel(request, item) }}
+                </button>
+              </div>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- ===================================================
+             PROFILE / ACCOUNT SUMMARY
+             =================================================== -->
+
+    <section class="account-banner">
+
+      <div class="account-banner-left">
+
+        <div class="account-avatar">
+          {{ userInitial }}
+        </div>
+
+        <div>
+
+          <span class="account-eyebrow">
+            YOUR ACCOUNT
+          </span>
+
+          <h3>
+            {{ username }}
+          </h3>
+
+          <p>
+            {{ displayRole }}
+            <span class="separator">•</span>
+            {{ displayDepartment }}
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <button
+        type="button"
+        class="account-button"
+        (click)="openProfile()">
+
+        View Profile
+        <span>→</span>
+
+      </button>
+
+    </section>
+
+
+  </main>
+
+
+
+  <!-- =====================================================
+       REVIEW MODAL
+       ===================================================== -->
+
+  <div
+    class="modal-overlay review-modal-overlay"
+    *ngIf="reviewModalOpen"
+    (click)="closeReviewModal()">
+
+    <div
+      class="review-modal"
+      (click)="$event.stopPropagation()">
+
+      <div class="review-modal-header">
+        <div>
+          <span class="review-modal-eyebrow">PRODUCT FEEDBACK</span>
+          <h2>Review Your Purchase</h2>
+          <p>Share your experience with this product.</p>
+        </div>
+
+        <button
+          type="button"
+          class="modal-close review-modal-close"
+          [disabled]="isSubmittingReview"
+          (click)="closeReviewModal()">
+          ×
+        </button>
+      </div>
+
+      <div class="review-modal-product" *ngIf="selectedReviewProduct">
+        <div class="review-product-icon">★</div>
+        <div>
+          <span class="review-product-label">PRODUCT</span>
+          <h3>{{ selectedReviewProduct.productName || 'Product' }}</h3>
+          <span *ngIf="selectedReviewRequest">
+            Purchase Request #{{ selectedReviewRequest.purchaseRequestId }}
+          </span>
+        </div>
+      </div>
+
+      <div class="review-rating-section">
+        <span class="review-field-label">YOUR RATING</span>
+
+        <div class="review-stars" role="radiogroup" aria-label="Product rating">
+          <button
+            type="button"
+            class="review-star"
+            *ngFor="let star of [1,2,3,4,5]"
+            [class.selected]="isRatingSelected(star)"
+            [attr.aria-label]="star + ' star' + (star > 1 ? 's' : '')"
+            [attr.aria-checked]="selectedRating === star"
+            [disabled]="isSubmittingReview"
+            (click)="setRating(star)">
+            ★
+          </button>
+        </div>
+
+        <div class="review-rating-caption" *ngIf="selectedRating > 0">
+          {{ selectedRating }} out of 5
+        </div>
+
+        <div class="review-rating-caption muted" *ngIf="selectedRating === 0">
+          Select a rating
+        </div>
+      </div>
+
+      <div class="review-feedback-section">
+        <label
+          for="reviewFeedback"
+          class="review-field-label">
+          YOUR FEEDBACK
+        </label>
+
+        <textarea
+          id="reviewFeedback"
+          class="review-feedback-input"
+          [value]="reviewFeedback"
+          [disabled]="isSubmittingReview"
+          maxlength="2000"
+          rows="5"
+          (input)="reviewFeedback = $any($event.target).value"
+          placeholder="Tell us what you liked, what could be improved, or how the product performed..."></textarea>
+
+        <div class="review-character-count">
+          {{ reviewFeedback.length }}/2000
+        </div>
+      </div>
+
+      <div class="review-error-message" *ngIf="reviewErrorMessage">
+        <span>!</span>
+        {{ reviewErrorMessage }}
+      </div>
+
+      <div class="review-success-message" *ngIf="reviewSuccessMessage">
+        <span>✓</span>
+        {{ reviewSuccessMessage }}
+      </div>
+
+      <div class="review-modal-footer">
+        <button
+          type="button"
+          class="review-cancel-button"
+          [disabled]="isSubmittingReview"
+          (click)="closeReviewModal()">
+          Cancel
+        </button>
+
+        <button
+          type="button"
+          class="review-submit-button"
+          [disabled]="isSubmittingReview || selectedRating < 1"
+          (click)="submitReview()">
+
+          <span class="review-submit-spinner" *ngIf="isSubmittingReview"></span>
+
+          {{
+          isSubmittingReview
+          ? 'Submitting...'
+          : 'Submit Review'
+          }}
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- =====================================================
+       PROFILE MODAL
+       ===================================================== -->
+
+  <div
+    class="modal-overlay"
+    *ngIf="profileModalOpen"
+    (click)="closeProfile()">
+
+
+    <div
+      class="profile-modal"
+      (click)="$event.stopPropagation()">
+
+
+      <!-- MODAL HEADER -->
+
+      <div class="modal-header">
+
+        <div>
+
+          <span class="modal-eyebrow">
+            ACCOUNT
+          </span>
+
+          <h2>
+            My Profile
+          </h2>
+
+        </div>
+
+
+        <button
+          type="button"
+          class="modal-close"
+          (click)="closeProfile()">
+
+          ×
+
+        </button>
+
+      </div>
+
+
+
+      <!-- PROFILE HERO -->
+
+      <div class="profile-hero">
+
+        <div class="large-profile-avatar">
+          {{ userInitial }}
+        </div>
+
+        <div>
+
+          <h3>
+            {{ userProfile?.username || username }}
+          </h3>
+
+          <span>
+            {{ displayRole }}
+          </span>
+
+        </div>
+
+      </div>
+
+
+
+      <!-- PROFILE ERROR -->
+
+      <div
+        class="profile-error"
+        *ngIf="profileError">
+
+        {{ profileError }}
+
+      </div>
+
+
+
+      <!-- PROFILE DETAILS -->
+
+      <div
+        class="profile-details"
+        *ngIf="userProfile">
+
+
+        <div class="profile-detail">
+
+          <span class="detail-label">
+            USER ID
+          </span>
+
+          <strong>
+            {{ userProfile.userId }}
+          </strong>
+
+        </div>
+
+
+        <div class="profile-detail">
+
+          <span class="detail-label">
+            USERNAME
+          </span>
+
+          <strong>
+            {{ userProfile.username }}
+          </strong>
+
+        </div>
+
+
+        <div class="profile-detail">
+
+          <span class="detail-label">
+            EMAIL
+          </span>
+
+          <strong>
+            {{ userProfile.email || 'Not provided' }}
+          </strong>
+
+        </div>
+
+
+        <div class="profile-detail">
+
+          <span class="detail-label">
+            PHONE NUMBER
+          </span>
+
+          <strong>
+            {{ userProfile.phoneNumber || 'Not provided' }}
+          </strong>
+
+        </div>
+
+
+        <div class="profile-detail">
+
+          <span class="detail-label">
+            DESIGNATION
+          </span>
+
+          <strong>
+            {{ userProfile.designation || 'Not provided' }}
+          </strong>
+
+        </div>
+
+
+        <div class="profile-detail">
+
+          <span class="detail-label">
+            ROLE
+          </span>
+
+          <strong>
+            {{ displayRole }}
+          </strong>
+
+        </div>
+
+
+        <div class="profile-detail">
+
+          <span class="detail-label">
+            DEPARTMENT
+          </span>
+
+          <strong>
+            {{ displayDepartment }}
+          </strong>
+
+        </div>
+
+
+      </div>
+
+
+
+      <!-- PROFILE LOADING -->
+
+      <div
+        class="profile-loading"
+        *ngIf="
+          isProfileLoading &&
+          !userProfile
+        ">
+
+        <div class="loading-spinner"></div>
+
+        <span>
+          Loading profile...
+        </span>
+
+      </div>
+
+
+
+      <!-- MODAL FOOTER -->
+
+      <div class="modal-footer">
+
+        <button
+          type="button"
+          class="secondary-button"
+          (click)="closeProfile()">
+
+          Close
+
+        </button>
+
+
+        <button
+          type="button"
+          class="logout-modal-button"
+          (click)="logout()">
+
+          <span>↪</span>
+          Logout
+
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- =====================================================
+       DOWNLOAD FORMAT MENU
+       ===================================================== -->
+
+  <div
+    class="download-menu-overlay"
+    *ngIf="downloadMenuOpen"
+    (click)="closeDownloadMenu()">
+
+    <div
+      class="download-menu"
+      (click)="$event.stopPropagation()">
+
+      <div class="download-menu-header">
+
+        <div>
+          <span class="download-menu-eyebrow">
+            EXPORT REQUESTS
+          </span>
+
+          <h3>
+            Download Purchase Requests
+          </h3>
+
+          <p>
+            Choose a format to download your requests.
+          </p>
+        </div>
+
+        <button
+          type="button"
+          class="download-menu-close"
+          (click)="closeDownloadMenu()">
+          ×
+        </button>
+
+      </div>
+
+      <div class="download-format-list">
+
+        <button
+          type="button"
+          class="download-format-option"
+          (click)="downloadPurchaseRequests('pdf')">
+
+          <div class="format-icon pdf-icon">PDF</div>
+
+          <div class="format-copy">
+            <strong>PDF</strong>
+            <span>Download as a PDF document</span>
+          </div>
+
+          <span class="format-arrow">→</span>
+
+        </button>
+
+        <button
+          type="button"
+          class="download-format-option"
+          (click)="downloadPurchaseRequests('xlsx')">
+
+          <div class="format-icon excel-icon">XLSX</div>
+
+          <div class="format-copy">
+            <strong>Excel</strong>
+            <span>Download as an Excel spreadsheet</span>
+          </div>
+
+          <span class="format-arrow">→</span>
+
+        </button>
+
+        <button
+          type="button"
+          class="download-format-option"
+          (click)="downloadPurchaseRequests('csv')">
+
+          <div class="format-icon csv-icon">CSV</div>
+
+          <div class="format-copy">
+            <strong>CSV</strong>
+            <span>Download as a CSV file</span>
+          </div>
+
+          <span class="format-arrow">→</span>
+
+        </button>
+
+      </div>
+
+      <div class="download-menu-footer">
+
+        <button
+          type="button"
+          class="download-cancel-button"
+          (click)="closeDownloadMenu()">
+          Cancel
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+

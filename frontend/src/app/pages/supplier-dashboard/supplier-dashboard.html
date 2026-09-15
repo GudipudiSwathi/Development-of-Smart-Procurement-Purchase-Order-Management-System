@@ -1,0 +1,2572 @@
+<div class="supplier-dashboard">
+
+
+  <!-- =====================================================
+       TOP BAR
+       ===================================================== -->
+
+  <header class="topbar">
+
+    <div class="brand">
+
+      <div class="logo">
+        EP
+      </div>
+
+      <div class="brand-text">
+
+        <h2>
+          Enterprise
+        </h2>
+
+        <span>
+          Procurement System
+        </span>
+
+      </div>
+
+    </div>
+
+
+    <div class="topbar-right">
+
+      <div class="business-badge">
+
+        <span class="badge-dot"></span>
+
+        Business Account
+
+      </div>
+
+
+      <div class="user-name">
+        {{ username }}
+      </div>
+
+
+      <button
+        type="button"
+        class="logout-btn"
+        (click)="logout()">
+
+        Logout
+
+      </button>
+
+    </div>
+
+  </header>
+
+
+
+  <!-- =====================================================
+       MAIN
+       ===================================================== -->
+
+  <main class="dashboard-content">
+
+
+    <!-- =====================================================
+         WELCOME
+         ===================================================== -->
+
+    <section class="welcome-section">
+
+      <div>
+
+        <p class="eyebrow">
+          BUSINESS DASHBOARD
+        </p>
+
+        <h1>
+          Welcome, {{ username }}
+        </h1>
+
+        <p class="welcome-description">
+
+          Manage your supplier activities,
+          procurement requests and payments from one place.
+
+        </p>
+
+      </div>
+
+
+      <button
+        type="button"
+        class="refresh-button"
+        (click)="refreshDashboard()"
+        [disabled]="isRefreshing">
+
+        <span *ngIf="!isRefreshing">
+          ↻ Refresh
+        </span>
+
+        <span *ngIf="isRefreshing">
+          Refreshing...
+        </span>
+
+      </button>
+
+    </section>
+
+
+
+    <!-- =====================================================
+         SUMMARY ERROR
+         ===================================================== -->
+
+    <div
+      class="dashboard-error"
+      *ngIf="summaryError">
+
+      {{ summaryError }}
+
+    </div>
+
+
+
+    <!-- =====================================================
+         SUMMARY CARDS
+         ===================================================== -->
+
+    <section class="summary-grid">
+
+
+      <!-- ===================================================
+           PENDING
+           =================================================== -->
+
+      <div class="summary-card">
+
+        <div class="summary-icon">
+          ⏳
+        </div>
+
+        <div>
+
+          <span>
+            Pending
+          </span>
+
+          <strong>
+            {{ summary.pendingRequests }}
+          </strong>
+
+          <small>
+            Pending requests
+          </small>
+
+        </div>
+
+      </div>
+
+
+
+      <!-- ===================================================
+           COMPLETED
+           =================================================== -->
+
+      <div class="summary-card">
+
+        <div class="summary-icon">
+          ✓
+        </div>
+
+        <div>
+
+          <span>
+            Completed
+          </span>
+
+          <strong>
+            {{ summary.completedRequests }}
+          </strong>
+
+          <small>
+            Completed orders
+          </small>
+
+        </div>
+
+      </div>
+
+
+
+      <!-- ===================================================
+           PAYMENTS
+           =================================================== -->
+
+      <div class="summary-card">
+
+        <div class="summary-icon">
+          ₹
+        </div>
+
+        <div>
+
+          <span>
+            Payments
+          </span>
+
+          <strong>
+            {{ summary.successfulPayments }}
+          </strong>
+
+          <small>
+            Successful payments
+          </small>
+
+        </div>
+
+      </div>
+
+
+
+      <!-- ===================================================
+           TOTAL RECEIVED
+           =================================================== -->
+
+      <div class="summary-card">
+
+        <div class="summary-icon">
+          ₹
+        </div>
+
+        <div>
+
+          <span>
+            Total Received
+          </span>
+
+          <strong>
+            {{ formatCurrency(summary.totalAmountPaid) }}
+          </strong>
+
+          <small>
+            Total successful payments
+          </small>
+
+        </div>
+
+      </div>
+
+
+    </section>
+
+
+
+    <!-- =====================================================
+         SUPPLIER MANAGEMENT
+         ===================================================== -->
+
+    <section class="dashboard-section">
+
+
+      <div class="section-header">
+
+        <div>
+
+          <p class="eyebrow">
+            SUPPLIER MANAGEMENT
+          </p>
+
+          <h2>
+            Your business activity
+          </h2>
+
+        </div>
+
+      </div>
+
+
+
+      <!-- ===================================================
+           TABS
+           =================================================== -->
+
+      <div class="tabs">
+
+
+        <button
+          type="button"
+          class="tab"
+          [class.active]="activeTab === 'pending'"
+          (click)="selectTab('pending')">
+
+          Pending
+
+          <span
+            class="tab-count"
+            *ngIf="pendingRequests.length > 0">
+
+            {{ pendingRequests.length }}
+
+          </span>
+
+        </button>
+
+
+
+        <button
+          type="button"
+          class="tab"
+          [class.active]="activeTab === 'completed'"
+          (click)="selectTab('completed')">
+
+          Completed
+
+          <span
+            class="tab-count"
+            *ngIf="completedRequests.length > 0">
+
+    {{ completedRequests.length }}
+
+  </span>
+
+        </button>
+
+
+
+        <button
+          type="button"
+          class="tab"
+          [class.active]="activeTab === 'payments'"
+          (click)="selectTab('payments')">
+
+          Payment History
+
+          <span
+            class="tab-count"
+            *ngIf="paymentHistory.length > 0">
+
+            {{ paymentHistory.length }}
+
+          </span>
+
+        </button>
+
+
+
+        <button
+          type="button"
+          class="tab"
+          [class.active]="activeTab === 'reviews'"
+          (click)="selectTab('reviews')">
+
+          Reviews
+
+          <span
+            class="tab-count"
+            *ngIf="reviews.length > 0">
+
+            {{ reviews.length }}
+
+          </span>
+
+        </button>
+
+
+
+        <button
+          type="button"
+          class="tab"
+          [class.active]="activeTab === 'products'"
+          (click)="selectTab('products')">
+
+          Products
+
+        </button>
+
+
+
+        <button
+          type="button"
+          class="tab"
+          [class.active]="activeTab === 'profile'"
+          (click)="selectTab('profile')">
+
+          Profile
+
+        </button>
+
+
+      </div>
+
+
+
+      <!-- ===================================================
+           PENDING TAB
+           =================================================== -->
+
+      <div
+        class="tab-content"
+        *ngIf="activeTab === 'pending'">
+
+
+        <!-- LOADING -->
+
+        <div
+          class="loading-state"
+          *ngIf="isLoadingPendingRequests">
+
+          <div class="loading-spinner"></div>
+
+          <p>
+            Loading pending requests...
+          </p>
+
+        </div>
+
+
+
+        <!-- ERROR -->
+
+        <div
+          class="error-state"
+          *ngIf="
+            !isLoadingPendingRequests &&
+            pendingRequestsError
+          ">
+
+          <div class="error-icon">
+            !
+          </div>
+
+          <h3>
+            Unable to load requests
+          </h3>
+
+          <p>
+            {{ pendingRequestsError }}
+          </p>
+
+          <button
+            type="button"
+            class="retry-button"
+            (click)="loadPendingRequests()">
+
+            Try Again
+
+          </button>
+
+        </div>
+
+
+
+        <!-- EMPTY -->
+
+        <div
+          class="empty-state"
+          *ngIf="
+            !isLoadingPendingRequests &&
+            !pendingRequestsError &&
+            pendingRequests.length === 0
+          ">
+
+          <div class="empty-icon">
+            ✓
+          </div>
+
+          <h3>
+            No pending requests
+          </h3>
+
+          <p>
+            You currently have no pending procurement requests.
+          </p>
+
+        </div>
+
+
+
+        <!-- REQUESTS -->
+
+        <div
+          class="request-list"
+          *ngIf="
+            !isLoadingPendingRequests &&
+            !pendingRequestsError &&
+            pendingRequests.length > 0
+          ">
+
+
+          <div
+            class="request-card"
+            *ngFor="let request of pendingRequests">
+
+
+            <div class="request-header">
+
+              <div>
+
+                <span class="request-label">
+                  PURCHASE REQUEST
+                </span>
+
+                <h3>
+                  #{{ request.purchaseRequestId }}
+                </h3>
+
+              </div>
+
+
+              <span
+                class="request-status"
+                [ngClass]="
+                  getRequestStatusClass(request.status)
+                ">
+
+                {{ request.status }}
+
+              </span>
+
+            </div>
+
+
+
+            <div class="request-info-grid">
+
+
+              <div class="request-info">
+
+                <span>
+                  Requested By
+                </span>
+
+                <strong>
+                  {{ request.requesterUsername || '—' }}
+                </strong>
+
+              </div>
+
+
+              <div class="request-info">
+
+                <span>
+                  Request Date
+                </span>
+
+                <strong>
+                  {{ formatDate(request.requestDate) }}
+                </strong>
+
+              </div>
+
+
+              <div class="request-info">
+
+                <span>
+                  Supplier Amount
+                </span>
+
+                <strong>
+                  {{ formatCurrency(request.supplierAmount) }}
+                </strong>
+
+              </div>
+
+
+              <div class="request-info">
+
+                <span>
+                  Payment
+                </span>
+
+                <strong
+                  [ngClass]="
+                    getPaymentStatusClass(
+                      request.paymentStatus
+                    )
+                  ">
+
+                  {{
+                  getPaymentStatusLabel(
+                  request.paymentStatus
+                  )
+                  }}
+
+                </strong>
+
+              </div>
+
+
+            </div>
+
+
+
+            <div
+              class="request-remarks"
+              *ngIf="request.remarks">
+
+              <span>
+                Employee Remarks
+              </span>
+
+              <p>
+                {{ request.remarks }}
+              </p>
+
+            </div>
+
+
+
+            <div
+              class="request-items"
+              *ngIf="
+                request.items &&
+                request.items.length > 0
+              ">
+
+              <h4>
+                Requested Items
+              </h4>
+
+
+              <div
+                class="item-row"
+                *ngFor="let item of request.items">
+
+                <div class="item-name">
+
+                  <strong>
+                    {{ item.productName || 'Product' }}
+                  </strong>
+
+                  <span>
+                    Product #{{ item.productId }}
+                  </span>
+
+                </div>
+
+
+                <div class="item-quantity">
+
+                  Qty:
+                  <strong>
+                    {{ item.quantity }}
+                  </strong>
+
+                </div>
+
+
+                <div class="item-price">
+
+                  {{ formatCurrency(item.itemTotalPrice) }}
+
+                </div>
+
+              </div>
+
+            </div>
+
+
+
+
+            <!-- =================================================
+                 DELIVERY TRACKING
+                 ================================================= -->
+
+            <div
+              class="delivery-tracking"
+              *ngIf="request.paymentStatus === 'SUCCESS' || request.paymentStatus === 'PAID'">
+
+              <div class="delivery-tracking-header">
+
+                <div>
+                  <span class="delivery-label">
+                    DELIVERY TRACKING
+                  </span>
+
+                  <h4>
+                    Order #{{ request.purchaseRequestId }}
+                  </h4>
+                </div>
+
+                <span class="delivery-current-status">
+                  {{ getDeliveryStatusLabel(request.deliveryStatus) }}
+                </span>
+
+              </div>
+
+
+              <div class="delivery-progress">
+
+                <div
+                  class="delivery-step"
+                  *ngFor="let step of deliverySteps; let i = index"
+                  [class.completed]="
+                    isDeliveryStepCompleted(
+                      request.deliveryStatus,
+                      step.status
+                    )
+                  "
+                  [class.current]="
+                    request.deliveryStatus === step.status
+                  ">
+
+                  <div class="delivery-step-marker">
+
+                    <span
+                      *ngIf="
+                        isDeliveryStepCompleted(
+                          request.deliveryStatus,
+                          step.status
+                        )
+                      ">
+                      ✓
+                    </span>
+
+                    <span
+                      *ngIf="
+                        !isDeliveryStepCompleted(
+                          request.deliveryStatus,
+                          step.status
+                        )
+                      ">
+                      {{ i + 1 }}
+                    </span>
+
+                  </div>
+
+                  <div class="delivery-step-content">
+
+                    <strong>
+                      {{ step.label }}
+                    </strong>
+
+                    <small>
+                      {{ step.description }}
+                    </small>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+
+              <div
+                class="delivery-action"
+                *ngIf="
+                  getNextDeliveryStatus(
+                    request.deliveryStatus
+                  ) as nextStatus
+                ">
+
+                <div>
+                  <span>
+                    Next Step
+                  </span>
+
+                  <strong>
+                    {{ getDeliveryStatusLabel(nextStatus) }}
+                  </strong>
+                </div>
+
+                <button
+                  type="button"
+                  class="delivery-update-button"
+                  [disabled]="
+                    updatingDeliveryRequestId ===
+                    request.purchaseRequestId
+                  "
+                  (click)="
+                    updateDeliveryStatus(
+                      request,
+                      nextStatus
+                    )
+                  ">
+
+                  {{
+                  updatingDeliveryRequestId ===
+                  request.purchaseRequestId
+                  ? 'Updating...'
+                  : getDeliveryActionLabel(nextStatus)
+                  }}
+
+                </button>
+
+              </div>
+
+
+              <div
+                class="delivery-delivered-message"
+                *ngIf="
+                  request.deliveryStatus === 'DELIVERED'
+                ">
+
+                <span class="delivery-success-icon">
+                  ✓
+                </span>
+
+                <div>
+                  <strong>
+                    Order Delivered
+                  </strong>
+
+                  <p>
+                    The employee can now submit a review and feedback
+                    for the delivered product.
+                  </p>
+                </div>
+
+              </div>
+
+            </div>
+
+            <div class="payment-strip">
+
+              <div>
+
+                <span>
+                  Payment Status
+                </span>
+
+                <strong
+                  [ngClass]="
+                    getPaymentStatusClass(
+                      request.paymentStatus
+                    )
+                  ">
+
+                  {{
+                  getPaymentStatusLabel(
+                  request.paymentStatus
+                  )
+                  }}
+
+                </strong>
+
+              </div>
+
+
+              <div
+                *ngIf="request.paymentReference">
+
+                <span>
+                  Transaction Reference
+                </span>
+
+                <strong>
+                  {{ request.paymentReference }}
+                </strong>
+
+              </div>
+
+            </div>
+
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+
+      <!-- ===================================================
+           COMPLETED TAB
+           =================================================== -->
+
+      <div
+        class="tab-content"
+        *ngIf="activeTab === 'completed'">
+
+
+        <!-- LOADING -->
+        <div
+          class="loading-state"
+          *ngIf="isLoadingCompletedRequests">
+
+          <div class="loading-spinner"></div>
+
+          <p>
+            Loading completed requests...
+          </p>
+
+        </div>
+
+
+        <div
+          class="empty-state"
+          *ngIf="
+            !isLoadingCompletedRequests &&
+            completedRequests.length === 0
+          ">
+          *ngIf="
+          completedRequests.length === 0
+          ">
+
+          <div class="empty-icon">
+            ✓
+          </div>
+
+          <h3>
+            No completed requests
+          </h3>
+
+          <p>
+            Successfully paid supplier requests will appear here.
+          </p>
+
+        </div>
+
+
+
+        <div
+          class="request-list"
+          *ngIf="
+            !isLoadingCompletedRequests &&
+            completedRequests.length > 0
+          ">
+
+
+          <div
+            class="request-card completed-card"
+            *ngFor="
+              let request of completedRequests
+            ">
+
+
+            <div class="request-header">
+
+              <div>
+
+                <span class="request-label">
+                  COMPLETED PURCHASE REQUEST
+                </span>
+
+                <h3>
+                  #{{ request.purchaseRequestId }}
+                </h3>
+
+              </div>
+
+
+              <span
+                class="request-status request-approved">
+
+                PAID
+
+              </span>
+
+            </div>
+
+
+
+            <div class="request-info-grid">
+
+              <div class="request-info">
+
+                <span>
+                  Requested By
+                </span>
+
+                <strong>
+                  {{ request.requesterUsername || '—' }}
+                </strong>
+
+              </div>
+
+
+              <div class="request-info">
+
+                <span>
+                  Request Date
+                </span>
+
+                <strong>
+                  {{ formatDate(request.requestDate) }}
+                </strong>
+
+              </div>
+
+
+              <div class="request-info">
+
+                <span>
+                  Amount Received
+                </span>
+
+                <strong>
+                  {{ formatCurrency(request.supplierAmount) }}
+                </strong>
+
+              </div>
+
+
+              <div class="request-info">
+
+                <span>
+                  Payment
+                </span>
+
+                <strong class="status-success">
+                  Paid
+                </strong>
+
+              </div>
+
+            </div>
+
+
+
+            <div
+              class="request-items"
+              *ngIf="
+                request.items &&
+                request.items.length > 0
+              ">
+
+              <h4>
+                Items
+              </h4>
+
+
+              <div
+                class="item-row"
+                *ngFor="
+                  let item of request.items
+                ">
+
+                <div class="item-name">
+
+                  <strong>
+                    {{ item.productName || 'Product' }}
+                  </strong>
+
+                </div>
+
+
+                <div class="item-quantity">
+
+                  Qty:
+                  <strong>
+                    {{ item.quantity }}
+                  </strong>
+
+                </div>
+
+
+                <div class="item-price">
+
+                  {{ formatCurrency(item.itemTotalPrice) }}
+
+                </div>
+
+              </div>
+
+            </div>
+
+
+
+            <!-- =================================================
+     DELIVERY TRACKING
+     ================================================= -->
+
+            <div class="delivery-tracking">
+
+              <div class="delivery-tracking-header">
+
+                <div>
+                  <span class="delivery-label">
+                    DELIVERY TRACKING
+                  </span>
+
+                  <h4>
+                    Order #{{ request.purchaseRequestId }}
+                  </h4>
+                </div>
+
+                <span class="delivery-current-status">
+                  {{ getDeliveryStatusLabel(request.deliveryStatus) }}
+                </span>
+
+              </div>
+
+
+              <div class="delivery-progress">
+
+                <div
+                  class="delivery-step"
+                  *ngFor="let step of deliverySteps; let i = index"
+                  [class.completed]="isDeliveryStepCompleted(request.deliveryStatus, step.status)"
+                  [class.current]="request.deliveryStatus === step.status">
+
+                  <div class="delivery-step-marker">
+
+                    <span
+                      *ngIf="isDeliveryStepCompleted(request.deliveryStatus, step.status)">
+                      ✓
+                    </span>
+
+                    <span
+                      *ngIf="!isDeliveryStepCompleted(request.deliveryStatus, step.status)">
+                      {{ i + 1 }}
+                    </span>
+
+                  </div>
+
+                  <div class="delivery-step-content">
+
+                    <strong>
+                      {{ step.label }}
+                    </strong>
+
+                    <small>
+                      {{ step.description }}
+                    </small>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+
+              <div
+                class="delivery-action"
+                *ngIf="getNextDeliveryStatus(request.deliveryStatus) as nextStatus">
+
+                <div>
+
+                  <span>
+                    Next Step
+                  </span>
+
+                  <strong>
+                    {{ getDeliveryStatusLabel(nextStatus) }}
+                  </strong>
+
+                </div>
+
+                <button
+                  type="button"
+                  class="delivery-update-button"
+                  [disabled]="updatingDeliveryRequestId === request.purchaseRequestId"
+                  (click)="updateDeliveryStatus(request, nextStatus)">
+
+                  {{
+                  updatingDeliveryRequestId === request.purchaseRequestId
+                  ? 'Updating...'
+                  : getDeliveryActionLabel(nextStatus)
+                  }}
+
+                </button>
+
+              </div>
+
+
+              <div
+                class="delivery-delivered-message"
+                *ngIf="request.deliveryStatus === 'DELIVERED'">
+
+                <span class="delivery-success-icon">
+                  ✓
+                </span>
+
+                <div>
+
+                  <strong>
+                    Order Delivered
+                  </strong>
+
+                  <p>
+                    The employee can now submit a review and feedback
+                    for the delivered product.
+                  </p>
+
+                </div>
+
+              </div>
+
+            </div>
+
+
+            <div class="payment-strip">
+
+              <div>
+
+                <span>
+                  Payment Status
+                </span>
+
+                <strong class="status-success">
+                  Paid
+                </strong>
+
+              </div>
+
+
+              <div
+                *ngIf="request.paymentReference">
+
+                <span>
+                  Transaction Reference
+                </span>
+
+                <strong>
+                  {{ request.paymentReference }}
+                </strong>
+
+              </div>
+
+            </div>
+
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+
+      <!-- ===================================================
+           PAYMENT HISTORY TAB
+           =================================================== -->
+
+      <div
+        class="tab-content"
+        *ngIf="activeTab === 'payments'">
+
+
+        <div
+          class="loading-state"
+          *ngIf="isLoadingPayments">
+
+          <div class="loading-spinner"></div>
+
+          <p>
+            Loading payment history...
+          </p>
+
+        </div>
+
+
+
+        <div
+          class="error-state"
+          *ngIf="
+            !isLoadingPayments &&
+            paymentsError
+          ">
+
+          <div class="error-icon">
+            !
+          </div>
+
+          <h3>
+            Unable to load payment history
+          </h3>
+
+          <p>
+            {{ paymentsError }}
+          </p>
+
+          <button
+            type="button"
+            class="retry-button"
+            (click)="loadPaymentHistory()">
+
+            Try Again
+
+          </button>
+
+        </div>
+
+
+
+        <div
+          class="empty-state"
+          *ngIf="
+            !isLoadingPayments &&
+            !paymentsError &&
+            paymentHistory.length === 0
+          ">
+
+          <div class="empty-icon">
+            ₹
+          </div>
+
+          <h3>
+            No payment history
+          </h3>
+
+          <p>
+            Payments made by the administrator to your business
+            will appear here.
+          </p>
+
+        </div>
+
+
+
+        <div
+          class="payment-list"
+          *ngIf="
+            !isLoadingPayments &&
+            !paymentsError &&
+            paymentHistory.length > 0
+          ">
+
+
+          <div
+            class="payment-card"
+            *ngFor="
+              let payment of paymentHistory
+            ">
+
+
+            <div class="payment-card-left">
+
+              <div class="payment-icon">
+                ₹
+              </div>
+
+
+              <div>
+
+                <span class="payment-label">
+                  PAYMENT
+                </span>
+
+                <h3>
+                  Request #{{ payment.purchaseRequestId }}
+                </h3>
+
+                <p>
+                  {{ formatDate(payment.approvedDate) }}
+                </p>
+
+              </div>
+
+            </div>
+
+
+
+            <div class="payment-card-middle">
+
+              <span>
+                Amount
+              </span>
+
+              <strong>
+                {{ formatCurrency(payment.supplierAmount) }}
+              </strong>
+
+            </div>
+
+
+
+            <div class="payment-card-middle">
+
+              <span>
+                Status
+              </span>
+
+              <strong
+                [ngClass]="
+                  getPaymentStatusClass(
+                    payment.paymentStatus
+                  )
+                ">
+
+                {{
+                getPaymentStatusLabel(
+                payment.paymentStatus
+                )
+                }}
+
+              </strong>
+
+            </div>
+
+
+
+            <div
+              class="payment-card-reference"
+              *ngIf="payment.paymentReference">
+
+              <span>
+                Transaction
+              </span>
+
+              <strong>
+                {{ payment.paymentReference }}
+              </strong>
+
+            </div>
+
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+
+      <!-- ===================================================
+           REVIEWS TAB
+           =================================================== -->
+
+      <div
+        class="tab-content supplier-reviews-tab"
+        *ngIf="activeTab === 'reviews'">
+
+        <div class="reviews-page-header">
+          <div>
+            <p class="eyebrow">CUSTOMER FEEDBACK</p>
+            <h3>Product Reviews</h3>
+            <p>Reviews submitted by employees for your delivered products.</p>
+          </div>
+
+          <div class="review-summary-card">
+            <strong>{{ getAverageReviewRating() || '—' }}</strong>
+            <span class="review-summary-stars">{{ getReviewStars(getAverageReviewRating()) }}</span>
+            <small>{{ reviews.length }} review{{ reviews.length === 1 ? '' : 's' }}</small>
+          </div>
+        </div>
+
+        <div
+          class="loading-state"
+          *ngIf="isLoadingReviews">
+          <div class="loading-spinner"></div>
+          <p>Loading customer reviews...</p>
+        </div>
+
+        <div
+          class="error-state"
+          *ngIf="!isLoadingReviews && reviewsError">
+          <div class="error-icon">!</div>
+          <h3>Unable to load reviews</h3>
+          <p>{{ reviewsError }}</p>
+          <button type="button" class="retry-button" (click)="loadReviews()">
+            Try Again
+          </button>
+        </div>
+
+        <div
+          class="empty-state"
+          *ngIf="!isLoadingReviews && !reviewsError && reviews.length === 0">
+          <div class="empty-icon">★</div>
+          <h3>No customer reviews yet</h3>
+          <p>Reviews will appear here after employees review delivered products.</p>
+        </div>
+
+        <div
+          class="supplier-review-list"
+          *ngIf="!isLoadingReviews && !reviewsError && reviews.length > 0">
+
+          <article class="supplier-review-card" *ngFor="let review of reviews">
+            <div class="supplier-review-card-top">
+              <div>
+                <span class="review-product-label">PRODUCT</span>
+                <h4>{{ review.productName || 'Product' }}</h4>
+                <span class="review-request-label">Request #{{ review.purchaseRequestId }}</span>
+              </div>
+
+              <div class="supplier-review-rating">
+                <span>{{ getReviewStars(review.rating) }}</span>
+                <strong>{{ review.rating }}/5</strong>
+              </div>
+            </div>
+
+            <div class="supplier-review-feedback">
+              <span class="review-product-label">EMPLOYEE FEEDBACK</span>
+              <p>{{ review.feedback || 'No written feedback was provided.' }}</p>
+            </div>
+
+            <div class="supplier-review-footer">
+              <span>Reviewed by <strong>{{ review.employeeName || 'Employee' }}</strong></span>
+              <span>{{ review.createdAt ? (review.createdAt | date:'dd MMM yyyy, hh:mm a') : '—' }}</span>
+            </div>
+          </article>
+
+        </div>
+
+      </div>
+
+
+
+      <!-- ===================================================
+           PRODUCTS TAB
+           =================================================== -->
+
+      <div
+        class="tab-content product-tab-content"
+        *ngIf="activeTab === 'products'">
+
+        <div class="product-toolbar">
+          <div>
+            <p class="eyebrow">PRODUCT MANAGEMENT</p>
+            <h3>Your products</h3>
+            <p class="product-toolbar-description">
+              Add and manage the products offered by your business.
+            </p>
+          </div>
+
+          <div class="product-toolbar-actions">
+            <div class="product-search">
+              <span>⌕</span>
+              <input
+                type="text"
+                [(ngModel)]="productSearch"
+                (ngModelChange)="filterProducts()"
+                placeholder="Search products..." />
+            </div>
+
+            <button
+              type="button"
+              class="add-product-button"
+              (click)="openAddProductModal()">
+              + Add Product
+            </button>
+          </div>
+        </div>
+
+        <div class="product-message product-message-success" *ngIf="productSuccess">
+          {{ productSuccess }}
+        </div>
+
+        <div class="product-message product-message-error" *ngIf="productsError">
+          {{ productsError }}
+        </div>
+
+        <div class="loading-state" *ngIf="isLoadingProducts">
+          <div class="loading-spinner"></div>
+          <p>Loading your products...</p>
+        </div>
+
+        <div class="empty-state product-empty-state"
+             *ngIf="!isLoadingProducts && !productsError && products.length === 0">
+          <div class="empty-icon">📦</div>
+          <h3>No products yet</h3>
+          <p>Add your first business product to make it available in the procurement system.</p>
+          <button type="button" class="add-product-button" (click)="openAddProductModal()">
+            + Add Your First Product
+          </button>
+        </div>
+
+        <div class="empty-state product-empty-state"
+             *ngIf="!isLoadingProducts && !productsError && products.length > 0 && filteredProducts.length === 0">
+          <div class="empty-icon">⌕</div>
+          <h3>No matching products</h3>
+          <p>Try a different product name, category or department.</p>
+        </div>
+
+        <div class="products-table-wrap"
+             *ngIf="!isLoadingProducts && !productsError && filteredProducts.length > 0">
+          <table class="products-table">
+            <thead>
+            <tr>
+              <th>Product</th>
+              <th>Department</th>
+              <th>Category</th>
+              <th>Price</th>
+              <th>Qty</th>
+              <th>Total Value</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let product of filteredProducts">
+              <td>
+                <div class="product-name-cell">
+                  <div class="product-mini-icon">📦</div>
+                  <div>
+                    <strong>{{ product.name }}</strong>
+                    <small>{{ product.description }}</small>
+                  </div>
+                </div>
+              </td>
+              <td>{{ product.departmentName || '—' }}</td>
+              <td>{{ product.categoryName || '—' }}</td>
+              <td>{{ formatCurrency(product.price) }}</td>
+              <td>{{ product.numberOfQuantities }}</td>
+              <td>{{ formatCurrency(product.totalPrice ?? 0) }}</td>
+              <td>
+                  <span class="product-status" [ngClass]="getProductStatusClass(product.status)">
+                    {{ (product.status || 'ACTIVE').toUpperCase() }}
+                  </span>
+              </td>
+              <td>
+                <div class="product-actions">
+                  <button
+                    type="button"
+                    class="product-edit-button"
+                    (click)="openEditProductModal(product)">
+                    Edit
+                  </button>
+                  <button
+                    type="button"
+                    class="product-delete-button"
+                    [disabled]="deletingProductId === product.productId"
+                    (click)="deleteProduct(product)">
+                    {{ deletingProductId === product.productId ? 'Deleting...' : 'Delete' }}
+                  </button>
+                </div>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+
+      <!-- PRODUCT MODAL -->
+      <div
+        class="product-modal-backdrop"
+        *ngIf="showProductModal"
+        (click)="closeProductModal()">
+
+        <section
+          class="product-modal"
+          (click)="$event.stopPropagation()">
+
+          <div class="product-modal-header">
+            <div>
+              <p class="eyebrow">PRODUCT MANAGEMENT</p>
+              <h2>{{ isEditProductMode ? 'Edit Product' : 'Add Product' }}</h2>
+              <p>{{ isEditProductMode ? 'Update your product information.' : 'Add a product to your business catalogue.' }}</p>
+            </div>
+            <button type="button" class="product-modal-close" (click)="closeProductModal()">×</button>
+          </div>
+
+          <div class="product-modal-error" *ngIf="productsError">
+            {{ productsError }}
+          </div>
+
+          <div class="product-form-grid">
+            <div class="product-form-field full">
+              <label>Product Name <span>*</span></label>
+              <input type="text" [(ngModel)]="productForm.name" maxlength="150" placeholder="Enter product name" />
+            </div>
+
+            <div class="product-form-field">
+              <label>Price <span>*</span></label>
+              <input type="number" [(ngModel)]="productForm.price" (ngModelChange)="calculateProductTotal()" min="0.01" step="0.01" placeholder="0.00" />
+            </div>
+
+            <div class="product-form-field">
+              <label>Quantity <span>*</span></label>
+              <input type="number" [(ngModel)]="productForm.numberOfQuantities" (ngModelChange)="calculateProductTotal()" min="1" step="1" placeholder="1" />
+            </div>
+
+            <div class="product-form-field">
+              <label>Department <span>*</span></label>
+              <select [(ngModel)]="productForm.departmentId" (ngModelChange)="loadCategories()">
+                <option [ngValue]="0">Select department</option>
+                <option *ngFor="let department of departments" [ngValue]="department.departmentId">
+                  {{ department.departmentName }}
+                </option>
+              </select>
+            </div>
+
+            <div class="product-form-field">
+              <label>Category <span>*</span></label>
+              <select [(ngModel)]="productForm.categoryId" [disabled]="!productForm.departmentId || isLoadingCategories">
+                <option [ngValue]="0">{{ isLoadingCategories ? 'Loading categories...' : 'Select category' }}</option>
+                <option *ngFor="let category of categories" [ngValue]="category.categoryId">
+                  {{ category.categoryName }}
+                </option>
+              </select>
+            </div>
+
+            <div class="product-form-field">
+              <label>Status</label>
+              <select [(ngModel)]="productForm.status">
+                <option value="ACTIVE">ACTIVE</option>
+                <option value="INACTIVE">INACTIVE</option>
+              </select>
+            </div>
+
+            <div class="product-form-field">
+              <label>Total Price</label>
+              <input type="text" [value]="formatCurrency(productForm.totalPrice)" readonly />
+            </div>
+
+            <div class="product-form-field full">
+              <label>Description <span>*</span></label>
+              <textarea [(ngModel)]="productForm.description" maxlength="1000" rows="4" placeholder="Describe the product..."></textarea>
+            </div>
+          </div>
+
+          <div class="product-modal-footer">
+            <button type="button" class="product-cancel-button" [disabled]="isSavingProduct" (click)="closeProductModal()">
+              Cancel
+            </button>
+            <button type="button" class="add-product-button" [disabled]="isSavingProduct" (click)="saveProduct()">
+              {{ isSavingProduct ? 'Saving...' : (isEditProductMode ? 'Update Product' : 'Add Product') }}
+            </button>
+          </div>
+
+        </section>
+      </div>
+
+
+
+      <!-- ===================================================
+           PROFILE TAB
+           =================================================== -->
+
+      <div
+        class="tab-content"
+        *ngIf="activeTab === 'profile'">
+
+        <!-- PROFILE LOADING -->
+        <div
+          class="loading-state"
+          *ngIf="isLoadingProfile">
+
+          <div class="loading-spinner"></div>
+
+          <p>
+            Loading your business profile...
+          </p>
+
+        </div>
+
+
+        <!-- PROFILE ERROR -->
+        <div
+          class="error-state"
+          *ngIf="!isLoadingProfile && profileError">
+
+          <div class="error-icon">
+            !
+          </div>
+
+          <h3>
+            Unable to load profile
+          </h3>
+
+          <p>
+            {{ profileError }}
+          </p>
+
+          <button
+            type="button"
+            class="retry-button"
+            (click)="loadSupplierProfile()">
+
+            Try Again
+
+          </button>
+
+        </div>
+
+
+        <!-- PROFILE SUCCESS -->
+        <div
+          class="profile-message profile-message-success"
+          *ngIf="!isLoadingProfile && profileSuccess">
+
+          {{ profileSuccess }}
+
+        </div>
+
+
+        <!-- PROFILE CONTENT -->
+        <div
+          class="profile-card supplier-profile-card"
+          *ngIf="!isLoadingProfile && !profileError">
+
+          <!-- PROFILE HEADER -->
+          <div class="profile-header">
+
+            <div class="profile-header-info">
+
+              <div class="profile-avatar">
+                {{
+                (supplierProfile.businessName || username)
+                .charAt(0)
+                .toUpperCase()
+                }}
+              </div>
+
+              <div>
+
+                <p class="eyebrow">
+                  BUSINESS PROFILE
+                </p>
+
+                <h3>
+                  {{ supplierProfile.businessName || 'Your Business' }}
+                </h3>
+
+                <p class="profile-subtitle">
+                  Manage your business and supplier information.
+                </p>
+
+              </div>
+
+            </div>
+
+
+            <!-- VIEW MODE -->
+            <button
+              *ngIf="!isEditingProfile"
+              type="button"
+              class="profile-edit-button"
+              (click)="startEditingProfile()">
+
+              Edit Profile
+
+            </button>
+
+
+            <!-- EDIT MODE ACTIONS -->
+            <div
+              class="profile-action-buttons"
+              *ngIf="isEditingProfile">
+
+              <button
+                type="button"
+                class="profile-cancel-button"
+                [disabled]="isSavingProfile"
+                (click)="cancelEditingProfile()">
+
+                Cancel
+
+              </button>
+
+              <button
+                type="button"
+                class="profile-save-button"
+                [disabled]="isSavingProfile"
+                (click)="saveSupplierProfile()">
+
+                {{
+                isSavingProfile
+                ? 'Saving...'
+                : 'Save Changes'
+                }}
+
+              </button>
+
+            </div>
+
+          </div>
+
+
+          <!-- EDIT ERROR -->
+          <div
+            class="profile-message profile-message-error"
+            *ngIf="profileError">
+
+            {{ profileError }}
+
+          </div>
+
+
+          <!-- =================================================
+               BUSINESS INFORMATION
+               ================================================= -->
+
+          <div class="profile-block">
+
+            <div class="profile-block-heading">
+
+              <div>
+                <p class="eyebrow">BUSINESS INFORMATION</p>
+                <h4>Business Details</h4>
+              </div>
+
+            </div>
+
+
+            <div class="profile-grid">
+
+              <!-- Business Name -->
+              <div class="profile-field">
+
+                <label>
+                  Business Name
+                </label>
+
+                <input
+                  *ngIf="isEditingProfile"
+                  type="text"
+                  [(ngModel)]="supplierProfile.businessName"
+                  placeholder="Enter business name" />
+
+                <div
+                  class="profile-value"
+                  *ngIf="!isEditingProfile">
+
+                  {{ supplierProfile.businessName || '—' }}
+
+                </div>
+
+              </div>
+
+
+              <!-- Business Type -->
+              <div class="profile-field">
+
+                <label>
+                  Business Type
+                </label>
+
+                <input
+                  *ngIf="isEditingProfile"
+                  type="text"
+                  [(ngModel)]="supplierProfile.businessType"
+                  placeholder="Example: IT Supplier" />
+
+                <div
+                  class="profile-value"
+                  *ngIf="!isEditingProfile">
+
+                  {{ supplierProfile.businessType || '—' }}
+
+                </div>
+
+              </div>
+
+
+              <!-- Website -->
+              <div class="profile-field">
+
+                <label>
+                  Website
+                </label>
+
+                <input
+                  *ngIf="isEditingProfile"
+                  type="text"
+                  [(ngModel)]="supplierProfile.website"
+                  placeholder="https://example.com" />
+
+                <div
+                  class="profile-value"
+                  *ngIf="!isEditingProfile">
+
+                  {{ supplierProfile.website || '—' }}
+
+                </div>
+
+              </div>
+
+
+              <!-- Business Registration Number -->
+              <div class="profile-field">
+
+                <label>
+                  Registration Number
+                </label>
+
+                <input
+                  *ngIf="isEditingProfile"
+                  type="text"
+                  [(ngModel)]="supplierProfile.businessRegistrationNumber"
+                  placeholder="Enter registration number" />
+
+                <div
+                  class="profile-value"
+                  *ngIf="!isEditingProfile">
+
+                  {{ supplierProfile.businessRegistrationNumber || '—' }}
+
+                </div>
+
+              </div>
+
+
+              <!-- Description -->
+              <div class="profile-field profile-field-full">
+
+                <label>
+                  Business Description
+                </label>
+
+                <textarea
+                  *ngIf="isEditingProfile"
+                  rows="4"
+                  [(ngModel)]="supplierProfile.description"
+                  placeholder="Describe your business"></textarea>
+
+                <div
+                  class="profile-value profile-description"
+                  *ngIf="!isEditingProfile">
+
+                  {{ supplierProfile.description || '—' }}
+
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <!-- =================================================
+               CONTACT INFORMATION
+               ================================================= -->
+
+          <div class="profile-block">
+
+            <div class="profile-block-heading">
+
+              <div>
+                <p class="eyebrow">CONTACT INFORMATION</p>
+                <h4>Contact Details</h4>
+              </div>
+
+            </div>
+
+
+            <div class="profile-grid">
+
+              <!-- Contact Person -->
+              <div class="profile-field">
+
+                <label>
+                  Contact Person
+                </label>
+
+                <input
+                  *ngIf="isEditingProfile"
+                  type="text"
+                  [(ngModel)]="supplierProfile.contactPerson"
+                  placeholder="Enter contact person" />
+
+                <div
+                  class="profile-value"
+                  *ngIf="!isEditingProfile">
+
+                  {{ supplierProfile.contactPerson || '—' }}
+
+                </div>
+
+              </div>
+
+
+              <!-- Contact Email -->
+              <div class="profile-field">
+
+                <label>
+                  Contact Email
+                </label>
+
+                <input
+                  *ngIf="isEditingProfile"
+                  type="email"
+                  [(ngModel)]="supplierProfile.contactEmail"
+                  placeholder="Enter email address" />
+
+                <div
+                  class="profile-value"
+                  *ngIf="!isEditingProfile">
+
+                  {{ supplierProfile.contactEmail || '—' }}
+
+                </div>
+
+              </div>
+
+
+              <!-- Contact Phone -->
+              <div class="profile-field">
+
+                <label>
+                  Contact Phone
+                </label>
+
+                <input
+                  *ngIf="isEditingProfile"
+                  type="text"
+                  [(ngModel)]="supplierProfile.contactPhone"
+                  placeholder="Enter phone number" />
+
+                <div
+                  class="profile-value"
+                  *ngIf="!isEditingProfile">
+
+                  {{ supplierProfile.contactPhone || '—' }}
+
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <!-- =================================================
+               BUSINESS ADDRESS
+               ================================================= -->
+
+          <div class="profile-block">
+
+            <div class="profile-block-heading">
+
+              <div>
+                <p class="eyebrow">BUSINESS ADDRESS</p>
+                <h4>Address Details</h4>
+              </div>
+
+            </div>
+
+
+            <div class="profile-grid">
+
+              <!-- Address -->
+              <div class="profile-field profile-field-full">
+
+                <label>
+                  Address
+                </label>
+
+                <textarea
+                  *ngIf="isEditingProfile"
+                  rows="3"
+                  [(ngModel)]="supplierProfile.address"
+                  placeholder="Enter business address"></textarea>
+
+                <div
+                  class="profile-value profile-description"
+                  *ngIf="!isEditingProfile">
+
+                  {{ supplierProfile.address || '—' }}
+
+                </div>
+
+              </div>
+
+
+              <!-- City -->
+              <div class="profile-field">
+
+                <label>
+                  City
+                </label>
+
+                <input
+                  *ngIf="isEditingProfile"
+                  type="text"
+                  [(ngModel)]="supplierProfile.city"
+                  placeholder="Enter city" />
+
+                <div
+                  class="profile-value"
+                  *ngIf="!isEditingProfile">
+
+                  {{ supplierProfile.city || '—' }}
+
+                </div>
+
+              </div>
+
+
+              <!-- State -->
+              <div class="profile-field">
+
+                <label>
+                  State
+                </label>
+
+                <input
+                  *ngIf="isEditingProfile"
+                  type="text"
+                  [(ngModel)]="supplierProfile.state"
+                  placeholder="Enter state" />
+
+                <div
+                  class="profile-value"
+                  *ngIf="!isEditingProfile">
+
+                  {{ supplierProfile.state || '—' }}
+
+                </div>
+
+              </div>
+
+
+              <!-- Pincode -->
+              <div class="profile-field">
+
+                <label>
+                  Pincode
+                </label>
+
+                <input
+                  *ngIf="isEditingProfile"
+                  type="text"
+                  [(ngModel)]="supplierProfile.pincode"
+                  placeholder="Enter pincode" />
+
+                <div
+                  class="profile-value"
+                  *ngIf="!isEditingProfile">
+
+                  {{ supplierProfile.pincode || '—' }}
+
+                </div>
+
+              </div>
+
+
+              <!-- Country -->
+              <div class="profile-field">
+
+                <label>
+                  Country
+                </label>
+
+                <input
+                  *ngIf="isEditingProfile"
+                  type="text"
+                  [(ngModel)]="supplierProfile.country"
+                  placeholder="Enter country" />
+
+                <div
+                  class="profile-value"
+                  *ngIf="!isEditingProfile">
+
+                  {{ supplierProfile.country || '—' }}
+
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <!-- =================================================
+               TAX INFORMATION
+               ================================================= -->
+
+          <div class="profile-block">
+
+            <div class="profile-block-heading">
+
+              <div>
+                <p class="eyebrow">TAX &amp; REGISTRATION</p>
+                <h4>Business Compliance</h4>
+              </div>
+
+            </div>
+
+
+            <div class="profile-grid">
+
+              <!-- GST -->
+              <div class="profile-field">
+
+                <label>
+                  GST Number
+                </label>
+
+                <input
+                  *ngIf="isEditingProfile"
+                  type="text"
+                  [(ngModel)]="supplierProfile.gstNumber"
+                  placeholder="Enter GST number" />
+
+                <div
+                  class="profile-value"
+                  *ngIf="!isEditingProfile">
+
+                  {{ supplierProfile.gstNumber || '—' }}
+
+                </div>
+
+              </div>
+
+
+              <!-- PAN -->
+              <div class="profile-field">
+
+                <label>
+                  PAN Number
+                </label>
+
+                <input
+                  *ngIf="isEditingProfile"
+                  type="text"
+                  [(ngModel)]="supplierProfile.panNumber"
+                  placeholder="Enter PAN number" />
+
+                <div
+                  class="profile-value"
+                  *ngIf="!isEditingProfile">
+
+                  {{ supplierProfile.panNumber || '—' }}
+
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <!-- =================================================
+               ACCOUNT INFORMATION
+               ================================================= -->
+
+          <div class="profile-block">
+
+            <div class="profile-block-heading">
+
+              <div>
+                <p class="eyebrow">ACCOUNT INFORMATION</p>
+                <h4>Supplier Account</h4>
+              </div>
+
+            </div>
+
+
+            <div class="profile-grid">
+
+              <div class="profile-field">
+
+                <label>
+                  Account Type
+                </label>
+
+                <div class="profile-value">
+                  Business / Supplier
+                </div>
+
+              </div>
+
+
+              <div class="profile-field">
+
+                <label>
+                  Username
+                </label>
+
+                <div class="profile-value">
+                  {{ username }}
+                </div>
+
+              </div>
+
+
+              <div class="profile-field">
+
+                <label>
+                  User ID
+                </label>
+
+                <div class="profile-value">
+                  {{ userId || '—' }}
+                </div>
+
+              </div>
+
+
+              <div class="profile-field">
+
+                <label>
+                  Account Status
+                </label>
+
+                <div class="profile-value status-success">
+                  Active
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+  </main>
+
+
+  <!-- =====================================================
+       DELIVERY CONFIRMATION MODAL
+       ===================================================== -->
+
+  <div
+    class="delivery-confirm-modal-backdrop"
+    *ngIf="showDeliveryConfirmModal"
+    (click)="closeDeliveryConfirmModal()">
+
+    <section
+      class="delivery-confirm-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="delivery-confirm-title"
+      (click)="$event.stopPropagation()">
+
+      <!-- MODAL HEADER -->
+      <div class="delivery-confirm-header">
+
+        <div class="delivery-confirm-icon">
+          ?
+        </div>
+
+        <div class="delivery-confirm-title-block">
+
+          <span class="delivery-confirm-eyebrow">
+            DELIVERY UPDATE
+          </span>
+
+          <h2 id="delivery-confirm-title">
+            Update Order #{{ deliveryConfirmRequest?.purchaseRequestId }}
+          </h2>
+
+        </div>
+
+        <button
+          type="button"
+          class="delivery-confirm-close"
+          aria-label="Close"
+          [disabled]="updatingDeliveryRequestId !== null"
+          (click)="closeDeliveryConfirmModal()">
+
+          ×
+
+        </button>
+
+      </div>
+
+
+      <!-- MODAL CONTENT -->
+      <div class="delivery-confirm-body">
+
+        <p class="delivery-confirm-question">
+          Update this order to
+          <strong>
+            {{ getDeliveryStatusLabel(deliveryConfirmNextStatus || '') }}
+          </strong>?
+        </p>
+
+
+        <div class="delivery-confirm-order">
+
+          <div class="delivery-confirm-order-item">
+
+            <span>
+              Order
+            </span>
+
+            <strong>
+              #{{ deliveryConfirmRequest?.purchaseRequestId }}
+            </strong>
+
+          </div>
+
+
+          <div class="delivery-confirm-order-item">
+
+            <span>
+              Requested By
+            </span>
+
+            <strong>
+              {{ deliveryConfirmRequest?.requesterUsername || '—' }}
+            </strong>
+
+          </div>
+
+
+          <div class="delivery-confirm-order-item">
+
+            <span>
+              Current Status
+            </span>
+
+            <strong>
+              {{ getDeliveryStatusLabel(deliveryConfirmRequest?.deliveryStatus) }}
+            </strong>
+
+          </div>
+
+
+          <div class="delivery-confirm-order-item">
+
+            <span>
+              Next Status
+            </span>
+
+            <strong class="delivery-confirm-next-status">
+              {{ getDeliveryStatusLabel(deliveryConfirmNextStatus || '') }}
+            </strong>
+
+          </div>
+
+        </div>
+
+
+        <div class="delivery-confirm-note">
+
+          <span class="delivery-confirm-note-icon">
+            i
+          </span>
+
+          <p>
+            This will update the delivery status for the order.
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <!-- MODAL FOOTER -->
+      <div class="delivery-confirm-footer">
+
+        <button
+          type="button"
+          class="delivery-confirm-cancel"
+          [disabled]="updatingDeliveryRequestId !== null"
+          (click)="closeDeliveryConfirmModal()">
+
+          Cancel
+
+        </button>
+
+
+        <button
+          type="button"
+          class="delivery-confirm-update"
+          [disabled]="updatingDeliveryRequestId !== null"
+          (click)="confirmDeliveryStatusUpdate()">
+
+          <span
+            *ngIf="updatingDeliveryRequestId !== deliveryConfirmRequest?.purchaseRequestId">
+
+            Update to
+            {{ getDeliveryStatusLabel(deliveryConfirmNextStatus || '') }}
+
+          </span>
+
+          <span
+            *ngIf="updatingDeliveryRequestId === deliveryConfirmRequest?.purchaseRequestId">
+
+            Updating...
+
+          </span>
+
+        </button>
+
+      </div>
+
+    </section>
+
+  </div>
+
+</div>
+

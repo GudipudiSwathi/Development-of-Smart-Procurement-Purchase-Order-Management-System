@@ -1,0 +1,1097 @@
+```
+<div class="admin-page">
+
+  <!-- =====================================================
+       COMMON ADMIN SIDEBAR
+       ===================================================== -->
+
+  <app-admin-sidebar></app-admin-sidebar>
+
+
+  <!-- =====================================================
+       MAIN AREA
+       ===================================================== -->
+
+  <main class="main-area">
+
+
+    <!-- ===================================================
+         PAGE HEADER
+         =================================================== -->
+
+    <header class="page-header">
+
+      <div class="header-content">
+
+        <div class="breadcrumb">
+          <span>Admin</span>
+          <span class="separator">/</span>
+          <strong>Accounts</strong>
+        </div>
+
+        <p class="eyebrow">
+          PAYMENT MANAGEMENT
+        </p>
+
+        <h1>
+          Accounts &amp; Payments
+        </h1>
+
+        <p class="page-subtitle">
+          Monitor payment accounts and manage procurement payment transactions.
+        </p>
+
+      </div>
+
+
+      <div class="header-actions">
+
+        <button
+          type="button"
+          class="refresh-button"
+          (click)="refreshAccounts()"
+          [disabled]="isRefreshing">
+
+          <span
+            class="refresh-icon"
+            [class.spinning]="isRefreshing">
+            ↻
+          </span>
+
+          {{
+          isRefreshing
+          ? 'Refreshing...'
+          : 'Refresh'
+          }}
+
+        </button>
+
+      </div>
+
+    </header>
+
+
+    <!-- ===================================================
+         ALERTS
+         =================================================== -->
+
+    <div
+      class="alert success-alert"
+      *ngIf="successMessage">
+
+      <span class="alert-symbol">
+        ✓
+      </span>
+
+      <span>
+        {{ successMessage }}
+      </span>
+
+      <button
+        type="button"
+        class="alert-close"
+        (click)="successMessage = ''">
+
+        ×
+
+      </button>
+
+    </div>
+
+
+    <div
+      class="alert error-alert"
+      *ngIf="errorMessage">
+
+      <span class="alert-symbol">
+        !
+      </span>
+
+      <span>
+        {{ errorMessage }}
+      </span>
+
+      <button
+        type="button"
+        class="alert-close"
+        (click)="errorMessage = ''">
+
+        ×
+
+      </button>
+
+    </div>
+
+
+    <!-- ===================================================
+         STATISTICS
+         =================================================== -->
+
+    <section class="stats-grid">
+
+
+      <!-- TOTAL ACCOUNTS -->
+
+      <div class="stat-card">
+
+        <div class="stat-icon total-icon">
+          ▣
+        </div>
+
+        <div class="stat-info">
+
+          <span class="stat-label">
+            TOTAL ACCOUNTS
+          </span>
+
+          <strong class="stat-value">
+            {{ totalAccounts }}
+          </strong>
+
+          <span class="stat-note">
+            Payment accounts
+          </span>
+
+        </div>
+
+      </div>
+
+
+      <!-- PENDING -->
+
+      <div class="stat-card">
+
+        <div class="stat-icon pending-icon">
+          ◷
+        </div>
+
+        <div class="stat-info">
+
+          <span class="stat-label">
+            PENDING
+          </span>
+
+          <strong class="stat-value">
+            {{ pendingPayments }}
+          </strong>
+
+          <span class="stat-note">
+            Awaiting payment
+          </span>
+
+        </div>
+
+      </div>
+
+
+      <!-- SUCCESS -->
+
+      <div class="stat-card">
+
+        <div class="stat-icon success-icon">
+          ✓
+        </div>
+
+        <div class="stat-info">
+
+          <span class="stat-label">
+            SUCCESS
+          </span>
+
+          <strong class="stat-value">
+            {{ successfulPayments }}
+          </strong>
+
+          <span class="stat-note">
+            Successful payments
+          </span>
+
+        </div>
+
+      </div>
+
+
+      <!-- FAILED -->
+
+      <div class="stat-card">
+
+        <div class="stat-icon failed-icon">
+          ×
+        </div>
+
+        <div class="stat-info">
+
+          <span class="stat-label">
+            FAILED
+          </span>
+
+          <strong class="stat-value">
+            {{ failedPayments }}
+          </strong>
+
+          <span class="stat-note">
+            Failed payments
+          </span>
+
+        </div>
+
+      </div>
+
+
+      <!-- TOTAL VALUE -->
+
+      <div class="stat-card">
+
+        <div class="stat-icon amount-icon">
+          ₹
+        </div>
+
+        <div class="stat-info">
+
+          <span class="stat-label">
+            TOTAL VALUE
+          </span>
+
+          <strong class="stat-value amount-value">
+            {{ formatCurrency(totalAmount) }}
+          </strong>
+
+          <span class="stat-note">
+            All account value
+          </span>
+
+        </div>
+
+      </div>
+
+
+      <!-- PENDING VALUE -->
+
+      <div class="stat-card">
+
+        <div class="stat-icon pending-value-icon">
+          ◫
+        </div>
+
+        <div class="stat-info">
+
+          <span class="stat-label">
+            PENDING VALUE
+          </span>
+
+          <strong class="stat-value amount-value">
+            {{ formatCurrency(pendingAmount) }}
+          </strong>
+
+          <span class="stat-note">
+            Awaiting payment
+          </span>
+
+        </div>
+
+      </div>
+
+    </section>
+    <!-- ===================================================
+             MAIN ACCOUNTS CARD
+             =================================================== -->
+
+    <section class="content-card">
+
+
+      <!-- =================================================
+           TOOLBAR
+           ================================================= -->
+
+      <div class="toolbar">
+
+        <div class="toolbar-heading">
+
+          <div class="toolbar-icon">
+            ▣
+          </div>
+
+          <div>
+
+            <h2>
+              Payment Accounts
+            </h2>
+
+            <p>
+              {{ filteredAccounts.length }}
+              {{
+              filteredAccounts.length === 1
+              ? 'account'
+              : 'accounts'
+              }}
+              displayed
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <div class="toolbar-controls">
+
+
+          <!-- SEARCH -->
+
+          <div class="search-box">
+
+            <span class="search-icon">
+              ⌕
+            </span>
+
+            <input
+              type="text"
+              [(ngModel)]="searchTerm"
+              (ngModelChange)="onSearch()"
+              placeholder="Search account, request, user or reference..."
+              aria-label="Search payment accounts">
+
+
+            <button
+              type="button"
+              class="search-clear"
+              *ngIf="searchTerm"
+              (click)="searchTerm = ''; onSearch()">
+
+              ×
+
+            </button>
+
+          </div>
+
+
+          <!-- STATUS -->
+
+          <div class="filter-box">
+
+            <label>
+              Status
+            </label>
+
+            <select
+              [(ngModel)]="selectedStatus"
+              (ngModelChange)="onStatusChange()">
+
+              <option value="ALL">
+                All Status
+              </option>
+
+              <option value="PENDING">
+                Pending
+              </option>
+
+              <option value="SUCCESS">
+                Success
+              </option>
+
+              <option value="FAILED">
+                Failed
+              </option>
+
+            </select>
+
+          </div>
+
+
+          <!-- CLEAR -->
+
+          <button
+            type="button"
+            class="clear-button"
+            (click)="clearFilters()"
+            [disabled]="
+              !searchTerm &&
+              selectedStatus === 'ALL'
+            ">
+
+            ↺
+            Clear
+
+          </button>
+
+        </div>
+
+      </div>
+
+
+      <!-- =================================================
+           LOADING
+           ================================================= -->
+
+      <div
+        class="loading-state"
+        *ngIf="isLoading">
+
+        <div class="loading-spinner"></div>
+
+        <h3>
+          Loading payment accounts
+        </h3>
+
+        <p>
+          Please wait while account records are loaded.
+        </p>
+
+      </div>
+
+
+      <!-- =================================================
+           EMPTY
+           ================================================= -->
+
+      <div
+        class="empty-state"
+        *ngIf="
+          !isLoading &&
+          filteredAccounts.length === 0
+        ">
+
+        <div class="empty-icon">
+          ▣
+        </div>
+
+        <h3>
+          No payment accounts found
+        </h3>
+
+        <p
+          *ngIf="
+            searchTerm ||
+            selectedStatus !== 'ALL'
+          ">
+
+          No accounts match the current search or filter.
+
+        </p>
+
+        <p
+          *ngIf="
+            !searchTerm &&
+            selectedStatus === 'ALL'
+          ">
+
+          There are currently no payment accounts.
+
+        </p>
+
+        <button
+          type="button"
+          class="empty-clear-button"
+          *ngIf="
+            searchTerm ||
+            selectedStatus !== 'ALL'
+          "
+          (click)="clearFilters()">
+
+          Clear Filters
+
+        </button>
+
+      </div>
+
+
+      <!-- =================================================
+           ACCOUNT TABLE
+           ================================================= -->
+
+      <div
+        class="table-wrapper"
+        *ngIf="
+          !isLoading &&
+          filteredAccounts.length > 0
+        ">
+
+        <table class="accounts-table">
+
+          <thead>
+
+          <tr>
+
+            <th>
+              ACCOUNT
+            </th>
+
+            <th>
+              PURCHASE REQUEST
+            </th>
+
+            <th>
+              USER
+            </th>
+
+            <th>
+              AMOUNT
+            </th>
+
+            <th>
+              PAYMENT STATUS
+            </th>
+
+            <th>
+              REFERENCE
+            </th>
+
+            <th>
+              PAYMENT DATE
+            </th>
+
+            <th class="actions-column">
+              ACTIONS
+            </th>
+
+          </tr>
+
+          </thead>
+
+
+          <tbody>
+
+          <tr
+            *ngFor="
+                let account of paginatedAccounts;
+                trackBy: trackByAccountId
+              ">
+
+
+            <!-- ACCOUNT -->
+
+            <td>
+
+              <div class="account-cell">
+
+                <div class="account-icon">
+                  AC
+                </div>
+
+                <div class="account-info">
+
+                  <strong>
+                    #{{ account.accountId }}
+                  </strong>
+
+                  <span>
+                      Payment account
+                    </span>
+
+                </div>
+
+              </div>
+
+            </td>
+
+
+            <!-- PURCHASE REQUEST -->
+
+            <td>
+
+              <div class="request-cell">
+
+                  <span class="request-icon">
+                    PR
+                  </span>
+
+                <div>
+
+                  <strong>
+                    #{{ account.purchaseRequestId }}
+                  </strong>
+
+                  <span>
+                      Purchase Request
+                    </span>
+
+                </div>
+
+              </div>
+
+            </td>
+
+
+            <!-- USER -->
+
+            <td>
+
+              <div class="user-cell">
+
+                <div class="user-avatar">
+                  U
+                </div>
+
+                <div>
+
+                  <strong>
+                    User #{{ account.userId }}
+                  </strong>
+
+                  <span>
+                      User ID: {{ account.userId }}
+                    </span>
+
+                </div>
+
+              </div>
+
+            </td>
+
+
+            <!-- AMOUNT -->
+
+            <td>
+
+              <div class="amount-cell">
+
+                <strong>
+                  {{ formatCurrency(account.amount) }}
+                </strong>
+
+                <span>
+                    Account amount
+                  </span>
+
+              </div>
+
+            </td>
+
+
+            <!-- STATUS -->
+
+            <td>
+
+                <span
+                  class="status-badge"
+                  [ngClass]="
+                    getStatusClass(
+                      account.paymentStatus
+                    )
+                  ">
+
+                  <span class="status-dot"></span>
+
+                  {{
+                    getStatusLabel(
+                      account.paymentStatus
+                    )
+                  }}
+
+                </span>
+
+            </td>
+
+
+            <!-- REFERENCE -->
+
+            <td>
+
+              <div class="reference-cell">
+
+                <strong
+                  *ngIf="account.paymentReference">
+
+                  {{ account.paymentReference }}
+
+                </strong>
+
+                <span
+                  *ngIf="!account.paymentReference">
+
+                    No reference
+
+                  </span>
+
+              </div>
+
+            </td>
+
+
+            <!-- PAYMENT DATE -->
+
+            <td>
+
+              <div class="date-cell">
+
+                <strong
+                  *ngIf="account.paymentDate">
+
+                  {{
+                  formatDate(
+                  account.paymentDate
+                  )
+                  }}
+
+                </strong>
+
+                <span
+                  *ngIf="account.paymentDate">
+
+                    {{
+                      formatDateTime(
+                        account.paymentDate
+                      )
+                    }}
+
+                  </span>
+
+                <span
+                  *ngIf="!account.paymentDate">
+
+                    Not paid
+
+                  </span>
+
+              </div>
+
+            </td>
+
+
+            <!-- ACTIONS -->
+
+            <td class="actions-column">
+
+              <div class="row-actions">
+
+
+                <!-- VIEW -->
+
+                <button
+                  type="button"
+                  class="action-button view-button"
+                  title="View account details"
+                  (click)="viewDetails(account)">
+
+                  ◉
+
+                </button>
+
+
+                <!-- PAY -->
+
+                <button
+                  type="button"
+                  class="action-button pay-button"
+                  title="Process payment"
+                  *ngIf="normalizeStatus(account.paymentStatus) === 'PENDING'"
+                  (click)="openPaymentModal(account)">
+
+                  ₹
+
+                </button>
+
+              </div>
+
+            </td>
+
+          </tr>
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+
+      <!-- =================================================
+           PAGINATION
+           ================================================= -->
+
+      <div
+        class="pagination-bar"
+        *ngIf="
+          !isLoading &&
+          filteredAccounts.length > 0
+        ">
+
+        <div class="pagination-info">
+
+          Showing
+
+          <strong>
+            {{
+            ((currentPage - 1) * pageSize) + 1
+            }}
+          </strong>
+
+          to
+
+          <strong>
+            {{
+            Math.min(
+            currentPage * pageSize,
+            filteredAccounts.length
+            )
+            }}
+          </strong>
+
+          of
+
+          <strong>
+            {{ filteredAccounts.length }}
+          </strong>
+
+          accounts
+
+        </div>
+
+
+        <div class="pagination-controls">
+
+          <button
+            type="button"
+            class="page-button"
+            (click)="previousPage()"
+            [disabled]="currentPage === 1">
+
+            ‹
+
+            <span>
+              Previous
+            </span>
+
+          </button>
+
+
+          <button
+            type="button"
+            class="page-number"
+            *ngFor="let page of pageNumbers"
+            [class.active]="page === currentPage"
+            (click)="goToPage(page)">
+
+            {{ page }}
+
+          </button>
+
+
+          <button
+            type="button"
+            class="page-button"
+            (click)="nextPage()"
+            [disabled]="currentPage === totalPages">
+
+            <span>
+              Next
+            </span>
+
+            ›
+
+          </button>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+</div>
+
+
+<!-- =========================================================
+     ACCOUNT DETAILS MODAL
+     ========================================================= -->
+
+<div class="modal-backdrop" *ngIf="showDetailsModal" (click)="closeDetails()">
+  <section class="modal details-modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <div class="modal-title">
+        <div class="modal-account-icon">AC</div>
+        <div>
+          <span class="modal-eyebrow">PAYMENT ACCOUNT</span>
+          <h2>#{{ selectedAccount?.accountId }}</h2>
+        </div>
+      </div>
+      <button type="button" class="modal-close" (click)="closeDetails()">×</button>
+    </div>
+
+    <div class="modal-body" *ngIf="selectedAccount">
+      <div class="account-summary">
+        <div>
+          <span class="summary-label">PAYMENT AMOUNT</span>
+          <strong>{{ formatCurrency(selectedAccount.amount) }}</strong>
+        </div>
+        <span class="status-badge" [ngClass]="getStatusClass(selectedAccount.paymentStatus)">
+          <span class="status-dot"></span>
+          {{ getStatusLabel(selectedAccount.paymentStatus) }}
+        </span>
+      </div>
+
+      <div class="details-grid">
+        <div class="detail-item"><span>Account ID</span><strong>#{{ selectedAccount.accountId }}</strong></div>
+        <div class="detail-item"><span>Purchase Request</span><strong>#{{ selectedAccount.purchaseRequestId }}</strong></div>
+        <div class="detail-item"><span>User ID</span><strong>#{{ selectedAccount.userId }}</strong></div>
+        <div class="detail-item"><span>Payment Date</span><strong>{{ formatDateTime(selectedAccount.paymentDate) }}</strong></div>
+        <div class="detail-item detail-wide"><span>Payment Reference</span><strong>{{ selectedAccount.paymentReference || 'No payment reference' }}</strong></div>
+      </div>
+
+      <div class="payment-action-card" *ngIf="normalizeStatus(selectedAccount.paymentStatus) === 'PENDING'">
+        <div>
+          <strong>Payment is ready</strong>
+          <p>Choose the supplier and payment method to complete this approved request.</p>
+        </div>
+        <button type="button" class="pay-now-button" (click)="openPaymentModal(selectedAccount)">
+          ₹ Pay Now
+        </button>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="secondary-button" (click)="closeDetails()">Close</button>
+    </div>
+  </section>
+</div>
+
+<!-- =========================================================
+     NEW PAYMENT FLOW MODAL
+     ========================================================= -->
+
+<div class="modal-backdrop" *ngIf="showPaymentModal" (click)="closePaymentModal()">
+  <section class="modal payment-flow-modal" (click)="$event.stopPropagation()">
+
+    <div class="modal-header">
+      <div class="modal-title">
+        <div class="payment-flow-icon">₹</div>
+        <div>
+          <span class="modal-eyebrow">PAYMENT</span>
+          <h2>Complete Payment</h2>
+        </div>
+      </div>
+      <button type="button" class="modal-close" (click)="closePaymentModal()">×</button>
+    </div>
+
+    <div class="payment-flow-progress">
+      <div [class.active]="paymentStep >= 1"><span>1</span><label>Supplier</label></div>
+      <div [class.active]="paymentStep >= 2"><span>2</span><label>Method</label></div>
+      <div [class.active]="paymentStep >= 3"><span>3</span><label>Payment</label></div>
+    </div>
+
+    <div class="modal-body payment-flow-body">
+      <div class="payment-request-banner">
+        <div>
+          <span>Purchase Request</span>
+          <strong>#{{ accountForPayment?.purchaseRequestId }}</strong>
+        </div>
+        <div>
+          <span>Account Amount</span>
+          <strong>{{ formatCurrency(accountForPayment?.amount) }}</strong>
+        </div>
+      </div>
+
+      <!-- STEP 1 -->
+      <div *ngIf="paymentStep === 1">
+        <h3>Select Supplier</h3>
+        <p class="payment-help">Payment is processed separately for each supplier assigned to this request.</p>
+
+        <div class="supplier-payment-list" *ngIf="suppliersForPayment.length">
+          <button type="button" class="supplier-payment-option" *ngFor="let supplier of suppliersForPayment" (click)="selectSupplier(supplier)">
+            <span class="supplier-payment-avatar">S</span>
+            <span class="supplier-payment-info">
+              <strong>{{ supplier.supplierName }}</strong>
+              <small>Supplier ID: {{ supplier.supplierId }}</small>
+            </span>
+            <span class="supplier-arrow">›</span>
+          </button>
+        </div>
+
+        <div class="payment-loading" *ngIf="!suppliersForPayment.length && !errorMessage">Loading suppliers...</div>
+      </div>
+
+      <!-- STEP 2 -->
+      <div *ngIf="paymentStep === 2">
+        <div class="selected-supplier-banner">
+          <div>
+            <span>Selected Supplier</span>
+            <strong>{{ selectedSupplier?.supplierName }}</strong>
+          </div>
+          <button type="button" class="link-button" (click)="backPaymentStep()">Change</button>
+        </div>
+
+        <h3>Select Payment Method</h3>
+        <div class="payment-method-grid">
+          <button type="button" class="payment-method-card" (click)="choosePaymentMethod('QR_CODE')" [disabled]="isProcessingPayment">
+            <span class="method-icon">▦</span>
+            <strong>QR Code</strong>
+            <small>Scan dynamic UPI QR</small>
+          </button>
+          <button type="button" class="payment-method-card" (click)="choosePaymentMethod('UPI')" [disabled]="isProcessingPayment">
+            <span class="method-icon">U</span>
+            <strong>UPI</strong>
+            <small>Pay using UPI ID</small>
+          </button>
+          <button type="button" class="payment-method-card" (click)="choosePaymentMethod('CREDIT_CARD')" [disabled]="isProcessingPayment">
+            <span class="method-icon">▣</span>
+            <strong>Credit Card</strong>
+            <small>Pay by card</small>
+          </button>
+        </div>
+        <div class="payment-inline-loading" *ngIf="isProcessingPayment">Preparing secure payment...</div>
+      </div>
+
+      <!-- STEP 3 -->
+      <div *ngIf="paymentStep === 3 && currentTransaction">
+        <div class="transaction-summary">
+          <div><span>Supplier</span><strong>{{ currentTransaction.supplierName }}</strong></div>
+          <div><span>Amount</span><strong>{{ formatCurrency(currentTransaction.amount) }}</strong></div>
+          <div><span>Transaction</span><strong>{{ currentTransaction.transactionReference || currentTransaction.qrReference }}</strong></div>
+        </div>
+
+        <!-- QR / UPI -->
+        <div *ngIf="isDigitalPayment" class="digital-payment-panel">
+          <div class="qr-area" *ngIf="selectedPaymentMethod === 'QR_CODE'">
+            <img [src]="qrImageUrl" alt="Dynamic UPI QR Code" class="dynamic-qr" />
+            <small>Scan this dynamic QR code with your UPI app.</small>
+          </div>
+
+          <div class="upi-details">
+            <span>Supplier UPI ID</span>
+            <strong>{{ currentTransaction.supplierUpiId || 'UPI ID not configured' }}</strong>
+            <small>QR Reference: {{ currentTransaction.qrReference }}</small>
+          </div>
+
+          <div class="form-group">
+            <label>MPIN <span>*</span></label>
+            <input type="password" inputmode="numeric" maxlength="6" [(ngModel)]="mpin" placeholder="Enter 4–6 digit MPIN" [disabled]="isProcessingPayment" />
+            <small>MPIN is validated and stored only as a secure hash on the server.</small>
+          </div>
+        </div>
+
+        <!-- CARD -->
+        <div *ngIf="selectedPaymentMethod === 'CREDIT_CARD'" class="card-payment-panel">
+          <div class="form-group">
+            <label>Card Holder Name <span>*</span></label>
+            <input type="text" [(ngModel)]="cardHolderName" placeholder="Name on card" [disabled]="isProcessingPayment" />
+          </div>
+          <div class="form-group">
+            <label>Card Number <span>*</span></label>
+            <input type="text" inputmode="numeric" maxlength="19" [(ngModel)]="cardNumber" placeholder="Enter card number" [disabled]="isProcessingPayment" />
+          </div>
+          <div class="card-fields-row">
+            <div class="form-group"><label>Expiry <span>*</span></label><input type="text" maxlength="7" [(ngModel)]="cardExpiry" placeholder="MM/YY" [disabled]="isProcessingPayment" /></div>
+            <div class="form-group"><label>CVV <span>*</span></label><input type="password" inputmode="numeric" maxlength="4" [(ngModel)]="cardCvv" placeholder="CVV" [disabled]="isProcessingPayment" /></div>
+          </div>
+          <small class="card-security-note">Full card number and CVV are not stored by the application.</small>
+        </div>
+      </div>
+    </div>
+
+    <div class="payment-flow-error" *ngIf="errorMessage">{{ errorMessage }}</div>
+
+    <div class="modal-footer payment-flow-footer">
+      <button type="button" class="secondary-button" [disabled]="isProcessingPayment || isProcessingFailure" (click)="paymentStep > 1 ? backPaymentStep() : closePaymentModal()">
+        {{ paymentStep > 1 ? 'Back' : 'Cancel' }}
+      </button>
+
+      <button type="button" class="failure-action-button" *ngIf="paymentStep === 3 && currentTransaction" [disabled]="isProcessingPayment || isProcessingFailure" (click)="markCurrentPaymentFailed()">
+        {{ isProcessingFailure ? 'Updating...' : 'Mark Failed' }}
+      </button>
+
+      <button type="button" class="success-action-button" *ngIf="paymentStep === 3 && currentTransaction" [disabled]="isProcessingPayment || isProcessingFailure" (click)="processPayment()">
+        <span class="button-spinner" *ngIf="isProcessingPayment"></span>
+        {{ isProcessingPayment ? 'Processing...' : 'Pay Now' }}
+      </button>
+    </div>
+  </section>
+</div>

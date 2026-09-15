@@ -1,0 +1,340 @@
+<div class="login-page">
+
+  <div class="login-card">
+
+    <!-- ===================================== -->
+    <!-- LEFT SIDE -->
+    <!-- ===================================== -->
+
+    <div class="login-left">
+
+      <div class="brand">
+
+        <div class="brand-logo">
+          EP
+        </div>
+
+        <div>
+          <h2>Enterprise</h2>
+          <p>Procurement System</p>
+        </div>
+
+      </div>
+
+
+      <div class="welcome-content">
+
+        <div class="welcome-label">
+          WELCOME BACK
+        </div>
+
+        <h1>
+          Manage your<br>
+          procurement<br>
+          <span>smarter.</span>
+        </h1>
+
+        <p class="description">
+          Login to access purchase requests,
+          approvals, payments, tracking and more.
+        </p>
+
+
+        <div class="feature">
+
+          <div class="check">
+            ✓
+          </div>
+
+          <span>
+            Secure procurement management
+          </span>
+
+        </div>
+
+
+        <div class="feature">
+
+          <div class="check">
+            ✓
+          </div>
+
+          <span>
+            Track your purchase requests
+          </span>
+
+        </div>
+
+
+        <div class="feature">
+
+          <div class="check">
+            ✓
+          </div>
+
+          <span>
+            Manage approvals and payments
+          </span>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- ===================================== -->
+    <!-- RIGHT SIDE -->
+    <!-- ===================================== -->
+
+    <div class="login-right">
+
+      <div class="form-container">
+
+
+        <!-- ================================= -->
+        <!-- USER TYPE -->
+        <!-- ================================= -->
+
+        <div class="account-type">
+
+          <div class="account-type-label">
+            LOGIN AS
+          </div>
+
+
+          <div class="type-switch">
+
+
+            <!-- EMPLOYEE -->
+
+            <button
+              type="button"
+              class="type-button"
+              [class.active]="userType === 'EMPLOYEE'"
+              (click)="changeUserType('EMPLOYEE')">
+
+              <span class="type-icon">
+                👤
+              </span>
+
+              <span>
+                Employee
+              </span>
+
+            </button>
+
+
+            <!-- BUSINESS -->
+
+            <button
+              type="button"
+              class="type-button"
+              [class.active]="userType === 'BUSINESS'"
+              (click)="changeUserType('BUSINESS')">
+
+              <span class="type-icon">
+                🏢
+              </span>
+
+              <span>
+                Business
+              </span>
+
+            </button>
+
+          </div>
+
+        </div>
+
+
+        <!-- ================================= -->
+        <!-- FORM HEADER -->
+        <!-- ================================= -->
+
+        <div class="form-label">
+          {{ userTypeLabel.toUpperCase() }} LOGIN
+        </div>
+
+        <h1>
+          Login to your account
+        </h1>
+
+        <p class="subtitle">
+
+          <ng-container
+            *ngIf="userType === 'EMPLOYEE'">
+
+            Access your employee procurement dashboard.
+
+          </ng-container>
+
+          <ng-container
+            *ngIf="userType === 'BUSINESS'">
+
+            Access your business supplier dashboard.
+
+          </ng-container>
+
+        </p>
+
+
+        <!-- ================================= -->
+        <!-- ERROR -->
+        <!-- ================================= -->
+
+        <div
+          class="message error"
+          *ngIf="errorMessage">
+
+          {{ errorMessage }}
+
+        </div>
+
+
+        <!-- ================================= -->
+        <!-- SUCCESS -->
+        <!-- ================================= -->
+
+        <div
+          class="message success"
+          *ngIf="successMessage">
+
+          {{ successMessage }}
+
+        </div>
+
+
+        <!-- ================================= -->
+        <!-- LOGIN FORM -->
+        <!-- ================================= -->
+
+        <form
+          [formGroup]="loginForm"
+          (ngSubmit)="onSubmit()">
+
+
+          <!-- USERNAME -->
+
+          <div class="form-group">
+
+            <label for="username">
+              Username
+            </label>
+
+            <input
+              id="username"
+              type="text"
+              formControlName="username"
+              placeholder="Enter your username"
+              autocomplete="username"
+            >
+
+            <div
+              class="validation"
+              *ngIf="
+                submitted &&
+                f['username'].invalid
+              ">
+
+              Username is required.
+
+            </div>
+
+          </div>
+
+
+          <!-- PASSWORD -->
+
+          <div class="form-group">
+
+            <label for="password">
+              Password
+            </label>
+
+            <input
+              id="password"
+              type="password"
+              formControlName="password"
+              placeholder="Enter your password"
+              autocomplete="current-password"
+            >
+
+            <div
+              class="validation"
+              *ngIf="
+                submitted &&
+                f['password'].invalid
+              ">
+
+              Password is required.
+
+            </div>
+
+          </div>
+
+
+          <!-- LOGIN BUTTON -->
+
+          <button
+            type="submit"
+            class="login-button"
+            [disabled]="isLoading">
+
+            <span *ngIf="!isLoading">
+              Login →
+            </span>
+
+            <span *ngIf="isLoading">
+              Logging in...
+            </span>
+
+          </button>
+
+        </form>
+
+
+        <!-- ================================= -->
+        <!-- REGISTER -->
+        <!-- ================================= -->
+
+        <div class="register-link">
+
+          Don't have an account?
+
+          <button
+            type="button"
+            class="register-button"
+            (click)="goToRegister()">
+
+            Register
+
+          </button>
+
+        </div>
+
+
+        <!-- ================================= -->
+        <!-- CURRENT ACCOUNT TYPE -->
+        <!-- ================================= -->
+
+        <div class="selected-type">
+
+          <span>
+            Signing in as
+          </span>
+
+          <strong>
+            {{ userTypeLabel }}
+          </strong>
+
+        </div>
+
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

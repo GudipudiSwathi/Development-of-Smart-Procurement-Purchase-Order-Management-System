@@ -1,0 +1,1179 @@
+<div class="admin-users">
+
+  <app-admin-sidebar></app-admin-sidebar>
+
+
+  <!-- =====================================================
+       MAIN AREA
+       ===================================================== -->
+
+  <div class="main-area">
+
+
+    <!-- ===================================================
+         TOPBAR
+         =================================================== -->
+
+    <header class="topbar">
+
+      <div class="topbar-heading">
+
+        <h2>
+          User Management
+        </h2>
+
+        <span>
+          Manage your organization's users
+        </span>
+
+      </div>
+
+
+      <!-- PROFILE -->
+
+      <div class="topbar-profile">
+
+        <div class="topbar-avatar">
+
+          {{ getInitial(adminName) }}
+
+        </div>
+
+        <div class="topbar-profile-info">
+
+          <strong>
+            {{ adminName }}
+          </strong>
+
+          <span>
+            Administrator
+          </span>
+
+        </div>
+
+      </div>
+
+    </header>
+
+
+
+    <!-- ===================================================
+         MAIN CONTENT
+         =================================================== -->
+
+    <main class="users-content">
+
+
+      <!-- =================================================
+           PAGE HEADER
+           ================================================= -->
+
+      <section class="page-header">
+
+        <div>
+
+          <p class="eyebrow">
+            ADMINISTRATION
+          </p>
+
+          <h1>
+            Users
+          </h1>
+
+          <p class="page-description">
+            View and manage all registered users.
+          </p>
+
+        </div>
+
+
+        <!-- ADD USER -->
+
+        <button
+          type="button"
+          class="add-user-button"
+          (click)="openAddUserModal()">
+
+          <span class="plus-icon">
+            +
+          </span>
+
+          Add User
+
+        </button>
+
+      </section>
+
+
+
+      <!-- =================================================
+           SUCCESS MESSAGE
+           ================================================= -->
+
+      <div
+        class="page-success"
+        *ngIf="successMessage">
+
+        <span>
+          ✓
+        </span>
+
+        {{ successMessage }}
+
+      </div>
+
+
+
+      <!-- =================================================
+           ERROR MESSAGE
+           ================================================= -->
+
+      <div
+        class="page-error"
+        *ngIf="errorMessage">
+
+        <span>
+          ⚠
+        </span>
+
+        {{ errorMessage }}
+
+        <button
+          type="button"
+          (click)="loadUsers()">
+
+          Retry
+
+        </button>
+
+      </div>
+
+
+
+      <!-- =================================================
+           STAT CARDS
+           ================================================= -->
+
+      <section class="stats-grid">
+
+
+        <!-- TOTAL -->
+
+        <div class="stat-card">
+
+          <div class="stat-icon users-icon">
+            ♙
+          </div>
+
+          <div class="stat-content">
+
+            <span>
+              TOTAL USERS
+            </span>
+
+            <strong>
+              {{ totalUsers }}
+            </strong>
+
+            <small>
+              Registered users
+            </small>
+
+          </div>
+
+        </div>
+
+
+        <!-- EMPLOYEES -->
+
+        <div class="stat-card">
+
+          <div class="stat-icon employee-icon">
+            ◉
+          </div>
+
+          <div class="stat-content">
+
+            <span>
+              EMPLOYEES
+            </span>
+
+            <strong>
+              {{ totalEmployees }}
+            </strong>
+
+            <small>
+              Registered employees
+            </small>
+
+          </div>
+
+        </div>
+
+
+        <!-- ADMINS -->
+
+        <div class="stat-card">
+
+          <div class="stat-icon admin-icon">
+            ★
+          </div>
+
+          <div class="stat-content">
+
+            <span>
+              ADMINS
+            </span>
+
+            <strong>
+              {{ totalAdmins }}
+            </strong>
+
+            <small>
+              System administrators
+            </small>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+
+      <!-- =================================================
+           USERS CARD
+           ================================================= -->
+
+      <section class="users-card">
+
+
+        <!-- =================================================
+             TABLE HEADER
+             ================================================= -->
+
+        <div class="table-header">
+
+
+          <div class="table-title">
+
+            <div class="title-row">
+
+              <h2>
+                All Users
+              </h2>
+
+              <span class="live-dot"></span>
+
+            </div>
+
+            <span class="user-count">
+
+              {{ filteredUsers.length }}
+
+              {{
+                filteredUsers.length === 1
+                  ? 'user'
+                  : 'users'
+              }}
+
+              found
+
+            </span>
+
+          </div>
+
+
+
+          <!-- =================================================
+               TABLE TOOLS
+               ================================================= -->
+
+          <div class="table-tools">
+
+
+            <!-- SEARCH -->
+
+            <div class="search-box">
+
+              <span class="search-icon">
+                🔍
+              </span>
+
+              <input
+                type="text"
+                placeholder="Search users..."
+                [(ngModel)]="searchText"
+                (input)="filterUsers()"
+              />
+
+            </div>
+
+
+
+            <!-- ROLE FILTER -->
+
+            <div class="role-filter">
+
+              <select
+                [(ngModel)]="selectedRole"
+                (change)="onRoleChange()">
+
+                <option value="ALL">
+                  All Roles
+                </option>
+
+                <option value="ADMIN">
+                  Admin
+                </option>
+
+                <option value="EMPLOYEE">
+                  Employee
+                </option>
+
+              </select>
+
+            </div>
+
+
+
+            <!-- REFRESH -->
+
+            <button
+              type="button"
+              class="refresh-button"
+              (click)="refreshUsers()"
+              title="Refresh users">
+
+              ↻
+
+            </button>
+
+          </div>
+
+        </div>
+
+
+
+        <!-- =================================================
+             LOADING
+             ================================================= -->
+
+        <div
+          class="loading-skeleton"
+          *ngIf="isLoading">
+
+          <div
+            class="skeleton-row"
+            *ngFor="let item of [1,2,3,4,5]">
+
+            <div class="skeleton skeleton-avatar"></div>
+
+            <div class="skeleton skeleton-name"></div>
+
+            <div class="skeleton skeleton-email"></div>
+
+            <div class="skeleton skeleton-phone"></div>
+
+            <div class="skeleton skeleton-designation"></div>
+
+            <div class="skeleton skeleton-role"></div>
+
+            <div class="skeleton skeleton-department"></div>
+
+            <div class="skeleton skeleton-action"></div>
+
+          </div>
+
+          <p class="loading-text">
+            Loading users...
+          </p>
+
+        </div>
+
+
+
+        <!-- =================================================
+             TABLE
+             ================================================= -->
+
+        <div
+          class="table-wrapper"
+          *ngIf="!isLoading && !errorMessage">
+
+          <table>
+
+            <thead>
+
+            <tr>
+
+              <th>
+                USER
+              </th>
+
+              <th>
+                EMAIL
+              </th>
+
+              <th>
+                PHONE
+              </th>
+
+              <th>
+                DESIGNATION
+              </th>
+
+              <th>
+                ROLE
+              </th>
+
+              <th>
+                DEPARTMENT
+              </th>
+
+              <th>
+                ACTIONS
+              </th>
+
+            </tr>
+
+            </thead>
+
+
+            <tbody>
+
+
+            <!-- =================================================
+                 USERS
+                 ================================================= -->
+
+            <tr
+              *ngFor="let user of filteredUsers">
+
+
+              <!-- USER -->
+
+              <td>
+
+                <div class="user-cell">
+
+                  <div class="user-avatar">
+
+                    {{ getInitial(user.username) }}
+
+                  </div>
+
+                  <div class="user-info">
+
+                    <strong>
+                      {{ user.username }}
+                    </strong>
+
+                    <span>
+                        ID #{{ user.userId }}
+                      </span>
+
+                  </div>
+
+                </div>
+
+              </td>
+
+
+
+              <!-- EMAIL -->
+
+              <td>
+
+                  <span class="email">
+
+                    {{ user.email || '—' }}
+
+                  </span>
+
+              </td>
+
+
+
+              <!-- PHONE -->
+
+              <td>
+
+                  <span class="phone">
+
+                    {{ user.phoneNumber || '—' }}
+
+                  </span>
+
+              </td>
+
+
+
+              <!-- DESIGNATION -->
+
+              <td>
+
+                  <span class="designation">
+
+                    {{ user.designation || '—' }}
+
+                  </span>
+
+              </td>
+
+
+
+              <!-- ROLE -->
+
+              <td>
+
+                  <span
+                    class="role-badge"
+                    [class.admin-badge]="
+                      user.role?.toUpperCase() === 'ADMIN'
+                    "
+                    [class.employee-badge]="
+                      user.role?.toUpperCase() !== 'ADMIN'
+                    ">
+
+                    <span class="role-dot"></span>
+
+                    {{ user.role }}
+
+                  </span>
+
+              </td>
+
+
+
+              <!-- DEPARTMENT -->
+
+              <td>
+
+                  <span
+                    class="department-badge"
+                    *ngIf="user.departmentId">
+
+                    Department
+                    {{ user.departmentId }}
+
+                  </span>
+
+
+                <span
+                  class="department-badge no-department"
+                  *ngIf="!user.departmentId">
+
+                    No Department
+
+                  </span>
+
+              </td>
+
+
+
+              <!-- ACTIONS -->
+
+              <td>
+
+                <div class="actions">
+
+
+                  <!-- EDIT -->
+
+                  <button
+                    type="button"
+                    class="edit-action"
+                    title="Edit user"
+                    (click)="openEditUserModal(user)">
+
+                    ✎
+
+                  </button>
+
+
+
+                  <!-- DELETE -->
+
+                  <button
+                    type="button"
+                    class="delete-action"
+                    title="Delete user"
+                    (click)="deleteUser(user)"
+                    [disabled]="
+                        deletingUserId === user.userId
+                      ">
+
+                      <span
+                        *ngIf="
+                          deletingUserId !== user.userId
+                        ">
+
+                        ×
+
+                      </span>
+
+                    <span
+                      *ngIf="
+                          deletingUserId === user.userId
+                        ">
+
+                        ...
+
+                      </span>
+
+                  </button>
+
+                </div>
+
+              </td>
+
+            </tr>
+
+
+
+            <!-- =================================================
+                 EMPTY STATE
+                 ================================================= -->
+
+            <tr
+              *ngIf="filteredUsers.length === 0">
+
+              <td
+                colspan="7"
+                class="empty-state">
+
+                <div class="empty-content">
+
+                  <div class="empty-icon">
+                    ♙
+                  </div>
+
+                  <strong>
+                    No users found
+                  </strong>
+
+                  <p>
+                    Try changing your search or role filter.
+                  </p>
+
+                </div>
+
+              </td>
+
+            </tr>
+
+            </tbody>
+
+          </table>
+
+        </div>
+
+      </section>
+
+    </main>
+
+  </div>
+
+</div>
+
+
+
+<!-- =========================================================
+     ADD / EDIT USER MODAL
+     ========================================================= -->
+
+<div
+  class="modal-overlay"
+  *ngIf="showUserModal"
+  (click)="closeUserModal()">
+
+
+  <div
+    class="user-modal"
+    (click)="$event.stopPropagation()">
+
+
+    <!-- =====================================================
+         MODAL HEADER
+         ===================================================== -->
+
+    <div class="modal-header">
+
+      <div class="modal-title">
+
+        <span>
+          USER MANAGEMENT
+        </span>
+
+        <h2>
+
+          {{
+          isEditMode
+          ? 'Edit User'
+          : 'Add New User'
+          }}
+
+        </h2>
+
+      </div>
+
+
+      <button
+        type="button"
+        class="modal-close"
+        (click)="closeUserModal()"
+        [disabled]="isSavingUser">
+
+        ×
+
+      </button>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         MODAL BODY
+         ===================================================== -->
+
+    <div class="modal-body">
+
+
+      <!-- SUCCESS -->
+
+      <div
+        class="form-success"
+        *ngIf="modalSuccess">
+
+        ✓
+        {{ modalSuccess }}
+
+      </div>
+
+
+
+      <!-- ERROR -->
+
+      <div
+        class="form-error-box"
+        *ngIf="modalError">
+
+        ⚠
+        {{ modalError }}
+
+      </div>
+
+
+
+      <!-- FORM -->
+
+      <div class="form-grid">
+
+
+        <!-- USERNAME -->
+
+        <div class="form-group">
+
+          <label>
+            Username
+            <span>*</span>
+          </label>
+
+          <input
+            type="text"
+            name="username"
+            [(ngModel)]="newUser.username"
+            placeholder="Enter username"
+            [disabled]="isSavingUser"
+          />
+
+        </div>
+
+
+
+        <!-- EMAIL -->
+
+        <div class="form-group">
+
+          <label>
+            Email
+            <span>*</span>
+          </label>
+
+          <input
+            type="email"
+            name="email"
+            [(ngModel)]="newUser.email"
+            placeholder="Enter email address"
+            [disabled]="isSavingUser"
+          />
+
+        </div>
+
+
+
+        <!-- PASSWORD -->
+
+        <div class="form-group">
+
+          <label>
+
+            Password
+
+            <span
+              *ngIf="!isEditMode">
+              *
+            </span>
+
+          </label>
+
+          <input
+            type="password"
+            name="password"
+            [(ngModel)]="newUser.password"
+            [placeholder]="
+              isEditMode
+                ? 'Leave blank to keep current password'
+                : 'Enter password'
+            "
+            [disabled]="isSavingUser"
+          />
+
+          <small
+            *ngIf="isEditMode">
+
+            Leave blank if you don't want to change
+            the password.
+
+          </small>
+
+        </div>
+
+
+
+        <!-- PHONE -->
+
+        <div class="form-group">
+
+          <label>
+            Phone Number
+            <span>*</span>
+          </label>
+
+          <input
+            type="text"
+            name="phoneNumber"
+            [(ngModel)]="newUser.phoneNumber"
+            placeholder="Enter phone number"
+            [disabled]="isSavingUser"
+          />
+
+        </div>
+
+
+
+        <!-- DESIGNATION -->
+
+        <div class="form-group">
+
+          <label>
+            Designation
+            <span>*</span>
+          </label>
+
+          <input
+            type="text"
+            name="designation"
+            [(ngModel)]="newUser.designation"
+            placeholder="e.g. Software Engineer"
+            [disabled]="isSavingUser"
+          />
+
+        </div>
+
+
+
+        <!-- ROLE -->
+
+        <div class="form-group">
+
+          <label>
+            Role
+            <span>*</span>
+          </label>
+
+          <select
+            name="role"
+            [(ngModel)]="newUser.role"
+            [disabled]="isSavingUser">
+
+            <option value="EMPLOYEE">
+              Employee
+            </option>
+
+            <option value="ADMIN">
+              Admin
+            </option>
+
+          </select>
+
+        </div>
+
+
+
+        <!-- DEPARTMENT -->
+
+        <div class="form-group full-width">
+
+          <label>
+            Department ID
+            <span>*</span>
+          </label>
+
+          <input
+            type="number"
+            name="departmentId"
+            [(ngModel)]="newUser.departmentId"
+            placeholder="Enter department ID"
+            [disabled]="isSavingUser"
+          />
+
+          <small>
+            Enter the department ID assigned to this user.
+          </small>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         MODAL FOOTER
+         ===================================================== -->
+
+    <div class="modal-footer">
+
+
+      <!-- CANCEL -->
+
+      <button
+        type="button"
+        class="cancel-button"
+        (click)="closeUserModal()"
+        [disabled]="isSavingUser">
+
+        Cancel
+
+      </button>
+
+
+
+      <!-- SAVE -->
+
+      <button
+        type="button"
+        class="save-user-button"
+        (click)="saveUser()"
+        [disabled]="isSavingUser">
+
+
+        <span
+          *ngIf="!isSavingUser">
+
+          {{
+            isEditMode
+              ? 'Save Changes'
+              : 'Create User'
+          }}
+
+        </span>
+
+
+        <span
+          *ngIf="isSavingUser">
+
+          {{
+            isEditMode
+              ? 'Saving...'
+              : 'Creating...'
+          }}
+
+        </span>
+
+
+      </button>
+
+    </div>
+
+
+  </div>
+
+</div>
+<!-- =========================================================
+     DELETE USER CONFIRMATION MODAL
+     ========================================================= -->
+
+<div
+  class="modal-overlay delete-overlay"
+  *ngIf="showDeleteModal"
+  (click)="cancelDelete()">
+
+  <div
+    class="delete-modal"
+    (click)="$event.stopPropagation()">
+
+
+    <!-- =====================================================
+         SUCCESS STATE
+         ===================================================== -->
+
+    <div
+      class="delete-success-state"
+      *ngIf="deleteSuccessMessage">
+
+      <div class="delete-success-icon">
+        ✓
+      </div>
+
+      <h2>
+        User Deleted
+      </h2>
+
+      <p>
+        {{ deleteSuccessMessage }}
+      </p>
+
+    </div>
+
+
+    <!-- =====================================================
+         DELETE CONFIRMATION STATE
+         ===================================================== -->
+
+    <ng-container *ngIf="!deleteSuccessMessage">
+
+      <!-- HEADER -->
+
+      <div class="delete-modal-header">
+
+        <div class="delete-warning-icon">
+          ⚠
+        </div>
+
+        <button
+          type="button"
+          class="delete-modal-close"
+          (click)="cancelDelete()"
+          [disabled]="isDeletingUser">
+
+          ×
+
+        </button>
+
+      </div>
+
+
+      <!-- BODY -->
+
+      <div class="delete-modal-body">
+
+        <p class="delete-eyebrow">
+          USER MANAGEMENT
+        </p>
+
+        <h2>
+          Delete User
+        </h2>
+
+
+        <p class="delete-message">
+
+          Are you sure you want to delete
+
+          <strong>
+            "{{ userToDelete?.username }}"
+          </strong>
+
+          ?
+
+        </p>
+
+
+        <p class="delete-warning-text">
+
+          This action will permanently remove the user
+          from the system and cannot be undone.
+
+        </p>
+
+
+        <!-- ERROR -->
+
+        <div
+          class="delete-error-message"
+          *ngIf="deleteErrorMessage">
+
+          <span>⚠</span>
+
+          {{ deleteErrorMessage }}
+
+        </div>
+
+      </div>
+
+
+      <!-- FOOTER -->
+
+      <div class="delete-modal-footer">
+
+        <!-- CANCEL -->
+
+        <button
+          type="button"
+          class="delete-cancel-button"
+          (click)="cancelDelete()"
+          [disabled]="isDeletingUser">
+
+          Cancel
+
+        </button>
+
+
+        <!-- DELETE -->
+
+        <button
+          type="button"
+          class="delete-confirm-button"
+          (click)="confirmDeleteUser()"
+          [disabled]="isDeletingUser">
+
+          <span
+            *ngIf="!isDeletingUser">
+
+            Delete User
+
+          </span>
+
+
+          <span
+            *ngIf="isDeletingUser">
+
+            <span class="delete-spinner"></span>
+
+            Deleting...
+
+          </span>
+
+        </button>
+
+      </div>
+
+    </ng-container>
+
+  </div>
+
+</div>

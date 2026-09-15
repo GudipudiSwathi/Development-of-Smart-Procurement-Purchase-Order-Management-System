@@ -1,0 +1,733 @@
+:host {
+  display: block;
+  width: 250px;
+  min-width: 250px;
+  height: 100vh;
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 1000;
+
+  /*
+   * Lock the sidebar typography so parent page styles
+   * cannot change its appearance.
+   */
+  font-family:
+    Inter,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Helvetica,
+    Arial,
+    sans-serif;
+}
+
+
+/* =========================================================
+   SIDEBAR
+   ========================================================= */
+
+.admin-sidebar {
+  width: 250px;
+  height: 100vh;
+  min-height: 100vh;
+
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  background: #ffffff;
+
+  border-right: 1px solid #e9e3f0;
+
+  box-sizing: border-box;
+
+  overflow: hidden;
+
+  color: #706978;
+
+  font-family:
+    Inter,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Helvetica,
+    Arial,
+    sans-serif;
+}
+
+
+/* =========================================================
+   BRAND / HEADER
+   ========================================================= */
+
+.sidebar-header {
+  width: 100%;
+  height: 82px;
+  min-height: 82px;
+
+  padding: 0 24px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 12px;
+
+  background: #ffffff;
+
+  border-bottom: 1px solid #f0ecf4;
+
+  box-sizing: border-box;
+}
+
+
+.brand-icon {
+  width: 42px;
+  height: 42px;
+
+  min-width: 42px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 12px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #8d75df,
+      #b39ae8
+    );
+
+  color: #ffffff;
+
+  font-size: 13px;
+  font-weight: 800;
+
+  line-height: 1;
+
+  box-shadow:
+    0 7px 18px
+    rgba(141, 117, 223, 0.22);
+}
+
+
+.brand-icon span {
+  display: block;
+
+  color: #ffffff;
+
+  font-family:
+    Inter,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Helvetica,
+    Arial,
+    sans-serif;
+
+  font-size: 13px;
+  font-weight: 800;
+}
+
+
+.brand-text {
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 2px;
+}
+
+
+.brand-text h2 {
+  margin: 0;
+
+  color: #2d2737;
+
+  font-family:
+    Inter,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Helvetica,
+    Arial,
+    sans-serif;
+
+  font-size: 15px;
+  font-weight: 700;
+
+  line-height: 1.2;
+}
+
+
+.brand-text span {
+  display: block;
+
+  color: #948c9d;
+
+  font-family:
+    Inter,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Helvetica,
+    Arial,
+    sans-serif;
+
+  font-size: 10px;
+
+  line-height: 1.2;
+}
+
+
+/* =========================================================
+   NAVIGATION
+   ========================================================= */
+
+.sidebar-nav {
+  flex: 1;
+
+  min-height: 0;
+
+  padding: 25px 14px;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  box-sizing: border-box;
+}
+
+
+.sidebar-nav::-webkit-scrollbar {
+  width: 5px;
+}
+
+
+.sidebar-nav::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+
+.sidebar-nav::-webkit-scrollbar-thumb {
+  background: #e4deeb;
+
+  border-radius: 10px;
+}
+
+
+.sidebar-nav::-webkit-scrollbar-thumb:hover {
+  background: #d4cce0;
+}
+
+
+/* Firefox */
+
+.sidebar-nav {
+  scrollbar-width: thin;
+  scrollbar-color: #e4deeb transparent;
+}
+
+
+/* =========================================================
+   SECTION TITLES
+   ========================================================= */
+
+.nav-section-title {
+  margin: 0 10px 10px;
+
+  color: #aaa2b0;
+
+  font-family:
+    Inter,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Helvetica,
+    Arial,
+    sans-serif;
+
+  font-size: 9px;
+  font-weight: 800;
+
+  letter-spacing: 2px;
+
+  line-height: 1.2;
+}
+
+
+/* =========================================================
+   NAV ITEMS
+   ========================================================= */
+
+.nav-item {
+  width: 100%;
+  min-height: 43px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 12px;
+
+  padding: 0 13px;
+
+  margin-bottom: 5px;
+
+  border: none;
+  border-radius: 10px;
+
+  background: transparent;
+
+  color: #706978;
+
+  font-family:
+    Inter,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Helvetica,
+    Arial,
+    sans-serif;
+
+  font-size: 12px;
+  font-weight: 600;
+
+  text-align: left;
+  text-decoration: none;
+
+  cursor: pointer;
+
+  box-sizing: border-box;
+
+  transition:
+    background .2s ease,
+    color .2s ease,
+    transform .2s ease;
+}
+
+
+.nav-item:hover {
+  background: #f7f3fc;
+
+  color: #765fc9;
+
+  transform: translateX(2px);
+}
+
+
+.nav-item.active,
+.nav-item.active:hover {
+  background: #f0ebff;
+
+  color: #765bc9;
+
+  transform: translateX(0);
+}
+
+
+/* =========================================================
+   NAV ICON
+   ========================================================= */
+
+.nav-icon {
+  width: 21px;
+  min-width: 21px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  color: inherit;
+
+  font-family:
+    Inter,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Helvetica,
+    Arial,
+    sans-serif;
+
+  font-size: 16px;
+
+  line-height: 1;
+}
+
+
+/* =========================================================
+   OPTIONAL NAV COUNT
+   ========================================================= */
+
+.nav-count {
+  min-width: 20px;
+  height: 20px;
+
+  margin-left: auto;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0 5px;
+
+  border-radius: 50%;
+
+  background: #fff1d8;
+
+  color: #a66c0c;
+
+  font-size: 9px;
+  font-weight: 800;
+
+  box-sizing: border-box;
+}
+
+
+/* =========================================================
+   SIDEBAR FOOTER
+   ========================================================= */
+
+.sidebar-footer {
+  width: 100%;
+
+  padding: 12px 14px 18px;
+
+  background: #ffffff;
+
+  border-top: 1px solid #f0ecf4;
+
+  box-sizing: border-box;
+}
+
+
+/* =========================================================
+   ADMIN PROFILE
+   ========================================================= */
+
+.admin-profile {
+  display: flex;
+  align-items: center;
+
+  gap: 10px;
+
+  padding: 13px 8px 10px;
+
+  min-width: 0;
+}
+
+
+.profile-avatar {
+  width: 34px;
+  height: 34px;
+
+  min-width: 34px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background:
+    linear-gradient(
+      135deg,
+      #8d75df,
+      #b29be7
+    );
+
+  color: #ffffff;
+
+  font-family:
+    Inter,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Helvetica,
+    Arial,
+    sans-serif;
+
+  font-size: 11px;
+  font-weight: 800;
+
+  line-height: 1;
+}
+
+
+.profile-info {
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 2px;
+}
+
+
+.profile-info strong {
+  display: block;
+
+  color: #494252;
+
+  font-family:
+    Inter,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Helvetica,
+    Arial,
+    sans-serif;
+
+  font-size: 10px;
+  font-weight: 700;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+
+.profile-info span {
+  display: block;
+
+  color: #9c94a3;
+
+  font-family:
+    Inter,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Helvetica,
+    Arial,
+    sans-serif;
+
+  font-size: 8px;
+}
+
+
+/* =========================================================
+   LOGOUT
+   ========================================================= */
+
+.logout-button {
+  width: 100%;
+  min-height: 40px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 12px;
+
+  padding: 0 13px;
+
+  margin-top: 2px;
+
+  border: none;
+  border-radius: 10px;
+
+  background: transparent;
+
+  color: #706978;
+
+  font-family:
+    Inter,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Helvetica,
+    Arial,
+    sans-serif;
+
+  font-size: 12px;
+  font-weight: 600;
+
+  text-align: left;
+
+  cursor: pointer;
+
+  box-sizing: border-box;
+
+  transition:
+    background .2s ease,
+    color .2s ease,
+    transform .2s ease;
+}
+
+
+.logout-button:hover {
+  background: #fff3f4;
+
+  color: #b84451;
+
+  transform: translateX(2px);
+}
+
+
+.logout-button .logout-icon {
+  width: 21px;
+  min-width: 21px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  font-family:
+    Inter,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Helvetica,
+    Arial,
+    sans-serif;
+
+  font-size: 16px;
+
+  line-height: 1;
+}
+
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+  :host {
+    width: 72px;
+    min-width: 72px;
+  }
+
+
+  .admin-sidebar {
+    width: 72px;
+  }
+
+
+  .sidebar-header {
+    padding: 0;
+
+    justify-content: center;
+  }
+
+
+  .brand-text {
+    display: none;
+  }
+
+
+  .sidebar-nav {
+    padding: 25px 8px;
+  }
+
+
+  .nav-section-title {
+    display: none;
+  }
+
+
+  .nav-item {
+    position: relative;
+
+    justify-content: center;
+
+    padding: 0;
+
+    gap: 0;
+  }
+
+
+  .nav-label {
+    display: none;
+  }
+
+
+  .nav-count {
+    position: absolute;
+
+    top: -3px;
+    right: 1px;
+
+    margin: 0;
+
+    min-width: 17px;
+    height: 17px;
+
+    font-size: 8px;
+  }
+
+
+  .sidebar-footer {
+    padding: 12px 8px 18px;
+  }
+
+
+  .admin-profile {
+    justify-content: center;
+
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+
+  .profile-info {
+    display: none;
+  }
+
+
+  .logout-button {
+    justify-content: center;
+
+    padding: 0;
+
+    gap: 0;
+  }
+
+
+  .logout-button > span:last-child {
+    display: none;
+  }
+
+
+  .logout-button .logout-icon {
+    width: 21px;
+  }
+
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 650px) {
+
+  :host {
+    display: none;
+  }
+
+
+  .admin-sidebar {
+    display: none;
+  }
+
+}

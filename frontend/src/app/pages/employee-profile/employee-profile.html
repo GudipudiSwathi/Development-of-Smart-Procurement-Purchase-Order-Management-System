@@ -1,0 +1,1102 @@
+<div class="profile-page">
+
+  <!-- =====================================================
+       TOP NAVIGATION
+       ===================================================== -->
+
+  <header class="profile-header">
+
+    <div class="header-left">
+
+      <button
+        type="button"
+        class="back-button"
+        (click)="goToDashboard()">
+
+        <span class="back-icon">←</span>
+
+        <span>Dashboard</span>
+
+      </button>
+
+      <div class="header-divider"></div>
+
+      <div class="page-heading">
+
+        <span class="heading-eyebrow">
+          ACCOUNT
+        </span>
+
+        <h1>
+          My Profile
+        </h1>
+
+      </div>
+
+    </div>
+
+
+    <div class="header-right">
+
+      <div class="secure-indicator">
+
+        <span class="secure-dot"></span>
+
+        <span>
+          Secure Session
+        </span>
+
+      </div>
+
+
+      <button
+        type="button"
+        class="logout-button"
+        (click)="openLogoutConfirmation()">
+
+        <span class="logout-icon">
+          ↪
+        </span>
+
+        <span>
+          Logout
+        </span>
+
+      </button>
+
+    </div>
+
+  </header>
+
+
+
+  <!-- =====================================================
+       MAIN CONTENT
+       ===================================================== -->
+
+  <main class="profile-content">
+
+
+    <!-- ===================================================
+         PAGE INTRO
+         =================================================== -->
+
+    <section class="profile-intro">
+
+      <div>
+
+        <span class="intro-label">
+          ACCOUNT SETTINGS
+        </span>
+
+        <h2>
+          Manage your profile
+        </h2>
+
+        <p>
+          Keep your personal information up to date and
+          manage your account security from one place.
+        </p>
+
+      </div>
+
+
+      <button
+        *ngIf="!editMode && !loading"
+        type="button"
+        class="edit-profile-button"
+        (click)="enableEdit()">
+
+        <span class="button-icon">
+          ✎
+        </span>
+
+        <span>
+          Edit Profile
+        </span>
+
+      </button>
+
+    </section>
+
+
+
+    <!-- ===================================================
+         LOADING STATE
+         =================================================== -->
+
+    <section
+      *ngIf="loading"
+      class="loading-card">
+
+      <div class="loading-spinner"></div>
+
+      <h3>
+        Loading your profile
+      </h3>
+
+      <p>
+        Please wait while we securely retrieve your
+        account information.
+      </p>
+
+    </section>
+
+
+
+    <!-- ===================================================
+         ERROR MESSAGE
+         =================================================== -->
+
+    <div
+      *ngIf="errorMessage && !loading"
+      class="message-card error-card">
+
+      <div class="message-icon">
+        !
+      </div>
+
+      <div class="message-content">
+
+        <strong>
+          Something went wrong
+        </strong>
+
+        <span>
+          {{ errorMessage }}
+        </span>
+
+      </div>
+
+      <button
+        type="button"
+        class="retry-button"
+        (click)="loadProfile()">
+
+        Try Again
+
+      </button>
+
+    </div>
+
+
+
+    <!-- ===================================================
+         SUCCESS MESSAGE
+         =================================================== -->
+
+    <div
+      *ngIf="successMessage"
+      class="message-card success-card">
+
+      <div class="message-icon">
+        ✓
+      </div>
+
+      <div class="message-content">
+
+        <strong>
+          Profile updated
+        </strong>
+
+        <span>
+          {{ successMessage }}
+        </span>
+
+      </div>
+
+      <button
+        type="button"
+        class="message-close"
+        (click)="successMessage = ''">
+
+        ×
+
+      </button>
+
+    </div>
+
+
+
+    <!-- ===================================================
+         PROFILE AREA
+         =================================================== -->
+
+    <div
+      *ngIf="profile && !loading"
+      class="profile-layout">
+
+
+      <!-- =================================================
+           LEFT PROFILE SUMMARY
+           ================================================= -->
+
+      <aside class="profile-summary-card">
+
+
+        <div class="summary-cover">
+
+          <div class="cover-pattern"></div>
+
+        </div>
+
+
+        <div class="summary-body">
+
+
+          <div class="profile-avatar">
+
+            {{ userInitial }}
+
+          </div>
+
+
+          <h2>
+            {{ profile.username }}
+          </h2>
+
+
+          <span class="profile-role">
+            {{ displayRole }}
+          </span>
+
+
+          <p class="profile-designation">
+            {{ profile.designation || 'Employee' }}
+          </p>
+
+
+          <div class="profile-status">
+
+            <span class="status-dot"></span>
+
+            <span>
+              Active Account
+            </span>
+
+          </div>
+
+
+          <div class="summary-divider"></div>
+
+
+          <!-- Account ID -->
+
+          <div class="summary-item">
+
+            <span class="summary-item-icon">
+              #
+            </span>
+
+            <div>
+
+              <span class="summary-label">
+                USER ID
+              </span>
+
+              <strong>
+                {{ profile.userId }}
+              </strong>
+
+            </div>
+
+          </div>
+
+
+          <!-- Department -->
+
+          <div class="summary-item">
+
+            <span class="summary-item-icon">
+              ◫
+            </span>
+
+            <div>
+
+              <span class="summary-label">
+                DEPARTMENT
+              </span>
+
+              <strong>
+                {{ departmentDisplay }}
+              </strong>
+
+            </div>
+
+          </div>
+
+
+          <!-- Role -->
+
+          <div class="summary-item">
+
+            <span class="summary-item-icon">
+              ◈
+            </span>
+
+            <div>
+
+              <span class="summary-label">
+                ACCESS LEVEL
+              </span>
+
+              <strong>
+                {{ displayRole }}
+              </strong>
+
+            </div>
+
+          </div>
+
+
+        </div>
+
+      </aside>
+
+
+
+      <!-- =================================================
+           RIGHT INFORMATION AREA
+           ================================================= -->
+
+      <section class="profile-details">
+
+
+        <!-- ===============================================
+             PERSONAL INFORMATION
+             =============================================== -->
+
+        <div class="details-card">
+
+
+          <div class="details-card-header">
+
+            <div class="section-icon">
+              👤
+            </div>
+
+            <div>
+
+              <h3>
+                Personal Information
+              </h3>
+
+              <p>
+                Your basic account and contact information.
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <div class="details-card-body">
+
+
+            <!-- Username -->
+
+            <div class="form-group">
+
+              <label for="username">
+                Username
+              </label>
+
+              <div class="input-wrapper">
+
+                <span class="input-icon">
+                  @
+                </span>
+
+                <input
+                  id="username"
+                  type="text"
+                  [(ngModel)]="username"
+                  [disabled]="!editMode"
+                  autocomplete="username"
+                  placeholder="Enter username">
+
+              </div>
+
+              <small *ngIf="editMode">
+                This name will be used when you sign in.
+              </small>
+
+            </div>
+
+
+            <!-- Email -->
+
+            <div class="form-group">
+
+              <label for="email">
+                Email Address
+              </label>
+
+              <div class="input-wrapper">
+
+                <span class="input-icon">
+                  ✉
+                </span>
+
+                <input
+                  id="email"
+                  type="email"
+                  [(ngModel)]="email"
+                  [disabled]="!editMode"
+                  autocomplete="email"
+                  placeholder="Enter email address">
+
+              </div>
+
+            </div>
+
+
+            <!-- Phone -->
+
+            <div class="form-group">
+
+              <label for="phoneNumber">
+                Phone Number
+              </label>
+
+              <div class="input-wrapper">
+
+                <span class="input-icon">
+                  ☎
+                </span>
+
+                <input
+                  id="phoneNumber"
+                  type="tel"
+                  [(ngModel)]="phoneNumber"
+                  [disabled]="!editMode"
+                  autocomplete="tel"
+                  placeholder="Enter phone number">
+
+              </div>
+
+            </div>
+
+
+            <!-- Designation -->
+
+            <div class="form-group">
+
+              <label for="designation">
+                Designation
+              </label>
+
+              <div class="input-wrapper">
+
+                <span class="input-icon">
+                  ◇
+                </span>
+
+                <input
+                  id="designation"
+                  type="text"
+                  [(ngModel)]="designation"
+                  [disabled]="!editMode"
+                  placeholder="Enter designation">
+
+              </div>
+
+            </div>
+
+
+          </div>
+
+        </div>
+
+
+
+        <!-- ===============================================
+             ORGANIZATION INFORMATION
+             =============================================== -->
+
+        <div class="details-card">
+
+
+          <div class="details-card-header">
+
+            <div class="section-icon">
+              🏢
+            </div>
+
+            <div>
+
+              <h3>
+                Organization
+              </h3>
+
+              <p>
+                Information managed by your administrator.
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <div class="details-card-body organization-grid">
+
+
+            <div class="readonly-info">
+
+              <span class="readonly-label">
+                DEPARTMENT
+              </span>
+
+              <strong>
+                {{ departmentDisplay }}
+              </strong>
+
+              <small>
+                Managed by administrator
+              </small>
+
+            </div>
+
+
+            <div class="readonly-info">
+
+              <span class="readonly-label">
+                ROLE
+              </span>
+
+              <strong>
+                {{ displayRole }}
+              </strong>
+
+              <small>
+                Managed by administrator
+              </small>
+
+            </div>
+
+
+            <div class="readonly-info">
+
+              <span class="readonly-label">
+                USER ID
+              </span>
+
+              <strong>
+                {{ profile.userId }}
+              </strong>
+
+              <small>
+                Permanent account identifier
+              </small>
+
+            </div>
+
+
+            <div class="readonly-info">
+
+              <span class="readonly-label">
+                ACCOUNT STATUS
+              </span>
+
+              <strong class="active-text">
+                ● Active
+              </strong>
+
+              <small>
+                Account is currently active
+              </small>
+
+            </div>
+
+
+          </div>
+
+        </div>
+
+
+
+        <!-- ===============================================
+             SECURITY
+             =============================================== -->
+
+        <div class="details-card security-card">
+
+
+          <div class="details-card-header">
+
+            <div class="section-icon security-icon">
+              🔐
+            </div>
+
+            <div>
+
+              <h3>
+                Account Security
+              </h3>
+
+              <p>
+                Update your password to keep your account
+                secure.
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <div class="details-card-body">
+
+
+            <div class="security-notice">
+
+              <span class="notice-icon">
+                ✓
+              </span>
+
+              <div>
+
+                <strong>
+                  Password protected
+                </strong>
+
+                <p>
+                  Your password is securely encrypted and
+                  never displayed in your profile.
+                </p>
+
+              </div>
+
+            </div>
+
+
+            <div
+              *ngIf="editMode"
+              class="password-section">
+
+
+              <!-- New password -->
+
+              <div class="form-group">
+
+                <label for="newPassword">
+                  New Password
+                </label>
+
+                <div class="input-wrapper">
+
+                  <span class="input-icon">
+                    •••
+                  </span>
+
+                  <input
+                    id="newPassword"
+                    [type]="showNewPassword ? 'text' : 'password'"
+                    [(ngModel)]="newPassword"
+                    autocomplete="new-password"
+                    placeholder="Enter new password">
+
+                  <button
+                    type="button"
+                    class="password-toggle"
+                    (click)="toggleNewPassword()">
+
+                    {{ showNewPassword ? 'Hide' : 'Show' }}
+
+                  </button>
+
+                </div>
+
+
+                <!-- Password strength -->
+
+                <div
+                  *ngIf="newPassword"
+                  class="password-strength">
+
+                  <div class="strength-header">
+
+                    <span>
+                      Password strength
+                    </span>
+
+                    <strong
+                      [class.weak]="passwordStrength === 'Weak'"
+                      [class.medium]="passwordStrength === 'Medium'"
+                      [class.strong]="passwordStrength === 'Strong'">
+
+                      {{ passwordStrength }}
+
+                    </strong>
+
+                  </div>
+
+                  <div class="strength-track">
+
+                    <div
+                      class="strength-fill"
+                      [class.weak-fill]="passwordStrength === 'Weak'"
+                      [class.medium-fill]="passwordStrength === 'Medium'"
+                      [class.strong-fill]="passwordStrength === 'Strong'">
+
+                    </div>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+
+              <!-- Confirm password -->
+
+              <div class="form-group">
+
+                <label for="confirmPassword">
+                  Confirm New Password
+                </label>
+
+                <div class="input-wrapper">
+
+                  <span class="input-icon">
+                    •••
+                  </span>
+
+                  <input
+                    id="confirmPassword"
+                    [type]="showConfirmPassword ? 'text' : 'password'"
+                    [(ngModel)]="confirmPassword"
+                    autocomplete="new-password"
+                    placeholder="Confirm new password">
+
+                  <button
+                    type="button"
+                    class="password-toggle"
+                    (click)="toggleConfirmPassword()">
+
+                    {{ showConfirmPassword ? 'Hide' : 'Show' }}
+
+                  </button>
+
+                </div>
+
+
+                <small
+                  *ngIf="confirmPassword && !passwordsMatch"
+                  class="validation-error">
+
+                  Passwords do not match.
+
+                </small>
+
+
+                <small
+                  *ngIf="confirmPassword && passwordsMatch"
+                  class="validation-success">
+
+                  ✓ Passwords match.
+
+                </small>
+
+              </div>
+
+
+              <div class="password-help">
+
+                <strong>
+                  Password recommendations
+                </strong>
+
+                <ul>
+
+                  <li>
+                    At least 6 characters
+                  </li>
+
+                  <li>
+                    Use uppercase and lowercase letters
+                  </li>
+
+                  <li>
+                    Include numbers and special characters
+                  </li>
+
+                </ul>
+
+              </div>
+
+
+            </div>
+
+
+            <div
+              *ngIf="!editMode"
+              class="security-locked">
+
+              <span>
+                🔒
+              </span>
+
+              <div>
+
+                <strong>
+                  Security settings are protected
+                </strong>
+
+                <p>
+                  Click <b>Edit Profile</b> above to change
+                  your password.
+                </p>
+
+              </div>
+
+            </div>
+
+
+          </div>
+
+        </div>
+
+
+
+        <!-- ===============================================
+             ACTION BUTTONS
+             =============================================== -->
+
+        <div
+          *ngIf="editMode"
+          class="profile-actions">
+
+
+          <button
+            type="button"
+            class="cancel-button"
+            [disabled]="saving"
+            (click)="cancelEdit()">
+
+            Cancel
+
+          </button>
+
+
+          <button
+            type="button"
+            class="save-button"
+            [disabled]="saving"
+            (click)="saveProfile()">
+
+            <span
+              *ngIf="saving"
+              class="button-spinner">
+            </span>
+
+            <span *ngIf="!saving">
+              ✓
+            </span>
+
+            <span>
+              {{ saving ? 'Saving...' : 'Save Changes' }}
+            </span>
+
+          </button>
+
+
+        </div>
+
+
+      </section>
+
+    </div>
+
+
+
+    <!-- ===================================================
+         QUICK ACCESS
+         =================================================== -->
+
+    <section
+      *ngIf="profile && !loading"
+      class="quick-access-section">
+
+
+      <div class="quick-access-heading">
+
+        <div>
+
+          <span>
+            WORKSPACE
+          </span>
+
+          <h2>
+            Quick Access
+          </h2>
+
+        </div>
+
+        <p>
+          Jump directly to your most-used procurement
+          tools.
+        </p>
+
+      </div>
+
+
+      <div class="quick-access-grid">
+
+
+        <!-- Purchase Requests -->
+
+        <button
+          type="button"
+          class="quick-card"
+          (click)="goToPurchaseRequests()">
+
+          <span class="quick-icon">
+            🛒
+          </span>
+
+          <span class="quick-content">
+
+            <strong>
+              My Purchase Requests
+            </strong>
+
+            <small>
+              Create and manage procurement requests
+            </small>
+
+          </span>
+
+          <span class="quick-arrow">
+            →
+          </span>
+
+        </button>
+
+
+        <!-- Tracking -->
+
+        <button
+          type="button"
+          class="quick-card"
+          (click)="goToTracking()">
+
+          <span class="quick-icon">
+            📦
+          </span>
+
+          <span class="quick-content">
+
+            <strong>
+              Track Requests
+            </strong>
+
+            <small>
+              Follow your request progress
+            </small>
+
+          </span>
+
+          <span class="quick-arrow">
+            →
+          </span>
+
+        </button>
+
+
+        <!-- Payments -->
+
+        <button
+          type="button"
+          class="quick-card"
+          (click)="goToPayments()">
+
+          <span class="quick-icon">
+            ₹
+          </span>
+
+          <span class="quick-content">
+
+            <strong>
+              Payments
+            </strong>
+
+            <small>
+              View procurement payment status
+            </small>
+
+          </span>
+
+          <span class="quick-arrow">
+            →
+          </span>
+
+        </button>
+
+
+      </div>
+
+    </section>
+
+
+  </main>
+
+
+
+  <!-- =====================================================
+       LOGOUT CONFIRMATION
+       ===================================================== -->
+
+  <div
+    *ngIf="showLogoutConfirmation"
+    class="modal-backdrop"
+    (click)="cancelLogout()">
+
+
+    <div
+      class="logout-modal"
+      (click)="$event.stopPropagation()">
+
+
+      <div class="logout-modal-icon">
+        ↪
+      </div>
+
+
+      <h2>
+        Sign out?
+      </h2>
+
+
+      <p>
+        Are you sure you want to end your current session?
+      </p>
+
+
+      <div class="logout-modal-actions">
+
+        <button
+          type="button"
+          class="modal-cancel-button"
+          (click)="cancelLogout()">
+
+          Stay Signed In
+
+        </button>
+
+
+        <button
+          type="button"
+          class="modal-logout-button"
+          (click)="logout()">
+
+          Sign Out
+
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

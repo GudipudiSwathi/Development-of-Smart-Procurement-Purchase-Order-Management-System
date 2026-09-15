@@ -1,0 +1,1531 @@
+/* =====================================================
+   LANDING PAGE
+   ===================================================== */
+
+.landing-page {
+  min-height: 100vh;
+  background: #f7f4fc;
+  color: #211d2b;
+}
+
+
+/* =====================================================
+   NAVBAR
+   ===================================================== */
+
+.navbar {
+  max-width: 1400px;
+  margin: 0 auto;
+
+  padding: 18px 55px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+}
+
+.logo {
+  width: 48px;
+  height: 48px;
+
+  border-radius: 13px;
+
+  background: #8d75df;
+  color: white;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.brand-text h2 {
+  margin: 0;
+
+  font-size: 21px;
+  line-height: 1.1;
+}
+
+.brand-text span {
+  display: block;
+
+  margin-top: 4px;
+
+  color: #777080;
+
+  font-size: 13px;
+}
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.login-link {
+  border: none;
+  background: transparent;
+
+  color: #5e5569;
+
+  padding: 11px 17px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: color 0.2s ease;
+}
+
+.login-link:hover {
+  color: #8d75df;
+}
+
+.signup-button {
+  border: none;
+
+  border-radius: 10px;
+
+  padding: 12px 21px;
+
+  background: #8d75df;
+  color: white;
+
+  font-weight: 700;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 6px 15px rgba(141, 117, 223, 0.18);
+
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.signup-button:hover {
+  background: #755bc9;
+
+  transform: translateY(-1px);
+}
+
+
+/* =====================================================
+   HERO
+   ===================================================== */
+
+.hero {
+  max-width: 1400px;
+
+  min-height: 500px;
+
+  margin: 0 auto;
+
+  padding: 25px 55px 55px;
+
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1fr)
+    minmax(420px, 0.9fr);
+
+  align-items: center;
+
+  gap: 55px;
+
+  box-sizing: border-box;
+}
+
+
+/* =====================================================
+   HERO CONTENT
+   ===================================================== */
+
+.hero-content {
+  max-width: 650px;
+}
+
+.eyebrow {
+  margin: 0 0 15px;
+
+  color: #8d75df;
+
+  letter-spacing: 4px;
+
+  font-size: 12px;
+
+  font-weight: 700;
+}
+
+.hero h1 {
+  margin: 0;
+
+  color: #211d2b;
+
+  font-size: clamp(58px, 6vw, 82px);
+
+  line-height: 0.96;
+
+  letter-spacing: -3px;
+}
+
+.hero h1 span {
+  display: block;
+
+  color: #8d75df;
+}
+
+.hero-description {
+  max-width: 570px;
+
+  margin: 30px 0 0;
+
+  color: #777080;
+
+  font-size: 18px;
+
+  line-height: 1.7;
+}
+
+.hero-actions {
+  display: flex;
+
+  align-items: center;
+
+  gap: 14px;
+
+  margin-top: 32px;
+}
+
+.primary-button,
+.secondary-button {
+  border-radius: 11px;
+
+  padding: 15px 22px;
+
+  font-size: 15px;
+
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
+}
+
+.primary-button {
+  border: none;
+
+  background: #8d75df;
+
+  color: white;
+
+  box-shadow:
+    0 10px 22px rgba(141, 117, 223, 0.22);
+}
+
+.primary-button:hover {
+  background: #755bc9;
+
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 13px 26px rgba(141, 117, 223, 0.27);
+}
+
+.primary-button span {
+  margin-left: 8px;
+
+  font-size: 18px;
+}
+
+.secondary-button {
+  border: 1px solid #ddd7e8;
+
+  background: white;
+
+  color: #5e5569;
+}
+
+.secondary-button:hover {
+  background: #faf9fd;
+
+  transform: translateY(-2px);
+}
+
+
+/* =====================================================
+   HERO VISUAL
+   ===================================================== */
+
+.hero-visual {
+  position: relative;
+
+  min-height: 420px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  padding: 20px;
+
+  box-sizing: border-box;
+}
+
+
+/* =====================================================
+   WORKFLOW CARD
+   ===================================================== */
+
+.workflow-card {
+  position: relative;
+
+  width: min(100%, 500px);
+
+  padding: 26px;
+
+  border-radius: 24px;
+
+  background: white;
+
+  border: 1px solid rgba(141, 117, 223, 0.08);
+
+  box-shadow:
+    0 22px 50px rgba(55, 35, 85, 0.10);
+
+  z-index: 2;
+
+  box-sizing: border-box;
+}
+
+
+/* =====================================================
+   WORKFLOW HEADER
+   ===================================================== */
+
+.workflow-header {
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: flex-start;
+
+  padding-bottom: 20px;
+
+  border-bottom: 1px solid #eeeaf4;
+}
+
+.small-label {
+  color: #8d75df;
+
+  letter-spacing: 2px;
+
+  font-size: 10px;
+
+  font-weight: 700;
+}
+
+.workflow-header h3 {
+  margin: 8px 0 0;
+
+  font-size: 24px;
+
+  line-height: 1.2;
+}
+
+.workflow-check {
+  width: 42px;
+  height: 42px;
+
+  border-radius: 50%;
+
+  background: #f0ebff;
+
+  color: #8d75df;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  font-size: 18px;
+
+  font-weight: 700;
+}
+
+
+/* =====================================================
+   WORKFLOW
+   ===================================================== */
+
+.workflow {
+  margin-top: 22px;
+}
+
+
+/* =====================================================
+   WORKFLOW STEP
+   ===================================================== */
+
+.workflow-step {
+  display: flex;
+
+  align-items: center;
+
+  gap: 14px;
+
+  padding: 11px 0;
+}
+
+.step-icon {
+  width: 46px;
+  height: 46px;
+
+  flex-shrink: 0;
+
+  border-radius: 13px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  font-size: 19px;
+}
+
+.request-icon {
+  background: #f0ebff;
+}
+
+.approval-icon {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.tracking-icon {
+  background: #fff4d6;
+}
+
+
+/* =====================================================
+   STEP CONTENT
+   ===================================================== */
+
+.step-content {
+  min-width: 0;
+
+  flex: 1;
+}
+
+.step-title-row {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 10px;
+}
+
+.step-title-row strong {
+  font-size: 14px;
+
+  color: #211d2b;
+}
+
+.step-content > span {
+  display: block;
+
+  margin-top: 5px;
+
+  color: #8b8492;
+
+  font-size: 11px;
+}
+
+
+/* =====================================================
+   STEP STATUS
+   ===================================================== */
+
+.completed,
+.in-progress {
+  padding: 5px 9px;
+
+  border-radius: 20px;
+
+  font-size: 9px;
+
+  font-weight: 700;
+
+  white-space: nowrap;
+}
+
+.completed {
+  background: #dcfce7;
+
+  color: #15803d;
+}
+
+.in-progress {
+  background: #fff4d6;
+
+  color: #a16207;
+}
+
+
+/* =====================================================
+   WORKFLOW CONNECTOR
+   ===================================================== */
+
+.workflow-line {
+  height: 20px;
+
+  width: 2px;
+
+  margin-left: 22px;
+
+  background: #e4def0;
+}
+
+
+/* =====================================================
+   WORKFLOW FOOTER
+   ===================================================== */
+
+.workflow-footer {
+  margin-top: 16px;
+
+  padding-top: 18px;
+
+  border-top: 1px solid #eeeaf4;
+}
+
+.workflow-footer > div:first-child {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+}
+
+.workflow-footer span {
+  color: #777080;
+
+  font-size: 11px;
+}
+
+.workflow-footer strong {
+  color: #8d75df;
+
+  font-size: 12px;
+}
+
+.mini-progress {
+  width: 100%;
+
+  height: 7px;
+
+  margin-top: 9px;
+
+  border-radius: 20px;
+
+  background: #eeeaf4;
+
+  overflow: hidden;
+}
+
+.mini-progress-fill {
+  width: 72%;
+
+  height: 100%;
+
+  border-radius: inherit;
+
+  background: #8d75df;
+}
+
+
+/* =====================================================
+   FLOATING CARDS
+   ===================================================== */
+
+.floating-card {
+  position: absolute;
+
+  padding: 13px 16px;
+
+  border-radius: 14px;
+
+  background: white;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+
+  box-shadow:
+    0 12px 30px rgba(50, 30, 80, 0.12);
+
+  z-index: 3;
+}
+
+.floating-one {
+  top: 35px;
+
+  right: 0;
+}
+
+.floating-two {
+  bottom: 35px;
+
+  left: 0;
+}
+
+.floating-icon {
+  width: 34px;
+  height: 34px;
+
+  border-radius: 9px;
+
+  background: #f0ebff;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+}
+
+.floating-card strong,
+.floating-card div span {
+  display: block;
+}
+
+.floating-card strong {
+  font-size: 12px;
+}
+
+.floating-card div span {
+  margin-top: 3px;
+
+  color: #8b8492;
+
+  font-size: 10px;
+}
+
+
+
+
+/* =====================================================
+   INTERACTIVE WORKFLOW
+   ===================================================== */
+
+.workflow-button {
+  width: 100%;
+  border: none;
+  background: transparent;
+  text-align: left;
+  font-family: inherit;
+  cursor: pointer;
+  border-radius: 14px;
+  padding: 10px;
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.workflow-button:hover {
+  background: #faf8ff;
+  transform: translateX(3px);
+}
+
+.workflow-button.active {
+  background: #f7f3ff;
+  box-shadow: inset 3px 0 0 #8d75df;
+}
+
+.workflow-button .step-icon {
+  transition: transform 0.2s ease;
+}
+
+.workflow-button.active .step-icon {
+  transform: scale(1.05);
+}
+
+
+/* =====================================================
+   WORKFLOW INFORMATION
+   ===================================================== */
+
+.workflow-info {
+  margin-top: 18px;
+  padding: 18px;
+  border-radius: 15px;
+  background: #faf9fd;
+  border: 1px solid #eeeaf4;
+}
+
+.workflow-info-label {
+  display: block;
+  color: #8d75df;
+  letter-spacing: 2px;
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.workflow-info h4 {
+  margin: 7px 0 6px;
+  font-size: 15px;
+  color: #211d2b;
+}
+
+.workflow-info p {
+  margin: 0;
+  color: #777080;
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+.workflow-action {
+  margin-top: 12px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: white;
+  color: #5e5569;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+
+/* =====================================================
+   HOW IT WORKS
+   ===================================================== */
+
+.how-it-works-section {
+  padding: 90px 55px;
+  background: #f7f4fc;
+}
+
+.how-it-works-grid {
+  max-width: 1250px;
+  margin: 0 auto;
+
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+
+  gap: 20px;
+}
+
+.process-card {
+  position: relative;
+
+  min-height: 285px;
+  padding: 30px 26px 26px;
+
+  border: 1px solid #eeeaf4;
+  border-radius: 20px;
+
+  background: white;
+
+  display: flex;
+  flex-direction: column;
+
+  box-sizing: border-box;
+
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    border-color 0.25s ease;
+}
+
+.process-card:hover {
+  transform: translateY(-6px);
+  border-color: #dcd2f7;
+  box-shadow: 0 18px 40px rgba(50, 30, 80, 0.10);
+}
+
+.process-number {
+  position: absolute;
+  top: 20px;
+  right: 22px;
+
+  color: #d6ccef;
+  font-size: 30px;
+  font-weight: 700;
+}
+
+.process-icon {
+  width: 52px;
+  height: 52px;
+
+  margin-bottom: 0;
+
+  border-radius: 14px;
+  background: #f0ebff;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 23px;
+}
+
+.process-card h3 {
+  margin: 22px 0 10px;
+  font-size: 20px;
+  line-height: 1.2;
+}
+
+.process-card p {
+  margin: 0;
+
+  color: #777080;
+  font-size: 14px;
+  line-height: 1.7;
+
+  flex: 1;
+}
+
+.process-flow {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+
+  margin-top: 22px;
+  padding: 7px 11px;
+
+  border-radius: 20px;
+
+  background: #f7f4ff;
+  color: #8067c9;
+
+  font-size: 11px;
+  font-weight: 700;
+}
+
+
+/* =====================================================
+   FEATURES
+   ===================================================== */
+
+.features-section {
+  padding: 90px 55px;
+
+  background: white;
+}
+
+.section-heading {
+  max-width: 700px;
+
+  margin: 0 auto 45px;
+
+  text-align: center;
+}
+
+.section-heading h2 {
+  margin: 0;
+
+  font-size: 39px;
+
+  line-height: 1.15;
+}
+
+.section-heading > p:last-child {
+  margin-top: 15px;
+
+  color: #777080;
+
+  font-size: 16px;
+}
+
+.feature-grid {
+  max-width: 1250px;
+
+  margin: 0 auto;
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(4, 1fr);
+
+  gap: 18px;
+}
+
+.feature-card {
+  padding: 28px;
+
+  border: 1px solid #eeeaf4;
+
+  border-radius: 18px;
+
+  background: #faf9fd;
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.feature-card:hover {
+  transform: translateY(-5px);
+
+  background: white;
+
+  box-shadow:
+    0 15px 35px rgba(50, 30, 80, 0.08);
+}
+
+.feature-icon {
+  width: 45px;
+  height: 45px;
+
+  border-radius: 12px;
+
+  background: #f0ebff;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  font-size: 20px;
+}
+
+.feature-card h3 {
+  margin: 22px 0 9px;
+
+  font-size: 19px;
+}
+
+.feature-card p {
+  margin: 0;
+
+  color: #777080;
+
+  font-size: 14px;
+
+  line-height: 1.7;
+}
+
+
+/* =====================================================
+   CTA
+   ===================================================== */
+
+.cta-section {
+  max-width: 1250px;
+
+  margin: 80px auto;
+
+  padding: 55px 60px;
+
+  border-radius: 25px;
+
+  background: #211d2b;
+
+  color: white;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 30px;
+}
+
+.cta-section .eyebrow {
+  color: #b8a8ef;
+}
+
+.cta-section h2 {
+  margin: 0;
+
+  color: white;
+
+  font-size: 34px;
+}
+
+.cta-section p:last-child {
+  margin: 10px 0 0;
+
+  color: #bdb7c8;
+}
+
+.cta-section .primary-button {
+  flex-shrink: 0;
+}
+
+
+/* =====================================================
+   FOOTER
+   ===================================================== */
+
+footer {
+  max-width: 1400px;
+
+  margin: 0 auto;
+
+  padding: 30px 55px 40px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  border-top: 1px solid #e7e2ef;
+}
+
+.footer-brand {
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+}
+
+.footer-brand .logo {
+  width: 38px;
+  height: 38px;
+
+  border-radius: 10px;
+
+  font-size: 14px;
+}
+
+.footer-brand strong,
+.footer-brand span {
+  display: block;
+}
+
+.footer-brand strong {
+  font-size: 14px;
+}
+
+.footer-brand span {
+  color: #88818f;
+
+  font-size: 11px;
+}
+
+footer > p {
+  margin: 0;
+
+  color: #88818f;
+
+  font-size: 12px;
+}
+
+
+
+/* =====================================================
+   TABLET
+   ===================================================== */
+
+@media (max-width: 1000px) {
+
+  .navbar {
+    padding: 20px 30px;
+  }
+
+  .hero {
+    grid-template-columns: 1fr;
+    min-height: auto;
+    padding: 60px 30px 80px;
+    text-align: center;
+  }
+
+  .hero-content {
+    max-width: 700px;
+    margin: 0 auto;
+  }
+
+  .hero-description {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .hero-actions {
+    justify-content: center;
+  }
+
+  .hero-visual {
+    max-width: 620px;
+    width: 100%;
+    min-height: 450px;
+    margin: 0 auto;
+  }
+
+  .feature-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .features-section {
+    padding-left: 30px;
+    padding-right: 30px;
+  }
+
+  .how-it-works-section {
+    padding-left: 30px;
+    padding-right: 30px;
+  }
+
+  .how-it-works-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .cta-section {
+    margin-left: 30px;
+    margin-right: 30px;
+    padding: 45px;
+  }
+}
+
+
+/* =====================================================
+   MOBILE
+   ===================================================== */
+
+@media (max-width: 600px) {
+
+  .navbar {
+    padding: 18px 20px;
+  }
+
+  .brand-text h2 {
+    font-size: 18px;
+  }
+
+  .brand-text span {
+    font-size: 11px;
+  }
+
+  .logo {
+    width: 42px;
+    height: 42px;
+  }
+
+  .login-link {
+    display: none;
+  }
+
+  .signup-button {
+    padding: 10px 15px;
+    font-size: 13px;
+  }
+
+  .hero {
+    min-height: auto;
+    padding: 45px 20px 65px;
+    gap: 35px;
+  }
+
+  .hero h1 {
+    font-size: 49px;
+    letter-spacing: -1px;
+  }
+
+  .hero-description {
+    font-size: 16px;
+  }
+
+  .hero-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .primary-button,
+  .secondary-button {
+    width: 100%;
+  }
+
+  /* -----------------------------------------
+     MOBILE WORKFLOW CARD
+     ----------------------------------------- */
+
+  .hero-visual {
+    min-height: 440px;
+    padding: 10px 0;
+  }
+
+  .workflow-card {
+    width: 100%;
+    padding: 22px;
+    border-radius: 20px;
+  }
+
+  .workflow-header h3 {
+    font-size: 20px;
+  }
+
+  .workflow-check {
+    width: 36px;
+    height: 36px;
+    font-size: 16px;
+  }
+
+  .step-icon {
+    width: 40px;
+    height: 40px;
+    font-size: 16px;
+  }
+
+  .step-title-row {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .step-title-row strong {
+    font-size: 13px;
+  }
+
+  .step-content > span {
+    font-size: 10px;
+  }
+
+  .workflow-line {
+    margin-left: 19px;
+    height: 20px;
+  }
+
+  .floating-one {
+    top: 5px;
+    right: -5px;
+    transform: scale(0.9);
+  }
+
+  .floating-two {
+    bottom: 5px;
+    left: -5px;
+    transform: scale(0.9);
+  }
+
+  /* -----------------------------------------
+     INTERACTIVE WORKFLOW
+     ----------------------------------------- */
+
+  .workflow-button {
+    padding: 9px;
+  }
+
+  .workflow-info {
+    padding: 15px;
+  }
+
+  /* -----------------------------------------
+     HOW IT WORKS
+     ----------------------------------------- */
+
+  .how-it-works-section {
+    padding: 65px 20px;
+  }
+
+  .how-it-works-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .process-card {
+    min-height: auto;
+    padding: 25px;
+  }
+
+  /* -----------------------------------------
+     FEATURES
+     ----------------------------------------- */
+
+  .features-section {
+    padding: 65px 20px;
+  }
+
+  .section-heading h2 {
+    font-size: 30px;
+  }
+
+  .feature-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* -----------------------------------------
+     CTA
+     ----------------------------------------- */
+
+  .cta-section {
+    margin: 50px 20px;
+    padding: 35px 25px;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .cta-section h2 {
+    font-size: 28px;
+  }
+
+  .cta-section .primary-button {
+    width: 100%;
+  }
+
+  /* -----------------------------------------
+     FOOTER
+     ----------------------------------------- */
+
+  footer {
+    padding: 25px 20px 30px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+}
+
+
+/* =====================================================
+   HERO VIEWPORT BALANCE
+   Keep the complete procurement workflow visible
+   on the first screen at desktop sizes.
+   ===================================================== */
+
+.navbar {
+  padding-top: 12px;
+  padding-bottom: 12px;
+}
+
+.hero {
+  min-height: 0;
+  height: calc(100vh - 82px);
+  max-height: 640px;
+  padding-top: 18px;
+  padding-bottom: 18px;
+  gap: 40px;
+  align-items: center;
+}
+
+.hero-content {
+  max-width: 620px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+/* Use the available left space better */
+.hero h1 {
+  font-size: clamp(54px, 5.5vw, 76px);
+}
+
+.hero-description {
+  margin-top: 22px;
+  max-width: 540px;
+  font-size: 17px;
+  line-height: 1.55;
+}
+
+.hero-actions {
+  margin-top: 25px;
+}
+
+/* Give the workflow side more room */
+.hero-visual {
+  min-height: 0;
+  height: 100%;
+  padding: 8px 0;
+}
+
+/* Compact the card vertically without making it look cramped */
+.workflow-card {
+  width: min(100%, 510px);
+  padding: 22px;
+  border-radius: 22px;
+}
+
+.workflow-header {
+  padding-bottom: 14px;
+}
+
+.workflow-header h3 {
+  font-size: 22px;
+  margin-top: 6px;
+}
+
+.workflow {
+  margin-top: 13px;
+}
+
+.workflow-step {
+  padding: 7px 8px;
+  gap: 11px;
+}
+
+.step-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 11px;
+  font-size: 17px;
+}
+
+.step-content > span {
+  margin-top: 3px;
+  font-size: 10px;
+}
+
+.workflow-line {
+  height: 12px;
+  margin-left: 20px;
+}
+
+.workflow-info {
+  margin-top: 12px;
+  padding: 13px 15px;
+}
+
+.workflow-info h4 {
+  margin: 5px 0 4px;
+  font-size: 14px;
+}
+
+.workflow-info p {
+  font-size: 10px;
+  line-height: 1.45;
+}
+
+.workflow-action {
+  margin-top: 8px;
+  padding: 6px 9px;
+  font-size: 9px;
+}
+
+.workflow-footer {
+  margin-top: 11px;
+  padding-top: 12px;
+}
+
+.mini-progress {
+  height: 5px;
+  margin-top: 6px;
+}
+
+/* Keep the floating cards inside the first viewport */
+.floating-one {
+  top: 18px;
+  right: -2px;
+}
+
+.floating-two {
+  bottom: 18px;
+  left: -2px;
+}
+
+/* Make the left side feel intentionally occupied */
+.hero-content::after {
+  right: 15px;
+  top: 34px;
+  transform: rotate(5deg);
+}
+
+.hero-content::before {
+  top: 25px;
+}
+
+/* A subtle visual baseline under the hero copy */
+.hero-actions::after {
+  top: calc(100% + 13px);
+}
+
+/* =====================================================
+   DESKTOP / LAPTOP
+   ===================================================== */
+
+@media (min-width: 1001px) and (max-height: 800px) {
+  .navbar {
+    padding-top: 9px;
+    padding-bottom: 9px;
+  }
+
+  .hero {
+    height: calc(100vh - 68px);
+    max-height: 620px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+
+  .hero h1 {
+    font-size: clamp(50px, 5.2vw, 70px);
+  }
+
+  .hero-description {
+    margin-top: 18px;
+    font-size: 16px;
+  }
+
+  .hero-actions {
+    margin-top: 20px;
+  }
+
+  .workflow-card {
+    padding: 19px;
+  }
+
+  .workflow-header h3 {
+    font-size: 21px;
+  }
+
+  .workflow-step {
+    padding: 5px 7px;
+  }
+
+  .step-icon {
+    width: 39px;
+    height: 39px;
+  }
+
+  .workflow-line {
+    height: 9px;
+  }
+
+  .workflow-info {
+    margin-top: 9px;
+    padding: 11px 13px;
+  }
+
+  .workflow-footer {
+    margin-top: 8px;
+    padding-top: 9px;
+  }
+
+  .floating-one {
+    top: 10px;
+  }
+
+  .floating-two {
+    bottom: 10px;
+  }
+}
+
+/* =====================================================
+   TABLET
+   ===================================================== */
+
+@media (max-width: 1000px) {
+  .hero {
+    height: auto;
+    max-height: none;
+    padding-top: 45px;
+    padding-bottom: 60px;
+  }
+
+  .hero-visual {
+    height: auto;
+    min-height: 0;
+  }
+}

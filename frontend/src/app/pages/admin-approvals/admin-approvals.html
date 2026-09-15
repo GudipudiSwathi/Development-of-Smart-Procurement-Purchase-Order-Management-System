@@ -1,0 +1,2093 @@
+<div class="admin-page">
+
+  <!-- =====================================================
+       COMMON ADMIN SIDEBAR
+       ===================================================== -->
+
+  <app-admin-sidebar></app-admin-sidebar>
+
+
+  <!-- =====================================================
+       MAIN AREA
+       ===================================================== -->
+
+  <main class="main-area">
+
+
+    <!-- ===================================================
+         PAGE HEADER
+         =================================================== -->
+
+    <header class="page-header">
+
+      <div class="header-content">
+
+        <div class="breadcrumb">
+          <span>Admin</span>
+          <span class="separator">/</span>
+          <strong>Approvals</strong>
+        </div>
+
+        <p class="eyebrow">
+          APPROVAL MANAGEMENT
+        </p>
+
+        <h1>
+          Approval Hierarchy
+        </h1>
+
+        <p class="page-subtitle">
+          Configure department and centralized approval levels
+          for enterprise procurement requests.
+        </p>
+
+      </div>
+
+
+      <div class="header-actions">
+
+        <button
+          type="button"
+          class="refresh-button"
+          (click)="refreshApprovals()"
+          [disabled]="isRefreshing">
+
+          <span
+            class="refresh-icon"
+            [class.spinning]="isRefreshing">
+            ↻
+          </span>
+
+          {{
+          isRefreshing
+          ? 'Refreshing...'
+          : 'Refresh'
+          }}
+
+        </button>
+
+
+        <button
+          type="button"
+          class="primary-button"
+          (click)="openAddModal()">
+
+          <span class="plus-icon">
+            +
+          </span>
+
+          Add Approval Level
+
+        </button>
+
+      </div>
+
+    </header>
+
+
+    <!-- ===================================================
+         ALERTS
+         =================================================== -->
+
+    <div
+      class="alert success-alert"
+      *ngIf="successMessage">
+
+      <span class="alert-symbol">
+        ✓
+      </span>
+
+      <span>
+        {{ successMessage }}
+      </span>
+
+      <button
+        type="button"
+        class="alert-close"
+        (click)="successMessage = ''">
+
+        ×
+
+      </button>
+
+    </div>
+
+
+    <div
+      class="alert error-alert"
+      *ngIf="errorMessage">
+
+      <span class="alert-symbol">
+        !
+      </span>
+
+      <span>
+        {{ errorMessage }}
+      </span>
+
+      <button
+        type="button"
+        class="alert-close"
+        (click)="errorMessage = ''">
+
+        ×
+
+      </button>
+
+    </div>
+
+
+    <!-- ===================================================
+         STATISTICS
+         =================================================== -->
+
+    <section class="stats-grid">
+
+
+      <!-- TOTAL -->
+
+      <div class="stat-card">
+
+        <div class="stat-icon total-icon">
+          ≡
+        </div>
+
+        <div class="stat-info">
+
+          <span class="stat-label">
+            TOTAL LEVELS
+          </span>
+
+          <strong class="stat-value">
+            {{ totalHierarchies }}
+          </strong>
+
+          <span class="stat-note">
+            Configured hierarchy records
+          </span>
+
+        </div>
+
+      </div>
+
+
+      <!-- ACTIVE -->
+
+      <div class="stat-card">
+
+        <div class="stat-icon active-icon">
+          ✓
+        </div>
+
+        <div class="stat-info">
+
+          <span class="stat-label">
+            ACTIVE
+          </span>
+
+          <strong class="stat-value">
+            {{ activeHierarchies }}
+          </strong>
+
+          <span class="stat-note">
+            Currently active
+          </span>
+
+        </div>
+
+      </div>
+
+
+      <!-- INACTIVE -->
+
+      <div class="stat-card">
+
+        <div class="stat-icon inactive-icon">
+          ○
+        </div>
+
+        <div class="stat-info">
+
+          <span class="stat-label">
+            INACTIVE
+          </span>
+
+          <strong class="stat-value">
+            {{ inactiveHierarchies }}
+          </strong>
+
+          <span class="stat-note">
+            Currently inactive
+          </span>
+
+        </div>
+
+      </div>
+
+
+      <!-- LEVEL 1 -->
+
+      <div class="stat-card">
+
+        <div class="stat-icon level-one-icon">
+          1
+        </div>
+
+        <div class="stat-info">
+
+          <span class="stat-label">
+            LEVEL 1
+          </span>
+
+          <strong class="stat-value">
+            {{ levelOneCount }}
+          </strong>
+
+          <span class="stat-note">
+            Department Managers
+          </span>
+
+        </div>
+
+      </div>
+
+
+      <!-- LEVEL 2 -->
+
+      <div class="stat-card">
+
+        <div class="stat-icon level-two-icon">
+          2
+        </div>
+
+        <div class="stat-info">
+
+          <span class="stat-label">
+            LEVEL 2
+          </span>
+
+          <strong class="stat-value">
+            {{ levelTwoCount }}
+          </strong>
+
+          <span class="stat-note">
+            Central Finance
+          </span>
+
+        </div>
+
+      </div>
+
+
+      <!-- LEVEL 3 -->
+
+      <div class="stat-card">
+
+        <div class="stat-icon level-three-icon">
+          3
+        </div>
+
+        <div class="stat-info">
+
+          <span class="stat-label">
+            LEVEL 3
+          </span>
+
+          <strong class="stat-value">
+            {{ levelThreeCount }}
+          </strong>
+
+          <span class="stat-note">
+            Procurement Head
+          </span>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ===================================================
+         APPROVAL FLOW
+         =================================================== -->
+
+    <section class="flow-card">
+
+      <div class="flow-header">
+
+        <div>
+
+          <p class="flow-eyebrow">
+            PROCUREMENT WORKFLOW
+          </p>
+
+          <h2>
+            Approval Flow
+          </h2>
+
+          <p>
+            Purchase requests move through the configured
+            approval hierarchy in sequence.
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <div class="approval-flow">
+
+
+        <!-- LEVEL 1 -->
+
+        <div class="flow-step">
+
+          <div class="flow-number level-one">
+            1
+          </div>
+
+          <div class="flow-content">
+
+            <strong>
+              Department Manager
+            </strong>
+
+            <span>
+              Department-specific approval
+            </span>
+
+          </div>
+
+        </div>
+
+
+        <div class="flow-arrow">
+          →
+        </div>
+
+
+        <!-- LEVEL 2 -->
+
+        <div class="flow-step">
+
+          <div class="flow-number level-two">
+            2
+          </div>
+
+          <div class="flow-content">
+
+            <strong>
+              Central Finance
+            </strong>
+
+            <span>
+              Centralized financial approval
+            </span>
+
+          </div>
+
+        </div>
+
+
+        <div class="flow-arrow">
+          →
+        </div>
+
+
+        <!-- LEVEL 3 -->
+
+        <div class="flow-step">
+
+          <div class="flow-number level-three">
+            3
+          </div>
+
+          <div class="flow-content">
+
+            <strong>
+              Procurement Head
+            </strong>
+
+            <span>
+              Final procurement approval
+            </span>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ===================================================
+         MAIN CONTENT CARD
+         =================================================== -->
+
+    <section class="content-card">
+
+
+      <!-- =================================================
+           TOOLBAR
+           ================================================= -->
+
+      <div class="toolbar">
+
+        <div class="toolbar-heading">
+
+          <div class="toolbar-icon">
+            ✓
+          </div>
+
+          <div>
+
+            <h2>
+              Approval Configuration
+            </h2>
+
+            <p>
+              {{ filteredHierarchies.length }}
+              {{
+              filteredHierarchies.length === 1
+              ? 'configuration'
+              : 'configurations'
+              }}
+              displayed
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <div class="toolbar-controls">
+
+
+          <!-- SEARCH -->
+
+          <div class="search-box">
+
+            <span class="search-icon">
+              ⌕
+            </span>
+
+            <input
+              type="text"
+              [(ngModel)]="searchTerm"
+              (ngModelChange)="onSearch()"
+              placeholder="Search approver, department or role..."
+              aria-label="Search approval hierarchy">
+
+
+            <button
+              type="button"
+              class="search-clear"
+              *ngIf="searchTerm"
+              (click)="searchTerm = ''; onSearch()">
+
+              ×
+
+            </button>
+
+          </div>
+
+
+          <!-- LEVEL -->
+
+          <div class="filter-box">
+
+            <label>
+              Level
+            </label>
+
+            <select
+              [(ngModel)]="selectedLevel"
+              (ngModelChange)="onLevelChange()">
+
+              <option value="ALL">
+                All Levels
+              </option>
+
+              <option value="1">
+                Level 1
+              </option>
+
+              <option value="2">
+                Level 2
+              </option>
+
+              <option value="3">
+                Level 3
+              </option>
+
+            </select>
+
+          </div>
+
+
+          <!-- STATUS -->
+
+          <div class="filter-box">
+
+            <label>
+              Status
+            </label>
+
+            <select
+              [(ngModel)]="selectedStatus"
+              (ngModelChange)="onStatusChange()">
+
+              <option value="ALL">
+                All Status
+              </option>
+
+              <option value="ACTIVE">
+                Active
+              </option>
+
+              <option value="INACTIVE">
+                Inactive
+              </option>
+
+            </select>
+
+          </div>
+
+
+          <!-- CLEAR -->
+
+          <button
+            type="button"
+            class="clear-button"
+            (click)="clearFilters()"
+            [disabled]="
+              !searchTerm &&
+              selectedLevel === 'ALL' &&
+              selectedStatus === 'ALL'
+            ">
+
+            ↺
+            Clear
+
+          </button>
+
+        </div>
+
+      </div>
+
+
+      <!-- =================================================
+           LOADING
+           ================================================= -->
+
+      <div
+        class="loading-state"
+        *ngIf="isLoading">
+
+        <div class="loading-spinner"></div>
+
+        <h3>
+          Loading approval hierarchy
+        </h3>
+
+        <p>
+          Please wait while configuration records are loaded.
+        </p>
+
+      </div>
+
+
+      <!-- =================================================
+           EMPTY
+           ================================================= -->
+
+      <div
+        class="empty-state"
+        *ngIf="
+          !isLoading &&
+          filteredHierarchies.length === 0
+        ">
+
+        <div class="empty-icon">
+          ✓
+        </div>
+
+        <h3>
+          No approval configurations found
+        </h3>
+
+        <p
+          *ngIf="
+            searchTerm ||
+            selectedLevel !== 'ALL' ||
+            selectedStatus !== 'ALL'
+          ">
+
+          No approval configurations match your
+          current search or filters.
+
+        </p>
+
+        <p
+          *ngIf="
+            !searchTerm &&
+            selectedLevel === 'ALL' &&
+            selectedStatus === 'ALL'
+          ">
+
+          No approval hierarchy has been configured yet.
+
+        </p>
+
+
+        <button
+          type="button"
+          class="empty-primary-button"
+          *ngIf="
+            !searchTerm &&
+            selectedLevel === 'ALL' &&
+            selectedStatus === 'ALL'
+          "
+          (click)="openAddModal()">
+
+          + Add Approval Level
+
+        </button>
+
+
+        <button
+          type="button"
+          class="empty-clear-button"
+          *ngIf="
+            searchTerm ||
+            selectedLevel !== 'ALL' ||
+            selectedStatus !== 'ALL'
+          "
+          (click)="clearFilters()">
+
+          Clear Filters
+
+        </button>
+
+      </div>
+
+
+      <!-- =================================================
+           TABLE
+           ================================================= -->
+
+      <div
+        class="table-wrapper"
+        *ngIf="
+          !isLoading &&
+          filteredHierarchies.length > 0
+        ">
+
+        <table class="approvals-table">
+
+          <thead>
+
+          <tr>
+
+            <th>
+              CONFIGURATION
+            </th>
+
+            <th>
+              APPROVAL LEVEL
+            </th>
+
+            <th>
+              APPROVER
+            </th>
+
+            <th>
+              DEPARTMENT
+            </th>
+
+            <th>
+              APPROVER ROLE
+            </th>
+
+            <th>
+              STATUS
+            </th>
+
+            <th class="actions-column">
+              ACTIONS
+            </th>
+
+          </tr>
+
+          </thead>
+
+
+          <tbody>
+
+          <tr
+            *ngFor="
+                let hierarchy of paginatedHierarchies;
+                trackBy: trackByHierarchyId
+              ">
+
+
+            <!-- CONFIGURATION -->
+
+            <td>
+
+              <div class="configuration-cell">
+
+                <div
+                  class="configuration-icon"
+                  [ngClass]="
+                      getLevelClass(
+                        hierarchy.level
+                      )
+                    ">
+
+                  {{
+                  hierarchy.level ??
+                  '-'
+                  }}
+
+                </div>
+
+                <div class="configuration-info">
+
+                  <strong>
+                    Configuration #{{
+                    hierarchy.approvalHierarchyId
+                    }}
+                  </strong>
+
+                  <span>
+                      Approval hierarchy
+                    </span>
+
+                </div>
+
+              </div>
+
+            </td>
+
+
+            <!-- LEVEL -->
+
+            <td>
+
+              <div class="level-cell">
+
+                  <span
+                    class="level-badge"
+                    [ngClass]="
+                      getLevelClass(
+                        hierarchy.level
+                      )
+                    ">
+
+                    <span class="level-number">
+                      {{
+                        hierarchy.level ??
+                        '-'
+                      }}
+                    </span>
+
+                    <span>
+                      {{
+                        getLevelLabel(
+                          hierarchy.level
+                        )
+                      }}
+                    </span>
+
+                  </span>
+
+                <small>
+                  {{
+                  getLevelDescription(
+                  hierarchy.level
+                  )
+                  }}
+                </small>
+
+              </div>
+
+            </td>
+
+
+            <!-- APPROVER -->
+
+            <td>
+
+              <div class="approver-cell">
+
+                <div class="approver-avatar">
+
+                  {{
+                  (
+                  hierarchy.approverName ||
+                  'A'
+                  ).charAt(0).toUpperCase()
+                  }}
+
+                </div>
+
+                <div class="approver-info">
+
+                  <strong>
+                    {{
+                    hierarchy.approverName ||
+                    'Not assigned'
+                    }}
+                  </strong>
+
+                  <span
+                    *ngIf="
+                        hierarchy.approverEmail
+                      ">
+
+                      {{
+                        hierarchy.approverEmail
+                      }}
+
+                    </span>
+
+                  <span
+                    *ngIf="
+                        !hierarchy.approverEmail
+                      ">
+
+                      User #{{
+                        hierarchy.approverUserId ??
+                        '-'
+                      }}
+
+                    </span>
+
+                </div>
+
+              </div>
+
+            </td>
+
+
+            <!-- DEPARTMENT -->
+
+            <td>
+
+              <div class="department-cell">
+
+                  <span
+                    class="department-icon"
+                    [class.centralized]="
+                      hierarchy.departmentId === null
+                    ">
+
+                    {{
+                      hierarchy.departmentId === null
+                        ? 'C'
+                        : 'D'
+                    }}
+
+                  </span>
+
+                <div>
+
+                  <strong>
+                    {{
+                    hierarchy.departmentName ||
+                    (
+                    hierarchy.departmentId === null
+                    ? 'Centralized'
+                    : 'Not assigned'
+                    )
+                    }}
+                  </strong>
+
+                  <span
+                    *ngIf="
+                        hierarchy.departmentId !== null
+                      ">
+
+                      Department #{{
+                        hierarchy.departmentId
+                      }}
+
+                    </span>
+
+                  <span
+                    *ngIf="
+                        hierarchy.departmentId === null
+                      ">
+
+                      Centralized approval
+
+                    </span>
+
+                </div>
+
+              </div>
+
+            </td>
+
+
+            <!-- ROLE -->
+
+            <td>
+
+                <span class="role-text">
+
+                  {{
+                    hierarchy.approverRole ||
+                    'Not specified'
+                  }}
+
+                </span>
+
+            </td>
+
+
+            <!-- STATUS -->
+
+            <td>
+
+                <span
+                  class="status-badge"
+                  [ngClass]="
+                    getStatusClass(
+                      hierarchy.status
+                    )
+                  ">
+
+                  <span class="status-dot"></span>
+
+                  {{
+                    getStatusLabel(
+                      hierarchy.status
+                    )
+                  }}
+
+                </span>
+
+            </td>
+
+
+            <!-- ACTIONS -->
+
+            <td class="actions-column">
+
+              <div class="row-actions">
+
+
+                <!-- VIEW -->
+
+                <button
+                  type="button"
+                  class="action-button view-button"
+                  title="View details"
+                  (click)="viewDetails(hierarchy)">
+
+                  ◉
+
+                </button>
+
+
+                <!-- EDIT -->
+
+                <button
+                  type="button"
+                  class="action-button edit-button"
+                  title="Edit configuration"
+                  (click)="openEditModal(hierarchy)">
+
+                  ✎
+
+                </button>
+
+
+                <!-- DELETE -->
+
+                <button
+                  type="button"
+                  class="action-button delete-button"
+                  title="Delete configuration"
+                  (click)="confirmDelete(hierarchy)">
+
+                  ×
+
+                </button>
+
+              </div>
+
+            </td>
+
+          </tr>
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+
+      <!-- =================================================
+           PAGINATION
+           ================================================= -->
+
+      <div
+        class="pagination-bar"
+        *ngIf="
+          !isLoading &&
+          filteredHierarchies.length > 0
+        ">
+
+        <div class="pagination-info">
+
+          Showing
+
+          <strong>
+            {{
+            ((currentPage - 1) * pageSize) + 1
+            }}
+          </strong>
+
+          to
+
+          <strong>
+            {{
+            Math.min(
+            currentPage * pageSize,
+            filteredHierarchies.length
+            )
+            }}
+          </strong>
+
+          of
+
+          <strong>
+            {{ filteredHierarchies.length }}
+          </strong>
+
+          configurations
+
+        </div>
+
+
+        <div class="pagination-controls">
+
+          <button
+            type="button"
+            class="page-button"
+            (click)="previousPage()"
+            [disabled]="currentPage === 1">
+
+            ‹
+
+            <span>
+              Previous
+            </span>
+
+          </button>
+
+
+          <button
+            type="button"
+            class="page-number"
+            *ngFor="let page of pageNumbers"
+            [class.active]="
+              page === currentPage
+            "
+            (click)="goToPage(page)">
+
+            {{ page }}
+
+          </button>
+
+
+          <button
+            type="button"
+            class="page-button"
+            (click)="nextPage()"
+            [disabled]="
+              currentPage === totalPages
+            ">
+
+            <span>
+              Next
+            </span>
+
+            ›
+
+          </button>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+</div>
+
+
+<!-- =========================================================
+     ADD / EDIT MODAL
+     ========================================================= -->
+
+<div
+  class="modal-backdrop"
+  *ngIf="showFormModal"
+  (click)="closeFormModal()">
+
+  <section
+    class="modal form-modal"
+    (click)="$event.stopPropagation()">
+
+
+    <!-- HEADER -->
+
+    <div class="modal-header">
+
+      <div class="modal-title">
+
+        <div class="modal-title-icon">
+          {{
+          isEditMode
+          ? '✎'
+          : '+'
+          }}
+        </div>
+
+        <div>
+
+          <span class="modal-eyebrow">
+            APPROVAL CONFIGURATION
+          </span>
+
+          <h2>
+            {{
+            isEditMode
+            ? 'Edit Approval Level'
+            : 'Add Approval Level'
+            }}
+          </h2>
+
+        </div>
+
+      </div>
+
+
+      <button
+        type="button"
+        class="modal-close"
+        [disabled]="isSaving"
+        (click)="closeFormModal()">
+
+        ×
+
+      </button>
+
+    </div>
+
+
+    <!-- BODY -->
+
+    <div class="modal-body">
+
+
+      <!-- FORM ERROR -->
+
+      <div
+        class="form-error"
+        *ngIf="errorMessage">
+
+        <span>
+          !
+        </span>
+
+        {{ errorMessage }}
+
+      </div>
+
+
+      <!-- APPROVAL LEVEL -->
+
+      <div class="form-group">
+
+        <label>
+          Approval Level
+          <span>*</span>
+        </label>
+
+        <select
+          [(ngModel)]="formData.level"
+          (ngModelChange)="onFormLevelChange()"
+          [disabled]="isSaving">
+
+          <option [ngValue]="null">
+            Select approval level
+          </option>
+
+          <option [ngValue]="1">
+            Level 1 — Department Manager
+          </option>
+
+          <option [ngValue]="2">
+            Level 2 — Central Finance
+          </option>
+
+          <option [ngValue]="3">
+            Level 3 — Procurement Head
+          </option>
+
+        </select>
+
+        <small>
+          Select the stage in the procurement approval workflow.
+        </small>
+
+      </div>
+
+
+      <!-- DEPARTMENT -->
+
+      <div
+        class="form-group"
+        *ngIf="formData.level === 1">
+
+        <label>
+          Department
+          <span>*</span>
+        </label>
+
+        <select
+          [(ngModel)]="formData.departmentId"
+          [disabled]="isSaving">
+
+          <option [ngValue]="null">
+            Select department
+          </option>
+
+          <option
+            *ngFor="
+              let department of departments;
+              trackBy: trackByDepartmentId
+            "
+            [ngValue]="department.departmentId">
+
+            {{ department.departmentName }}
+
+          </option>
+
+        </select>
+
+        <small>
+          Level 1 approval is assigned to a
+          department-specific manager.
+        </small>
+
+      </div>
+
+
+      <!-- CENTRALIZED INFORMATION -->
+
+      <div
+        class="centralized-notice"
+        *ngIf="
+          formData.level === 2 ||
+          formData.level === 3
+        ">
+
+        <div class="notice-icon">
+          C
+        </div>
+
+        <div>
+
+          <strong>
+            Centralized Approval
+          </strong>
+
+          <p>
+            {{
+            formData.level === 2
+            ? 'Finance approval is centralized and does not belong to a specific department.'
+            : 'Procurement Head approval is centralized and does not belong to a specific department.'
+            }}
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <!-- APPROVER -->
+
+      <div class="form-group">
+
+        <label>
+          Approver
+          <span>*</span>
+        </label>
+
+        <select
+          [(ngModel)]="formData.approverUserId"
+          [disabled]="isSaving">
+
+          <option [ngValue]="null">
+            Select approver
+          </option>
+
+          <option
+            *ngFor="
+              let user of users;
+              trackBy: trackByUserId
+            "
+            [ngValue]="user.userId">
+
+            {{ user.username }}
+
+            {{
+            user.designation
+            ? ' — ' + user.designation
+            : ''
+            }}
+
+          </option>
+
+        </select>
+
+        <small>
+          Select the user responsible for this approval stage.
+        </small>
+
+      </div>
+
+
+      <!-- ROLE -->
+
+      <div class="form-group">
+
+        <label>
+          Approver Role
+          <span>*</span>
+        </label>
+
+        <input
+          type="text"
+          [(ngModel)]="formData.approverRole"
+          placeholder="Enter approver role"
+          maxlength="100"
+          [disabled]="isSaving">
+
+        <small>
+          Role displayed for this approval configuration.
+        </small>
+
+      </div>
+
+
+      <!-- STATUS -->
+
+      <div class="form-group">
+
+        <label>
+          Status
+        </label>
+
+        <select
+          [(ngModel)]="formData.status"
+          [disabled]="isSaving">
+
+          <option value="ACTIVE">
+            Active
+          </option>
+
+          <option value="INACTIVE">
+            Inactive
+          </option>
+
+        </select>
+
+      </div>
+
+
+      <!-- FORM SUMMARY -->
+
+      <div
+        class="form-summary"
+        *ngIf="formData.level">
+
+        <div class="summary-heading">
+          Configuration Preview
+        </div>
+
+        <div class="summary-row">
+
+          <span>
+            Level
+          </span>
+
+          <strong>
+            {{
+            getLevelLabel(
+            formData.level
+            )
+            }}
+          </strong>
+
+        </div>
+
+        <div class="summary-row">
+
+          <span>
+            Approval Type
+          </span>
+
+          <strong>
+            {{
+            getLevelDescription(
+            formData.level
+            )
+            }}
+          </strong>
+
+        </div>
+
+        <div class="summary-row">
+
+          <span>
+            Department
+          </span>
+
+          <strong>
+            {{
+            formData.level === 1
+            ? (
+            departments.find(
+            d =>
+            d.departmentId ===
+            formData.departmentId
+            )?.departmentName ||
+            'Not selected'
+            )
+            : 'Centralized'
+            }}
+          </strong>
+
+        </div>
+
+        <div class="summary-row">
+
+          <span>
+            Approver
+          </span>
+
+          <strong>
+            {{
+            getApproverName(
+            formData.approverUserId
+            )
+            }}
+          </strong>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- FOOTER -->
+
+    <div class="modal-footer">
+
+      <button
+        type="button"
+        class="secondary-button"
+        [disabled]="isSaving"
+        (click)="closeFormModal()">
+
+        Cancel
+
+      </button>
+
+
+      <button
+        type="button"
+        class="primary-modal-button"
+        [disabled]="isSaving"
+        (click)="saveApprovalHierarchy()">
+
+        <span
+          class="button-spinner"
+          *ngIf="isSaving">
+        </span>
+
+        {{
+        isSaving
+        ? 'Saving...'
+        : (
+        isEditMode
+        ? 'Update Configuration'
+        : 'Create Configuration'
+        )
+        }}
+
+      </button>
+
+    </div>
+
+  </section>
+
+</div>
+
+
+<!-- =========================================================
+     DETAILS MODAL
+     ========================================================= -->
+
+<div
+  class="modal-backdrop"
+  *ngIf="showDetailsModal"
+  (click)="closeDetails()">
+
+  <section
+    class="modal details-modal"
+    (click)="$event.stopPropagation()">
+
+
+    <!-- HEADER -->
+
+    <div class="modal-header">
+
+      <div class="modal-title">
+
+        <div
+          class="modal-level-icon"
+          [ngClass]="
+            getLevelClass(
+              selectedHierarchy?.level ?? null
+            )
+          ">
+
+          {{
+          selectedHierarchy?.level ??
+          '-'
+          }}
+
+        </div>
+
+        <div>
+
+          <span class="modal-eyebrow">
+            APPROVAL CONFIGURATION
+          </span>
+
+          <h2>
+            Configuration #{{
+            selectedHierarchy?.approvalHierarchyId
+            }}
+          </h2>
+
+        </div>
+
+      </div>
+
+
+      <button
+        type="button"
+        class="modal-close"
+        (click)="closeDetails()">
+
+        ×
+
+      </button>
+
+    </div>
+
+
+    <!-- BODY -->
+
+    <div
+      class="modal-body"
+      *ngIf="selectedHierarchy">
+
+
+      <!-- SUMMARY -->
+
+      <div class="details-summary">
+
+        <div class="details-summary-main">
+
+          <span class="summary-label">
+            APPROVAL LEVEL
+          </span>
+
+          <strong>
+            {{
+            getLevelLabel(
+            selectedHierarchy.level
+            )
+            }}
+          </strong>
+
+          <span>
+            {{
+              getLevelDescription(
+                selectedHierarchy.level
+              )
+            }}
+          </span>
+
+        </div>
+
+
+        <span
+          class="status-badge large-status"
+          [ngClass]="
+            getStatusClass(
+              selectedHierarchy.status
+            )
+          ">
+
+          <span class="status-dot"></span>
+
+          {{
+            getStatusLabel(
+              selectedHierarchy.status
+            )
+          }}
+
+        </span>
+
+      </div>
+
+
+      <!-- CONFIGURATION DETAILS -->
+
+      <section class="details-section">
+
+        <div class="section-title">
+
+          <span class="section-icon">
+            ◈
+          </span>
+
+          <h3>
+            Configuration Details
+          </h3>
+
+        </div>
+
+
+        <div class="details-grid">
+
+
+          <div class="detail-item">
+
+            <span>
+              Configuration ID
+            </span>
+
+            <strong>
+              #{{
+              selectedHierarchy.approvalHierarchyId
+              }}
+            </strong>
+
+          </div>
+
+
+          <div class="detail-item">
+
+            <span>
+              Approval Level
+            </span>
+
+            <strong>
+              {{
+              getLevelLabel(
+              selectedHierarchy.level
+              )
+              }}
+            </strong>
+
+          </div>
+
+
+          <div class="detail-item">
+
+            <span>
+              Approver
+            </span>
+
+            <strong>
+              {{
+              selectedHierarchy.approverName ||
+              getApproverName(
+              selectedHierarchy.approverUserId
+              )
+              }}
+            </strong>
+
+          </div>
+
+
+          <div class="detail-item">
+
+            <span>
+              Approver User ID
+            </span>
+
+            <strong>
+              {{
+              selectedHierarchy.approverUserId ??
+              'Not assigned'
+              }}
+            </strong>
+
+          </div>
+
+
+          <div class="detail-item">
+
+            <span>
+              Department
+            </span>
+
+            <strong>
+              {{
+              selectedHierarchy.departmentName ||
+              (
+              selectedHierarchy.departmentId === null
+              ? 'Centralized'
+              : 'Not assigned'
+              )
+              }}
+            </strong>
+
+          </div>
+
+
+          <div class="detail-item">
+
+            <span>
+              Department ID
+            </span>
+
+            <strong>
+              {{
+              selectedHierarchy.departmentId ??
+              'Centralized'
+              }}
+            </strong>
+
+          </div>
+
+
+          <div class="detail-item">
+
+            <span>
+              Approver Role
+            </span>
+
+            <strong>
+              {{
+              selectedHierarchy.approverRole ||
+              'Not specified'
+              }}
+            </strong>
+
+          </div>
+
+
+          <div class="detail-item">
+
+            <span>
+              Status
+            </span>
+
+            <strong>
+              {{
+              getStatusLabel(
+              selectedHierarchy.status
+              )
+              }}
+            </strong>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- APPROVER CONTACT -->
+
+      <section
+        class="details-section"
+        *ngIf="
+          selectedHierarchy.approverEmail
+        ">
+
+        <div class="section-title">
+
+          <span class="section-icon">
+            @
+          </span>
+
+          <h3>
+            Approver Contact
+          </h3>
+
+        </div>
+
+
+        <div class="contact-card">
+
+          <div class="contact-avatar">
+
+            {{
+            (
+            selectedHierarchy.approverName ||
+            'A'
+            ).charAt(0).toUpperCase()
+            }}
+
+          </div>
+
+          <div>
+
+            <strong>
+              {{
+              selectedHierarchy.approverName
+              }}
+            </strong>
+
+            <span>
+              {{
+                selectedHierarchy.approverEmail
+              }}
+            </span>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- CENTRALIZED INFORMATION -->
+
+      <div
+        class="centralized-notice details-notice"
+        *ngIf="
+          selectedHierarchy.departmentId === null
+        ">
+
+        <div class="notice-icon">
+          C
+        </div>
+
+        <div>
+
+          <strong>
+            Centralized Approval
+          </strong>
+
+          <p>
+            This approval level is centralized and
+            is not associated with a specific department.
+          </p>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- FOOTER -->
+
+    <div class="modal-footer">
+
+      <button
+        type="button"
+        class="secondary-button"
+        (click)="closeDetails()">
+
+        Close
+
+      </button>
+
+
+      <button
+        type="button"
+        class="edit-modal-button"
+        *ngIf="selectedHierarchy"
+        (click)="
+          closeDetails();
+          openEditModal(selectedHierarchy)
+        ">
+
+        ✎
+        Edit Configuration
+
+      </button>
+
+    </div>
+
+  </section>
+
+</div>
+
+
+<!-- =========================================================
+     DELETE CONFIRMATION MODAL
+     ========================================================= -->
+
+<div
+  class="modal-backdrop"
+  *ngIf="showDeleteModal"
+  (click)="closeDeleteModal()">
+
+  <section
+    class="modal delete-modal"
+    (click)="$event.stopPropagation()">
+
+
+    <div class="delete-icon">
+      !
+    </div>
+
+
+    <h2>
+      Delete Approval Configuration?
+    </h2>
+
+
+    <p>
+      You are about to permanently delete approval
+      configuration
+      <strong>
+        #{{
+        hierarchyToDelete?.approvalHierarchyId
+        }}
+      </strong>.
+    </p>
+
+
+    <div class="delete-summary">
+
+      <div>
+
+        <span>
+          Approval Level
+        </span>
+
+        <strong>
+          {{
+          getLevelLabel(
+          hierarchyToDelete?.level ?? null
+          )
+          }}
+        </strong>
+
+      </div>
+
+
+      <div>
+
+        <span>
+          Approver
+        </span>
+
+        <strong>
+          {{
+          hierarchyToDelete?.approverName ||
+          getApproverName(
+          hierarchyToDelete?.approverUserId ?? null
+          )
+          }}
+        </strong>
+
+      </div>
+
+
+      <div>
+
+        <span>
+          Department
+        </span>
+
+        <strong>
+          {{
+          hierarchyToDelete?.departmentName ||
+          (
+          hierarchyToDelete?.departmentId === null
+          ? 'Centralized'
+          : 'Not assigned'
+          )
+          }}
+        </strong>
+
+      </div>
+
+    </div>
+
+
+    <div class="warning-box">
+
+      <span>
+        !
+      </span>
+
+      <p>
+        This action cannot be undone. The approval
+        configuration will be permanently removed.
+      </p>
+
+    </div>
+
+
+    <div class="delete-modal-actions">
+
+      <button
+        type="button"
+        class="secondary-button"
+        [disabled]="isDeleting"
+        (click)="closeDeleteModal()">
+
+        Cancel
+
+      </button>
+
+
+      <button
+        type="button"
+        class="delete-confirm-button"
+        [disabled]="isDeleting"
+        (click)="deleteApprovalHierarchy()">
+
+        <span
+          class="button-spinner"
+          *ngIf="isDeleting">
+        </span>
+
+        {{
+        isDeleting
+        ? 'Deleting...'
+        : 'Delete Configuration'
+        }}
+
+      </button>
+
+    </div>
+
+  </section>
+
+</div>

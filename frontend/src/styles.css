@@ -1,0 +1,336 @@
+/* =====================================================
+   ENTERPRISE PROCUREMENT SYSTEM
+   GLOBAL STYLES
+   ===================================================== */
+
+
+/* =====================================================
+   CSS VARIABLES
+   ===================================================== */
+
+:root {
+
+  /* Brand */
+  --primary: #8d75df;
+  --primary-dark: #755bc9;
+  --primary-light: #f0ebff;
+
+  /* Backgrounds */
+  --background: #f7f4fc;
+  --surface: #ffffff;
+  --surface-soft: #faf9fd;
+
+  /* Text */
+  --text-primary: #211d2b;
+  --text-secondary: #6f687a;
+  --text-muted: #8c8795;
+
+  /* Borders */
+  --border: #e7e2ef;
+  --border-light: #eeeaf4;
+
+  /* Status */
+  --success: #15803d;
+  --success-bg: #dcfce7;
+
+  --warning: #a16207;
+  --warning-bg: #fef3c7;
+
+  --danger: #b42318;
+  --danger-bg: #fee2e2;
+
+  /* Shadows */
+  --shadow-sm:
+    0 2px 8px rgba(50, 30, 80, 0.04);
+
+  --shadow-md:
+    0 8px 25px rgba(50, 30, 80, 0.07);
+
+  --shadow-lg:
+    0 15px 40px rgba(50, 30, 80, 0.10);
+
+  /* Radius */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --radius-xl: 24px;
+
+  /* Layout */
+  --max-width: 1400px;
+}
+
+
+/* =====================================================
+   RESET
+   ===================================================== */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+
+/* =====================================================
+   PAGE WIDTH / OVERFLOW
+   ===================================================== */
+
+html {
+  margin: 0;
+  padding: 0;
+
+  width: 100%;
+  max-width: 100%;
+
+  min-height: 100%;
+
+  overflow-x: hidden;
+}
+
+
+body {
+  margin: 0;
+  padding: 0;
+
+  width: 100%;
+  max-width: 100%;
+
+  min-height: 100vh;
+
+  overflow-x: hidden;
+
+  background: var(--background);
+
+  color: var(--text-primary);
+
+  font-family:
+    Georgia,
+    'Times New Roman',
+    serif;
+
+  line-height: 1.5;
+
+  -webkit-font-smoothing: antialiased;
+}
+
+
+/*
+   Angular component host elements can sometimes
+   contribute to unexpected horizontal overflow.
+*/
+
+app-root {
+  display: block;
+
+  width: 100%;
+  max-width: 100%;
+
+  min-height: 100vh;
+
+  overflow-x: hidden;
+}
+
+
+/* =====================================================
+   IMAGES / MEDIA
+   ===================================================== */
+
+img,
+svg,
+video,
+canvas {
+  max-width: 100%;
+}
+
+
+/* =====================================================
+   HEADINGS
+   ===================================================== */
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: var(--text-primary);
+}
+
+
+/* =====================================================
+   FORM / BUTTON FONT
+   ===================================================== */
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+
+/* =====================================================
+   BUTTON BASE
+   ===================================================== */
+
+button {
+  transition:
+    background-color 0.2s ease,
+    transform 0.15s ease,
+    box-shadow 0.2s ease,
+    opacity 0.2s ease;
+}
+
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid rgba(141, 117, 223, 0.25);
+
+  outline-offset: 2px;
+}
+
+
+/* =====================================================
+   LINKS
+   ===================================================== */
+
+a {
+  color: var(--primary);
+
+  text-decoration: none;
+}
+
+
+a:hover {
+  text-decoration: underline;
+}
+
+
+/* =====================================================
+   FORM ELEMENTS
+   ===================================================== */
+
+input,
+select,
+textarea {
+
+  width: 100%;
+  max-width: 100%;
+
+  border: 1px solid var(--border);
+
+  border-radius: var(--radius-md);
+
+  background: var(--surface);
+
+  color: var(--text-primary);
+
+  padding: 13px 15px;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background-color 0.2s ease;
+}
+
+
+input:hover,
+select:hover,
+textarea:hover {
+  border-color: #d2c9e1;
+}
+
+
+input:focus,
+select:focus,
+textarea:focus {
+
+  border-color: var(--primary);
+
+  box-shadow:
+    0 0 0 4px rgba(141, 117, 223, 0.10);
+
+  outline: none;
+}
+
+
+input::placeholder,
+textarea::placeholder {
+  color: #aaa5b0;
+}
+
+
+textarea {
+  resize: vertical;
+
+  min-height: 110px;
+
+  max-width: 100%;
+}
+
+
+/* =====================================================
+   DISABLED ELEMENTS
+   ===================================================== */
+
+button:disabled,
+input:disabled,
+select:disabled,
+textarea:disabled {
+
+  opacity: 0.6;
+
+  cursor: not-allowed;
+}
+
+
+/* =====================================================
+   SCROLLBAR
+   ===================================================== */
+
+::-webkit-scrollbar {
+  width: 9px;
+  height: 9px;
+}
+
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+
+::-webkit-scrollbar-thumb {
+
+  background: #cfc7dd;
+
+  border-radius: 20px;
+}
+
+
+::-webkit-scrollbar-thumb:hover {
+  background: #b7aec8;
+}
+
+
+/* =====================================================
+   RESPONSIVE
+   ===================================================== */
+
+@media (max-width: 768px) {
+
+  body {
+    font-size: 15px;
+  }
+
+}
+
+
+@media (max-width: 480px) {
+
+  body {
+    font-size: 14px;
+  }
+
+}

@@ -1,9 +1,12 @@
 package com.eps.enterpriseprocurementsystem.controller;
 
-import jakarta.validation.Valid;
-import com.eps.enterpriseprocurementsystem.entity.Department;
+import com.eps.enterpriseprocurementsystem.dto.CategoryDTO;
+import com.eps.enterpriseprocurementsystem.dto.DepartmentDTO;
+import com.eps.enterpriseprocurementsystem.service.CategoryService;
 import com.eps.enterpriseprocurementsystem.service.DepartmentService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,33 +18,87 @@ public class DepartmentController {
     @Autowired
     private DepartmentService departmentService;
 
-    // Save Department
+    @Autowired
+    private CategoryService categoryService;
+
+
+    // =====================================================
+    // SAVE DEPARTMENT - ADMIN ONLY
+    // =====================================================
+
     @PostMapping
-    public Department saveDepartment(@Valid @RequestBody Department department) {
-        return departmentService.saveDepartment(department);
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public DepartmentDTO saveDepartment(
+            @Valid @RequestBody DepartmentDTO dto) {
+
+        return departmentService.saveDepartment(dto);
     }
 
-    // Get All Departments
+
+    // =====================================================
+    // GET ALL DEPARTMENTS
+    // PUBLIC
+    // Used by Registration Page
+    // =====================================================
+
     @GetMapping
-    public List<Department> getAllDepartments() {
+    public List<DepartmentDTO> getAllDepartments() {
+
         return departmentService.getAllDepartments();
     }
 
-    // Get Department By ID
+
+    // =====================================================
+    // GET DEPARTMENT BY ID
+    // ADMIN & EMPLOYEE
+    // =====================================================
+
     @GetMapping("/{id}")
-    public Department getDepartmentById(@PathVariable Long id) {
+    @PreAuthorize("hasAnyAuthority('ADMIN','EMPLOYEE')")
+    public DepartmentDTO getDepartmentById(
+            @PathVariable Long id) {
+
         return departmentService.getDepartmentById(id);
     }
 
+
+    // =====================================================
+    // UPDATE DEPARTMENT - ADMIN ONLY
+    // =====================================================
+
     @PutMapping("/{id}")
-    public Department updateDepartment(@PathVariable Long id,
-                                       @Valid @RequestBody Department department) {
-        return departmentService.updateDepartment(id, department);
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public DepartmentDTO updateDepartment(
+            @PathVariable Long id,
+            @Valid @RequestBody DepartmentDTO dto) {
+
+        return departmentService.updateDepartment(id, dto);
     }
 
+
+    // =====================================================
+    // DELETE DEPARTMENT - ADMIN ONLY
+    // =====================================================
+
     @DeleteMapping("/{id}")
-    public String deleteDepartment(@PathVariable Long id) {
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public String deleteDepartment(
+            @PathVariable Long id) {
 
         return departmentService.deleteDepartment(id);
+    }
+
+
+    // =====================================================
+    // GET CATEGORIES BY DEPARTMENT
+    // ADMIN & EMPLOYEE
+    // =====================================================
+
+    @GetMapping("/{id}/categories")
+    @PreAuthorize("hasAnyAuthority('ADMIN','EMPLOYEE')")
+    public List<CategoryDTO> getCategoriesByDepartment(
+            @PathVariable Long id) {
+
+        return categoryService.getCategoriesByDepartmentId(id);
     }
 }

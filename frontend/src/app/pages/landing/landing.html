@@ -1,0 +1,679 @@
+<div class="landing-page">
+
+  <!-- =====================================================
+       NAVBAR
+       ===================================================== -->
+
+  <header class="navbar">
+
+    <div class="brand">
+
+      <div class="logo">
+        EP
+      </div>
+
+      <div class="brand-text">
+
+        <h2>
+          Enterprise
+        </h2>
+
+        <span>
+          Procurement System
+        </span>
+
+      </div>
+
+    </div>
+
+
+    <nav class="nav-actions">
+
+      <button
+        type="button"
+        class="login-link"
+        (click)="goToLogin()">
+
+        Login
+
+      </button>
+
+      <button
+        type="button"
+        class="signup-button"
+        (click)="goToRegister()">
+
+        Get Started
+
+      </button>
+
+    </nav>
+
+  </header>
+
+
+  <main>
+
+    <!-- ===================================================
+         HERO
+         =================================================== -->
+
+    <section class="hero">
+
+      <div class="hero-content">
+
+        <p class="eyebrow">
+          ENTERPRISE PROCUREMENT
+        </p>
+
+        <h1>
+          Procurement,
+          <span>simplified.</span>
+        </h1>
+
+        <p class="hero-description">
+          Manage purchasing, approvals, suppliers,
+          payments and request tracking from one
+          centralized platform.
+        </p>
+
+
+        <div class="hero-actions">
+
+          <button
+            type="button"
+            class="primary-button"
+            (click)="goToRegister()">
+
+            Get Started
+
+            <span>→</span>
+
+          </button>
+
+
+          <button
+            type="button"
+            class="secondary-button"
+            (click)="goToLogin()">
+
+            Sign In
+
+          </button>
+
+        </div>
+
+      </div>
+
+
+      <!-- =================================================
+           INTERACTIVE WORKFLOW
+           ================================================= -->
+
+      <div class="hero-visual">
+
+        <div class="workflow-card">
+
+          <!-- Workflow Header -->
+
+          <div class="workflow-header">
+
+            <div>
+
+              <span class="small-label">
+                PROCUREMENT WORKFLOW
+              </span>
+
+              <h3>
+                From request to delivery.
+              </h3>
+
+            </div>
+
+            <div class="workflow-check">
+              ✓
+            </div>
+
+          </div>
+
+
+          <!-- Workflow Steps -->
+
+          <div class="workflow">
+
+
+            <!-- REQUEST -->
+
+            <button
+              type="button"
+              class="workflow-step workflow-button"
+              [class.active]="selectedStep === 'request'"
+              (click)="selectWorkflowStep('request')">
+
+              <div class="step-icon request-icon">
+                📋
+              </div>
+
+              <div class="step-content">
+
+                <div class="step-title-row">
+
+                  <strong>
+                    Purchase Request
+                  </strong>
+
+                  <span class="completed">
+                    Submitted
+                  </span>
+
+                </div>
+
+                <span>
+                  Select products and quantities
+                </span>
+
+              </div>
+
+            </button>
+
+
+            <div class="workflow-line"></div>
+
+
+            <!-- APPROVAL -->
+
+            <button
+              type="button"
+              class="workflow-step workflow-button"
+              [class.active]="selectedStep === 'approval'"
+              (click)="selectWorkflowStep('approval')">
+
+              <div class="step-icon approval-icon">
+                ✓
+              </div>
+
+              <div class="step-content">
+
+                <div class="step-title-row">
+
+                  <strong>
+                    Approval
+                  </strong>
+
+                  <span class="completed">
+                    Approved
+                  </span>
+
+                </div>
+
+                <span>
+                  Review and approve the request
+                </span>
+
+              </div>
+
+            </button>
+
+
+            <div class="workflow-line"></div>
+
+
+            <!-- TRACKING -->
+
+            <button
+              type="button"
+              class="workflow-step workflow-button"
+              [class.active]="selectedStep === 'tracking'"
+              (click)="selectWorkflowStep('tracking')">
+
+              <div class="step-icon tracking-icon">
+                🚚
+              </div>
+
+              <div class="step-content">
+
+                <div class="step-title-row">
+
+                  <strong>
+                    Tracking
+                  </strong>
+
+                  <span class="in-progress">
+                    In Progress
+                  </span>
+
+                </div>
+
+                <span>
+                  Track procurement through delivery
+                </span>
+
+              </div>
+
+            </button>
+
+          </div>
+
+
+          <!-- =================================================
+               SELECTED WORKFLOW INFORMATION
+               ================================================= -->
+
+          <div class="workflow-info">
+
+            <span class="workflow-info-label">
+              HOW THIS STAGE WORKS
+            </span>
+
+            <h4>
+              {{ getWorkflowTitle() }}
+            </h4>
+
+            <p>
+              {{ getWorkflowDescription() }}
+            </p>
+
+            <div class="workflow-action">
+              {{ getWorkflowAction() }}
+            </div>
+
+          </div>
+
+
+          <!-- Progress -->
+
+          <div class="workflow-footer">
+
+            <div>
+
+              <span>
+                Procurement progress
+              </span>
+
+              <strong>
+                72%
+              </strong>
+
+            </div>
+
+            <div class="mini-progress">
+
+              <div class="mini-progress-fill"></div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- Floating notification -->
+
+        <div class="floating-card floating-one">
+
+          <span class="floating-icon">
+            ✓
+          </span>
+
+          <div>
+
+            <strong>
+              Approved
+            </strong>
+
+            <span>
+              Request reviewed
+            </span>
+
+          </div>
+
+        </div>
+
+
+        <div class="floating-card floating-two">
+
+          <span class="floating-icon">
+            🚚
+          </span>
+
+          <div>
+
+            <strong>
+              Tracking
+            </strong>
+
+            <span>
+              Order in progress
+            </span>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ===================================================
+         HOW IT WORKS
+         =================================================== -->
+
+    <section class="how-it-works-section">
+
+      <div class="section-heading">
+
+        <p class="eyebrow">
+          HOW IT WORKS
+        </p>
+
+        <h2>
+          From request to completion.
+        </h2>
+
+        <p>
+          A simple workflow keeps every procurement
+          activity organized and easy to follow.
+        </p>
+
+      </div>
+
+
+      <div class="how-it-works-grid">
+
+
+        <!-- STEP 01 -->
+
+        <article class="process-card">
+
+          <div class="process-number">
+            01
+          </div>
+
+          <div class="process-icon">
+            📋
+          </div>
+
+          <h3>
+            Create
+          </h3>
+
+          <p>
+            Select the products you need, set quantities
+            and submit a purchase request.
+          </p>
+
+          <span class="process-flow">
+            Select → Submit
+          </span>
+
+        </article>
+
+
+        <!-- STEP 02 -->
+
+        <article class="process-card">
+
+          <div class="process-number">
+            02
+          </div>
+
+          <div class="process-icon">
+            👀
+          </div>
+
+          <h3>
+            Review
+          </h3>
+
+          <p>
+            The request is reviewed by the appropriate
+            person in the approval workflow.
+          </p>
+
+          <span class="process-flow">
+            Review → Verify
+          </span>
+
+        </article>
+
+
+        <!-- STEP 03 -->
+
+        <article class="process-card">
+
+          <div class="process-number">
+            03
+          </div>
+
+          <div class="process-icon">
+            ✓
+          </div>
+
+          <h3>
+            Approve
+          </h3>
+
+          <p>
+            Authorized users can approve or reject the
+            purchase request with remarks.
+          </p>
+
+          <span class="process-flow">
+            Approve → Reject
+          </span>
+
+        </article>
+
+
+        <!-- STEP 04 -->
+
+        <article class="process-card">
+
+          <div class="process-number">
+            04
+          </div>
+
+          <div class="process-icon">
+            🚚
+          </div>
+
+          <h3>
+            Track
+          </h3>
+
+          <p>
+            Follow the request status and keep track of
+            its progress through completion.
+          </p>
+
+          <span class="process-flow">
+            Track → Complete
+          </span>
+
+        </article>
+
+      </div>
+
+    </section>
+
+
+    <!-- ===================================================
+         FEATURES
+         =================================================== -->
+
+    <section class="features-section">
+
+      <div class="section-heading">
+
+        <p class="eyebrow">
+          ONE PLATFORM
+        </p>
+
+        <h2>
+          Everything you need to manage procurement.
+        </h2>
+
+        <p>
+          Keep every stage of your procurement workflow
+          organized in one place.
+        </p>
+
+      </div>
+
+
+      <div class="feature-grid">
+
+
+        <article class="feature-card">
+
+          <div class="feature-icon">
+            📋
+          </div>
+
+          <h3>
+            Purchase Requests
+          </h3>
+
+          <p>
+            Create and manage purchase requests
+            with products, quantities and remarks.
+          </p>
+
+        </article>
+
+
+        <article class="feature-card">
+
+          <div class="feature-icon">
+            ✓
+          </div>
+
+          <h3>
+            Approvals
+          </h3>
+
+          <p>
+            Review pending requests and manage
+            approval decisions efficiently.
+          </p>
+
+        </article>
+
+
+        <article class="feature-card">
+
+          <div class="feature-icon">
+            💳
+          </div>
+
+          <h3>
+            Payments
+          </h3>
+
+          <p>
+            Keep procurement payments organized
+            and easy to track.
+          </p>
+
+        </article>
+
+
+        <article class="feature-card">
+
+          <div class="feature-icon">
+            🚚
+          </div>
+
+          <h3>
+            Tracking
+          </h3>
+
+          <p>
+            Follow purchase requests from creation
+            through completion.
+          </p>
+
+        </article>
+
+      </div>
+
+    </section>
+
+
+    <!-- ===================================================
+         CTA
+         =================================================== -->
+
+    <section class="cta-section">
+
+      <div>
+
+        <p class="eyebrow">
+          GET STARTED
+        </p>
+
+        <h2>
+          Ready to simplify your procurement?
+        </h2>
+
+        <p>
+          Create your account and start managing
+          your procurement activities.
+        </p>
+
+      </div>
+
+
+      <button
+        type="button"
+        class="primary-button"
+        (click)="goToRegister()">
+
+        Create an Account
+
+        <span>
+          →
+        </span>
+
+      </button>
+
+    </section>
+
+  </main>
+
+
+  <!-- =====================================================
+       FOOTER
+       ===================================================== -->
+
+  <footer>
+
+    <div class="footer-brand">
+
+      <div class="logo">
+        EP
+      </div>
+
+      <div>
+
+        <strong>
+          Enterprise
+        </strong>
+
+        <span>
+          Procurement System
+        </span>
+
+      </div>
+
+    </div>
+
+
+    <p>
+      Enterprise procurement management platform.
+    </p>
+
+  </footer>
+
+</div>
