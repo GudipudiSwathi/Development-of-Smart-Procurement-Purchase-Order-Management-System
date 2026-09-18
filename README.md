@@ -1,187 +1,207 @@
-Development of Smart Procurement & Purchase Order Management System
+🚀 Development of Smart Procurement & Purchase Order Management System
 
-A full-stack web-based Enterprise Procurement System designed to
-digitize the procurement lifecycle --- from employee purchase requests
-and admin approval to purchase order processing, payment, supplier
-fulfilment, delivery tracking, reports, and feedback.
+A full-stack web-based Enterprise Procurement System that digitizes the procurement lifecycle from purchase request creation and approval to payment, supplier fulfilment, delivery tracking, reporting, and feedback.
 
 📌 Project Overview
 
-The system provides a centralized procurement workflow for three main
-user roles:
+The Enterprise Procurement System provides a centralized platform for managing procurement activities across three main user roles.
 
-Employee -- creates purchase requests, tracks requests/orders,
-and provides feedback.
+👤 Employee
 
-Admin -- manages users, products, suppliers, requests,
-approvals, payments, and procurement activities.
+<ul>
+<li>Create and submit purchase requests</li>
+<li>Track request and order status</li>
+<li>View procurement activity</li>
+<li>Provide product reviews and feedback</li>
+</ul>
 
-Supplier -- manages supplier products and processes approved and
-paid orders through fulfilment and delivery stages.
+🛡️ Admin
 
-The application uses an Angular frontend, Spring Boot backend, and MySQL
-database.
+<ul>
+<li>Manage employees and suppliers</li>
+<li>Manage departments, categories, and products</li>
+<li>Review, approve, or reject purchase requests</li>
+<li>Manage purchase orders and payments</li>
+<li>Monitor procurement activities through dashboards and reports</li>
+</ul>
+
+🏢 Supplier
+
+<ul>
+<li>Manage supplier profile and products</li>
+<li>View approved and paid orders</li>
+<li>Confirm and process orders</li>
+<li>Update packing, shipping, and delivery status</li>
+</ul>
 
 ✨ Key Features
 
-Secure login and role-based access for Employee, Admin, and Supplier
-
-Employee purchase request creation and tracking
-
-Admin purchase request review and approval/rejection
-
-Product, category, department, and supplier management
-
-Purchase order workflow
-
-Payment initiation and payment status tracking
-
-MPIN-based payment verification for supported payment flows
-
-Supplier order processing and delivery-status updates
-
-Delivery tracking from confirmation through completion
-
-Product reviews and feedback
-
-Role-based dashboards
-
-Purchase request export in CSV, PDF, and Excel formats
-
-Notifications and procurement status visibility
+<table>
+<tr>
+<td>🔐 <strong>Role-Based Access</strong><br>Secure login for Employee, Admin, and Supplier</td>
+<td>📝 <strong>Purchase Requests</strong><br>Create and track procurement requests</td>
+</tr>
+<tr>
+<td>✅ <strong>Admin Approval</strong><br>Review, approve, or reject requests</td>
+<td>📦 <strong>Product & Supplier Management</strong><br>Manage products, categories, departments, and suppliers</td>
+</tr>
+<tr>
+<td>📄 <strong>Purchase Orders</strong><br>Manage purchase order processing</td>
+<td>💳 <strong>Payment Management</strong><br>Process payments and track transactions</td>
+</tr>
+<tr>
+<td>🔢 <strong>MPIN Verification</strong><br>Verify MPIN for applicable payment flows</td>
+<td>🚚 <strong>Delivery Tracking</strong><br>Track orders through fulfilment and delivery</td>
+</tr>
+<tr>
+<td>⭐ <strong>Reviews & Feedback</strong><br>Submit product reviews and feedback</td>
+<td>📊 <strong>Dashboards & Reports</strong><br>View procurement activities and summaries</td>
+</tr>
+</table>
 
 🧩 Functional Modules
 
-1. User & Access Management
+<table>
+<thead>
+<tr>
+<th align="center">#</th>
+<th>Module</th>
+<th>Main Functions</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center">01</td>
+<td><strong>👤 User & Access Management</strong></td>
+<td>Authentication, role-based access, employee/admin/supplier management, role-specific dashboards</td>
+</tr>
+<tr>
+<td align="center">02</td>
+<td><strong>🛒 Procurement Management</strong></td>
+<td>Purchase requests, request review, approval/rejection, purchase orders, status tracking</td>
+</tr>
+<tr>
+<td align="center">03</td>
+<td><strong>📦 Product & Supplier Management</strong></td>
+<td>Product catalog, categories, departments, suppliers, and supplier products</td>
+</tr>
+<tr>
+<td align="center">04</td>
+<td><strong>💳 Payment Management</strong></td>
+<td>Payment initiation, payment methods, processing, MPIN verification, transaction tracking</td>
+</tr>
+<tr>
+<td align="center">05</td>
+<td><strong>🚚 Delivery & Order Tracking</strong></td>
+<td>Order confirmation, packing, shipping, delivery completion, and tracking</td>
+</tr>
+<tr>
+<td align="center">06</td>
+<td><strong>📊 Dashboard, Reports & Feedback</strong></td>
+<td>Dashboards, procurement summaries, reports, CSV/PDF/Excel exports, reviews, and feedback</td>
+</tr>
+</tbody>
+</table>
 
-Authentication, role-based access, employee/admin/supplier management,
-and role-specific dashboards.
+🔄 End-to-End Procurement Workflow
 
-2. Procurement Management
+<table>
+<tr>
+<td align="center"><strong>01</strong><br>👤<br><strong>Employee Login</strong></td>
+<td align="center">→</td>
+<td align="center"><strong>02</strong><br>📝<br><strong>Create Request</strong></td>
+<td align="center">→</td>
+<td align="center"><strong>03</strong><br>🛡️<br><strong>Admin Review</strong></td>
+<td align="center">→</td>
+<td align="center"><strong>04</strong><br>✅<br><strong>Approve / Reject</strong></td>
+</tr>
+</table>
 
-Purchase request creation, review, approval/rejection, purchase order
-workflow, and status tracking.
+<p align="center">⬇️</p>
 
-3. Product & Supplier Management
+<table>
+<tr>
+<td align="center"><strong>05</strong><br>📄<br><strong>Purchase Order</strong></td>
+<td align="center">→</td>
+<td align="center"><strong>06</strong><br>💳<br><strong>Payment</strong></td>
+<td align="center">→</td>
+<td align="center"><strong>07</strong><br>🏢<br><strong>Supplier Fulfilment</strong></td>
+<td align="center">→</td>
+<td align="center"><strong>08</strong><br>📦<br><strong>Order Processing</strong></td>
+</tr>
+</table>
 
-Product catalog, categories, departments, supplier profiles, and
-supplier products.
+<p align="center">⬇️</p>
 
-4. Payment Management
+<table>
+<tr>
+<td align="center"><strong>09</strong><br>🚚<br><strong>Shipping</strong></td>
+<td align="center">→</td>
+<td align="center"><strong>10</strong><br>📍<br><strong>Delivery Tracking</strong></td>
+<td align="center">→</td>
+<td align="center"><strong>11</strong><br>⭐<br><strong>Feedback</strong></td>
+<td align="center">→</td>
+<td align="center"><strong>12</strong><br>📊<br><strong>Reports</strong></td>
+</tr>
+</table>
 
-Payment initiation, payment method selection, payment processing,
-payment status/history, and MPIN verification where applicable.
+🏗️ System Architecture
 
-5. Delivery & Order Tracking
+<table>
+<tr>
+<td align="center" width="25%">
 
-Order confirmation, packing, shipping, delivery completion, and tracking
-visibility.
-
-6. Dashboard, Reports & Feedback
-
-Role-based dashboards, procurement/payment summaries, reports,
-CSV/PDF/Excel exports, reviews, and feedback.
-
-🔄 End-to-End Workflow
-
-Employee Login
-↓
-Create Purchase Request
-↓
-Admin Review
-↓
-Approve / Reject
-↓
-Purchase Order
-↓
-Payment Processing
-↓
-Supplier Fulfilment
-↓
-Order Confirmation
-↓
-Packing
-↓
-Shipping
-↓
-Delivery
-↓
-Feedback / Reports
-
-🛠️ Technology Stack
-
-Frontend
+🎨 Frontend
 
 Angular
 
-TypeScript
+HTML5 • CSS3 • TypeScript
 
-HTML5
+</td>
+<td align="center" width="5%">→</td>
+<td align="center" width="25%">
 
-CSS3
-
-Backend
-
-Java
+⚙️ Backend
 
 Spring Boot
 
 REST APIs
-
 Spring Security
+JWT
 
-JWT Authentication
+</td>
+<td align="center" width="5%">→</td>
+<td align="center" width="20%">
 
-Database & Persistence
+🗄️ Persistence
+
+JPA / Hibernate
+
+Data Access Layer
+
+</td>
+<td align="center" width="5%">→</td>
+<td align="center" width="15%">
+
+🛢️ Database
 
 MySQL
 
-Spring Data JPA
+Procurement Data
 
-Hibernate
+</td>
+</tr>
+</table>
 
-Development & Tools
+<p align="center">
 
-IntelliJ IDEA
+Angular Frontend → REST API → Spring Boot → JPA / Hibernate → MySQL
 
-Visual Studio Code
-
-Maven
-
-Git
-
-GitHub
-
-Postman
-
-🏗️ System Architecture
-
-┌──────────────────────────────┐
-│      Angular Frontend        │
-│   HTML • CSS • TypeScript    │
-└──────────────┬───────────────┘
-│ REST API
-▼
-┌──────────────────────────────┐
-│         Spring Boot          │
-│ Controllers • Services       │
-│ Security • JWT               │
-└──────────────┬───────────────┘
-│
-▼
-┌──────────────────────────────┐
-│   Spring Data JPA /          │
-│        Hibernate             │
-└──────────────┬───────────────┘
-│
-▼
-┌──────────────────────────────┐
-│           MySQL              │
-│      Procurement Data        │
-└──────────────────────────────┘
+</p>
 
 📁 Project Structure
 
+<pre>
 EnterpriseProcurementSystem/
 │
 ├── src/
@@ -201,50 +221,104 @@ EnterpriseProcurementSystem/
 │           └── application.properties
 │
 ├── frontend/
+│   └── src/
+│
 ├── pom.xml
 └── README.md
+</pre>
+🛠️ Technology Stack
 
-⚙️ Local Setup
+<table>
+<tr>
+<td width="50%">
 
-Prerequisites
+🎨 Frontend
 
-Java JDK
+Angular
 
-Node.js and npm
+TypeScript
 
-Angular CLI
+HTML5
 
-MySQL Server
+CSS3
+
+⚙️ Backend
+
+Java
+
+Spring Boot
+
+REST APIs
+
+Spring Security
+
+JWT Authentication
+
+</td>
+<td width="50%">
+
+🗄️ Database & Persistence
+
+MySQL
+
+Spring Data JPA
+
+Hibernate
+
+🔧 Development & Tools
 
 IntelliJ IDEA
 
+Visual Studio Code
+
+Maven
+
 Git
 
-1. Clone the repository
+GitHub
 
-git clone https://github.com/GudipudiSwathi/Development-of-Smart-Procurement-Purchase-Order-Management-System.git
+Postman
+
+</td>
+</tr>
+</table>
+
+⚙️ Local Setup
+
+📋 Prerequisites
+
+<ul>
+<li>Java JDK</li>
+<li>Node.js and npm</li>
+<li>Angular CLI</li>
+<li>MySQL Server</li>
+<li>IntelliJ IDEA</li>
+<li>Git</li>
+</ul>
+
+1️⃣ Clone the Repository
+
+git clone <YOUR_GITHUB_REPOSITORY_URL>
 cd EnterpriseProcurementSystem
 
-2. Create the MySQL database
+2️⃣ Create the Database
 
 CREATE DATABASE enterprise_procurement_system;
 
-3. Configure database credentials securely
+3️⃣ Configure Database Credentials
 
-Use environment variables instead of committing real credentials to
-GitHub:
+Use environment variables for local credentials:
 
 DB_USERNAME=root
 DB_PASSWORD=your_mysql_password
 
-In IntelliJ:
+In IntelliJ IDEA:
 
 Run → Edit Configurations → Environment variables
 
-Do not commit database passwords, email passwords, API keys, or other
-secrets.
+⚠️ Never commit real database passwords, email passwords, API keys, JWT secrets, or other sensitive credentials to GitHub.
 
-4. Run the Spring Boot backend
+4️⃣ Run the Spring Boot Backend
 
 Run:
 
@@ -254,7 +328,7 @@ Backend:
 
 http://localhost:8080
 
-5. Run the Angular frontend
+5️⃣ Run the Angular Frontend
 
 From the frontend directory:
 
@@ -267,72 +341,120 @@ http://localhost:4200
 
 🔐 Security
 
-The application uses:
-
-Spring Security
-
-JWT-based authentication
-
-BCrypt password hashing
-
-Role-based access control
-
-Environment-based configuration for sensitive credentials
+<ul>
+<li>Spring Security</li>
+<li>JWT-based authentication</li>
+<li>BCrypt password hashing</li>
+<li>Role-based access control</li>
+<li>Environment-based configuration for sensitive credentials</li>
+</ul>
 
 📊 Project Presentation
 
-The project presentation can be stored in:
+The project presentation can be stored in the repository as:
 
 documentation/
 └── Enterprise-Procurement-System-Presentation.pptx
 
-It covers the functional modules, workflow, architecture, payment
-management, delivery tracking, dashboards, reports, and feedback.
+The presentation covers:
+
+<ul>
+<li>Project overview and objectives</li>
+<li>Requirements and functional modules</li>
+<li>Procurement workflow</li>
+<li>System architecture</li>
+<li>Payment management</li>
+<li>Supplier processing</li>
+<li>Delivery and order tracking</li>
+<li>Dashboards and reports</li>
+<li>Reviews and feedback</li>
+</ul>
 
 🎯 Project Objectives
 
-Digitize the procurement request process
-
-Reduce manual procurement activities
-
-Improve approval and purchase-order visibility
-
-Centralize product and supplier information
-
-Provide secure payment processing
-
-Track supplier fulfilment and delivery
-
-Improve procurement transparency through dashboards and reports
-
-Provide a structured platform for feedback
+<table>
+<tr>
+<td>🎯 Digitize procurement requests</td>
+<td>⚡ Reduce manual procurement activities</td>
+</tr>
+<tr>
+<td>📋 Improve approval visibility</td>
+<td>📄 Streamline purchase-order processing</td>
+</tr>
+<tr>
+<td>🤝 Centralize supplier information</td>
+<td>💳 Provide secure payment processing</td>
+</tr>
+<tr>
+<td>🚚 Track supplier fulfilment and delivery</td>
+<td>📊 Improve procurement transparency</td>
+</tr>
+</table>
 
 👥 User Roles
 
-Role                                Main Responsibilities
-
-Employee                            Create requests, track procurement
-activity, and provide feedback
-
-Admin                               Manage users, products, suppliers,
-requests, approvals, payments, and
-procurement operations
+<table>
+<thead>
+<tr>
+<th>Role</th>
+<th>Responsibilities</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>👤 <strong>Employee</strong></td>
+<td>Create purchase requests, track procurement activity, and provide feedback</td>
+</tr>
+<tr>
+<td>🛡️ <strong>Admin</strong></td>
+<td>Manage users, products, suppliers, requests, approvals, payments, and procurement operations</td>
+</tr>
+<tr>
+<td>🏢 <strong>Supplier</strong></td>
+<td>Manage supplier products and process approved/paid orders through delivery</td>
+</tr>
+</tbody>
+</table>
 
 📌 Project Information
 
-Project: Development of Smart Procurement & Purchase Order
-Management System
-Type: Full-Stack Web Application
-Program: B.Tech -- Computer Science and Engineering
-Group: Group 2
-Internship: Infosys SpringBoard Virtual Internship 7.0 Program
+<table>
+<tr>
+<td><strong>📌 Project</strong></td>
+<td>Development of Smart Procurement & Purchase Order Management System</td>
+</tr>
+<tr>
+<td><strong>💻 Type</strong></td>
+<td>Full-Stack Web Application</td>
+</tr>
+<tr>
+<td><strong>🎓 Program</strong></td>
+<td>B.Tech – Computer Science and Engineering</td>
+</tr>
+<tr>
+<td><strong>👥 Group</strong></td>
+<td>Group 2</td>
+</tr>
+<tr>
+<td><strong>🏫 Internship</strong></td>
+<td>Infosys SpringBoard Virtual Internship Program</td>
+</tr>
+</table>
 
 👤 Author
 
+<p align="center">
+
 Gudipudi Durga Swathi
-B.Tech -- Computer Science and Engineering
 
-📄 License
+B.Tech – Computer Science and Engineering
 
-This project was developed for educational and internship project
-purposes.
+</p>
+
+<p align="center">
+<strong>🚀 Smart Procurement • Better Process • Greater Transparency</strong>
+</p>
+
+<p align="center">
+⭐ Developed as an educational and internship project.
+</p>
